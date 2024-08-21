@@ -28,10 +28,10 @@
 
         <section class="section__btn__menu">
           <button class="btn__menu" data-value="введите дату начала поиска">
-            ДАТА ОТ<span class="btn__menu_value">12.05.2023</span>
+            ДАТА ОТ<span class="btn__menu_value">23 СЕН 2024</span>
           </button>
           <button class="btn__menu" data-value="введите дату конца поиска">
-            ДАТА ДО<span class="btn__menu_value"> 23.08.2023</span>
+            ДАТА ДО<span class="btn__menu_value">30 СЕН 2024</span>
           </button>
 
           <button class="btn__menu js-btn-deselect" data-value="Удалить юридическую форму">
@@ -195,7 +195,77 @@
             </div>
           </div>
 
-          <div class="table__wrapper"></div>
+          <section class="table_mobile__wrapper"></section>
+          <section class="table_desktop__wrapper">
+            <table class="table_desktop">
+              <tr class="tr_empty">
+                <td class="sort-table" data-sort-value="id">№ ID</td>
+                <td>EDIT</td>
+                <td>DEL</td>
+                <td>
+                  <span class="sort-table" data-sort-value="abbr">Аббревиатура</span>
+                  <span class="sort-table" data-sort-value="inn">ИНН</span>,
+                  <span class="sort-table" data-sort-value="year">Год</span>
+                </td>
+                <td class="sort-table" data-sort-value="fullName">Полное название</td>
+                <td colspan="6" class="sort-table" data-sort-value="alt1">
+                  Альтернативные названия
+                </td>
+              </tr>
+              <tr class="tr_empty">
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+
+                  <input type="number" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td></td>
+                <td></td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+                <td>
+                  <div class="search-table"><span class="icon loop"></span></div>
+                  <input type="text" class="input-search table" />
+                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                </td>
+              </tr>
+
+              <tbody class="tr-wrapper"></tbody>
+            </table>
+          </section>
         </section>
       </div>
     </div>
@@ -259,7 +329,8 @@
         </div>
         <p class="warning-text">
           <span class="icon" style="color: red"></span>
-          Вы собираетесь удалить учебное заведение id1 - undefined
+          Вы собираетесь удалить учебное заведение <span class="school-id"></span> -
+          <span class="school-name"></span>
         </p>
         <div class="popup-buttons">
           <button class="btn-delete btn__main">OK</button>

@@ -6,16 +6,17 @@ class Navbar extends HTMLElement {
   THRID_PANEL_TABS = [
     ['объявления', ''],
     ['вакансии', ''],
-    ['вакансии объед', ''],
+    ['ПОИСК', ''],
     ['соискатели', ''],
     ['отклики', ''],
     ['фио', ''],
     ['Адреса', ''],
     ['Компании', ''],
     ['Учебные заведения', ''],
-    ['Сокр.Ю.Ф.', ''],
-    ['Альтернативные', ''],
-    ['Филиалы', ''],
+    ['вакансии объединённые', ''],
+    ['СОКРАЩЕННЫЕ ЮРИДИЧЕСКИЕ⠀ФОРМЫ', ''],
+    ['Альтернативные учебные⠀заведения', ''],
+    ['Филиалы учебных⠀заведений', ''],
     // ["Квалификации", ""],
     ['Квалификации Специальности', ''],
     ['Телефонные коды', ''],
@@ -23,7 +24,6 @@ class Navbar extends HTMLElement {
     ['email рассылка', ''],
     ['КАК БЫЛО КАК НАДО', ''],
     ['ПРЕФИКСЫ СЧЕТОВ', ''],
-    ['ПОИСК', ''],
     ['БАНКИ', ''],
     ['РУБРИКАТОР', ''],
   ];
@@ -219,7 +219,7 @@ class Navbar extends HTMLElement {
                         padding-right: 25px;
                         padding-left: 15px;
                         box-sizing: border-box;
-                        grid-template-columns: 1fr 1fr;
+                        grid-template-columns: 1fr 1fr !important;
                         grid-template-rows: repeat(11, minmax(50px, auto));
                     }
                     .other-tabs{
@@ -291,10 +291,10 @@ class Navbar extends HTMLElement {
                 }
                 @media (width <= 1150px) {
                     .second-panel__tab {
-                        font-size: 16px;
+                        font-size: 15px;
                     }
                     .third-panel__tab-text {
-                        font-size: 16px;
+                        font-size: 15px;
                     }
                 }
             </style>
@@ -384,10 +384,6 @@ class Navbar extends HTMLElement {
         el.classList.remove('third-panel__tab_active');
         if (el.innerHTML.includes('Альтернативные')) {
           el.classList.add('third-panel__tab_active');
-          el.dataset.value = 'Альтернативные учебные заведения';
-        }
-        if (el.innerHTML.includes('вакансии объед')) {
-          el.dataset.value = 'Вакансии объединённые';
         }
       });
       el.addEventListener('click', () => {

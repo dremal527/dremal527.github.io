@@ -5,10 +5,6 @@
   }
 }
 @media (max-width: 1366px) {
-  .container,
-  .navbar-top-panel {
-    padding: 0px calc(var(--index) * 1.5) !important;
-  }
   .popup {
     width: calc(100% - 40px);
   }
@@ -76,9 +72,7 @@
   .second-panel .tab {
     width: 95px;
   }
-  td {
-    padding: 11px 8px !important;
-  }
+
   .will-removed {
     display: none;
   }
@@ -99,6 +93,45 @@
   }
 }
 @media (width <= 880px) {
+  .table_mobile__wrapper {
+    display: table;
+  }
+  .table_desktop__wrapper {
+    display: none;
+  }
+  .table_mobile {
+    table-layout: auto;
+    border: 1px solid #cbcbcb;
+    margin: 38px 0px 32px 0px;
+    padding: 0;
+    border-collapse: collapse;
+    color: #484848;
+    width: 100%;
+    font-size: 16px;
+  }
+  .table_mobile:last-child {
+    margin-bottom: 80px;
+  }
+  .td-wrapper-icon {
+    text-align: center;
+  }
+  .table_mobile > tr:first-child > td {
+    background-color: #ebf6f9;
+    border-bottom: 1px solid #cbcbcb;
+    color: #414141;
+    padding: 15px 16px !important;
+  }
+  .table_mobile > tr:first-child > td:first-child {
+    padding: 15px 0px 15px 16px !important;
+    font-size: 20px;
+  }
+
+  .table_mobile > td:first-child {
+    color: #9c9c9c;
+  }
+  .table_mobile > td {
+    padding: 16px 16px 16px 20px;
+  }
   .container {
     padding: 0px calc(var(--index) * 1);
   }
@@ -178,7 +211,7 @@
     margin-bottom: 0;
   }
   .section__table__content.bottom {
-    display: block;
+    display: none;
   }
   .btn__table {
     width: calc(50% - 20px);
@@ -407,11 +440,18 @@
   .mobile-wrapper__row-extra-content {
     font-size: 18px;
   }
+  .section__table__content.top {
+    display: block;
+    margin-bottom: 13px;
+  }
 }
 
 @media (width <= 640px) {
   .container {
     padding: 0px calc(var(--index) * 0.75);
+  }
+  #navbar {
+    display: none !important;
   }
   .btn__table:nth-child(1) {
     margin-right: 16px;
@@ -472,12 +512,9 @@
   .table__row-item {
     font-size: 18px;
   }
-  .section__table__content.top {
-    display: block;
-  }
+
   .table__btn__wrapper {
     display: flex;
-    margin-bottom: 13px;
   }
   .section__table__content.bottom {
     display: none;
@@ -494,13 +531,6 @@
       text-align: center;
       font-size: 16px;
     }
-  }
-
-  .btn-search {
-    top: 10px;
-  }
-  .btn-reset-search {
-    top: 7.5px;
   }
   .btn__main {
     font-size: 14px;
