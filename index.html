@@ -38,9 +38,9 @@
             <span class="icon control-panel__segment-icon"></span>
             DESELECT
           </button>
-          <button class="btn__menu" data-value="нашлось: 298732">
+          <button class="btn__menu js-btn-total" data-value="">
             <span class="icon control-panel__segment-icon"></span>
-            IN TOTAL: <span class="btn__menu_value"> 298732</span>
+            IN TOTAL: <span class="btn__menu_value js-total-value"></span>
           </button>
           <button class="btn__menu js-popup-export" data-value="экспортировать данные">
             <span class="icon control-panel__segment-icon"></span>
@@ -58,7 +58,7 @@
               <input
                 autocomplete="off"
                 data-active="close"
-                class="main__select"
+                class="main__select js-select-type-school"
                 type="text"
                 name="type-
             institution"
@@ -72,22 +72,48 @@
                 <span class="icon arrow reversed"></span>
               </button>
               <div class="prompt-filter" data-active="close">
-                <div class="filter-wrapper">
+                <div class="filter-wrapper js-filter-school-type">
                   <div class="filter-value">
-                    <label> По всем <input type="checkbox" name="" id="" /></label>
-                  </div>
-                  <div class="filter-value">
-                    <label>Школы, гимназии <input type="checkbox" name="" id="" /></label>
+                    <label>
+                      По всем
+                      <input
+                        class="js-checkbox-school-type"
+                        data-type-filter=""
+                        type="checkbox"
+                        name=""
+                        id=""
+                    /></label>
                   </div>
                   <div class="filter-value">
                     <label
-                      >Средние-специальные учебные заведения<input type="checkbox" name="" id=""
+                      >Школы, гимназии
+                      <input
+                        class="js-checkbox-school-type"
+                        data-type-filter="школа, гимназия, лицей-интернат"
+                        type="checkbox"
+                        name=""
+                        id=""
+                    /></label>
+                  </div>
+                  <div class="filter-value">
+                    <label
+                      >Средние-специальные учебные заведения<input
+                        class="js-checkbox-school-type"
+                        type="checkbox"
+                        name=""
+                        id=""
+                        data-type-filter="колледж, техникум, училище, учреждение"
                     /></label>
                   </div>
                   <div class="filter-value">
                     <label>
                       <span>Высшие-специальные учебные заведения</span>
-                      <input type="checkbox" name="" id=""
+                      <input
+                        class="js-checkbox-school-type"
+                        type="checkbox"
+                        data-type-filter="институт, университет"
+                        name=""
+                        id=""
                     /></label>
                   </div>
                   <button class="btn-apply-filter">Выбрать</button>
@@ -101,7 +127,7 @@
               <input
                 autocomplete="off"
                 data-active="close"
-                class="main__select"
+                class="main__select js-select-region"
                 name="region-
             institution"
                 type="text"
@@ -115,39 +141,38 @@
                 <span class="icon arrow reversed"></span>
               </button>
               <div class="prompt-filter" data-active="close">
-                <div class="filter-wrapper">
-                  <p class="prompt">Выберите регион или продолжите ввод</p>
-                  <div class="filter-value">
+                <p class="prompt">Выберите регион или продолжите ввод</p>
+                <div class="filter-wrapper js-region-filters__wrapper">
+                  <div class="filter-value filter-region">
                     <label>Нижний Новгород</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Нижегородская область</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Арзамас</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Балахна</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Богородск</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Бор</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Выкса</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Дзержинск</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Кстово</label>
                   </div>
-                  <div class="filter-value">
+                  <div class="filter-value filter-region">
                     <label>Павлово</label>
                   </div>
-                  <button class="btn-apply-filter">Выбрать</button>
                 </div>
               </div>
             </div>
@@ -155,7 +180,13 @@
         </section>
         <section class="section-search">
           <div class="search-wrapper">
-            <input class="input-search" type="text" placeholder="Быстрый поиск по № или ID" />
+            <input
+              class="input-search"
+              type="text"
+              placeholder="Быстрый поиск по № или ID"
+              data-search-value="id num"
+            />
+            <div class="prompt-search"></div>
             <button class="btn-search"><span class="icon loop"></span></button>
             <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
           </div>
@@ -164,12 +195,20 @@
               class="input-search"
               type="text"
               placeholder="Быстрый поиск по Аббревиатуре, ИНН, году"
+              data-search-value="abbr inn year"
             />
+            <div class="prompt-search"></div>
             <button class="btn-search"><span class="icon loop"></span></button>
             <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
           </div>
           <div class="search-wrapper">
-            <input class="input-search" type="text" placeholder="Поиск по полному названию" />
+            <input
+              class="input-search"
+              type="text"
+              placeholder="Поиск по полному названию"
+              data-search-value="fullName"
+            />
+            <div class="prompt-search"></div>
             <button class="btn-search"><span class="icon loop"></span></button>
             <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
           </div>
@@ -178,7 +217,9 @@
               class="input-search"
               type="text"
               placeholder="Поиск по альтернативным названиям"
+              data-search-value="alts"
             />
+            <div class="prompt-search"></div>
             <button class="btn-search">
               <span class="icon loop"></span>
             </button>
@@ -195,11 +236,10 @@
             </div>
           </div>
 
-          <section class="table_mobile__wrapper"></section>
           <section class="table_desktop__wrapper">
             <table class="table_desktop">
               <tr class="tr_empty">
-                <td class="sort-table" data-sort-value="id">№ ID</td>
+                <td class="sort-table" data-sort-value="id num">№ ID</td>
                 <td>EDIT</td>
                 <td>DEL</td>
                 <td>
@@ -215,50 +255,58 @@
               <tr class="tr_empty">
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-
-                  <input type="number" class="input-search table" />
+                  <input type="number" class="input-search table" data-search-value="id num" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td></td>
                 <td></td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="abbr inn year" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="fullName" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="alt1" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="alt2" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="alt3" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="alt4" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="alt5" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" />
+                  <input type="text" class="input-search table" data-search-value="alt6" />
+                  <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
               </tr>
@@ -284,11 +332,11 @@
             <span class="icon" style="color: gray; font-size: 20px"></span>
             <p class="placeholder">Выбрать файл</p>
             <p class="filename"></p>
-            <input accept=".xlsx, .xls" style="display: none" type="file" />
+            <input class="input-import" style="display: none" type="file" accept=".xlsx, .xls" />
           </label>
         </div>
         <div class="popup-buttons">
-          <button class="btn-download btn__main">Выгрузить</button>
+          <button class="btn-download btn__main popup-close">Выгрузить</button>
           <button class="btn-cancel btn__main popup-close">Отменить</button>
         </div>
       </div>
@@ -307,13 +355,19 @@
           <label>Выберите путь к файлу</label>
           <label class="pseudo-input">
             <span class="icon" style="color: gray; font-size: 20px"></span>
-            <p class="placeholder">Выбрать файл</p>
-            <p class="filename"></p>
-            <input accept=".xlsx, .xls" style="display: none" type="file" />
+            <input type="text" placeholder="Выбрать файл" class="input-export" />
           </label>
         </div>
         <div class="popup-buttons">
-          <button class="btn-download btn__main">Выгрузить</button>
+          <button class="btn-download-export btn__main">
+            <a
+              href="xlsx/data.xlsx"
+              class="link-download"
+              filename="xlsx, xls"
+              download="Альтернативные названия учебных заведений"
+              >Выгрузить</a
+            >
+          </button>
           <button class="btn-cancel btn__main popup-close">Отменить</button>
         </div>
       </div>
@@ -338,7 +392,6 @@
         </div>
       </div>
     </div>
-
     <!-- редактировать -->
     <div class="overlay popup-edit" style="display: none">
       <div class="popup">

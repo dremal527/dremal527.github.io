@@ -417,7 +417,7 @@ class Navbar extends HTMLElement {
     moreTab.onclick = () => {
       this.querySelectorAll('.second-panel__tab').forEach((el) => {
         this.querySelectorAll('.third-panel__tab').forEach((el) => {
-          el.offsetWidth > 151 ? el.classList.add('panel__tab_long') : undefined;
+          el.offsetWidth > 162 ? el.classList.add('panel__tab_long') : undefined;
 
           const otherTabs = this.querySelector('.other-tabs');
           if (otherTabs.classList.contains('other-tabs_active')) {
