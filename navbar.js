@@ -58,7 +58,7 @@ class Navbar extends HTMLElement {
                     display: inline-block !important;
                     transform: rotate(180deg);
                 }
-                .navbar-top-panel{
+                .navbar-top-panel {
                     background-color: #414f51;
                     color: white;
                     height: 40px;
@@ -74,7 +74,7 @@ class Navbar extends HTMLElement {
                       color: white;
                       text-decoration: none;
                       cursor: pointer;
-                      display:flex;
+                      display: flex;
                       align-items: center;
                       
                     }
@@ -458,16 +458,9 @@ class Navbar extends HTMLElement {
       const menu = document.querySelector('#navbar');
       menu.classList.remove('mobile-menu-wrapper_active');
     });
-    // window.addEventListener('resize', () => {
-    //   const menu = document.querySelector('#navbar');
-    //   if (window.innerWidth <= 640) {
-    //     menu.classList.remove('mobile-menu-wrapper_active');
-    //   } else if (window.innerWidth >= 880) {
-    //     menu.classList.add('mobile-menu-wrapper_active');
-    //   }
-    // });
+
   }
 }
 
 customElements.define('navbar-elem', Navbar);
-// (el.dataset.value = 'ВАКАНСИИ ОБЪЕДИНЁННЫЕ')
+

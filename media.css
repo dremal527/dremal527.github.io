@@ -14,9 +14,15 @@
       padding: 25px 38px;
     }
   }
+  .btn-add-alt {
+    margin-left: 38px;
+  }
   .input__wrapper,
   .warning-text {
-    padding: 50px 40px;
+    padding: 50px 38px;
+  }
+  .popup-edit-content-wrapper > .input__wrapper {
+    padding: 0px 38px;
   }
   .popup-close__wrapper {
     height: 80px;
@@ -97,6 +103,33 @@
     display: flex;
     flex-direction: column;
   }
+  .popup-edit-wrapper > .popup-buttons {
+    position: relative;
+  }
+  .edit-label {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .edit-label > input {
+    width: 100%;
+    margin-top: 9px;
+  }
+  .btn__main,
+  .btn-add-alt,
+  .edit-label > input {
+    height: 45px;
+  }
+  .btn-add-alt {
+    width: calc(100% - 78px);
+  }
+  .navbar-top-panel {
+    a {
+      display: block !important;
+    }
+  }
+  .empty {
+    display: none;
+  }
   tr {
     height: auto !important;
     margin-bottom: 26px;
@@ -132,7 +165,7 @@
   td {
     width: inherit !important;
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
     outline: none;
     text-align: left !important;
     padding: 0 !important;
@@ -153,10 +186,11 @@
     font-size: 18px;
     font-weight: 500;
     line-height: 137.02%;
-    padding: 16px;
+    padding: 8px 16px;
   }
   .prompt-search {
     width: 100%;
+    max-width: inherit;
   }
   .container {
     padding: 0px calc(var(--index) * 1);
@@ -191,6 +225,9 @@
       padding: 15px 30px;
     }
   }
+  .popup-edit-content-wrapper > .input__wrapper {
+    padding: 0px 30px;
+  }
   .warning-text,
   .input__wrapper {
     padding: 25px 30px;
@@ -217,7 +254,7 @@
     width: 266px;
   }
   .btn-cancel {
-    margin-left: 44px;
+    margin-left: 24px;
   }
   .search-wrapper {
     display: block;
@@ -467,10 +504,21 @@
     margin-bottom: 13px;
   }
 }
+@media (max-width: 800px) {
+  .popup-edit-wrapper > .popup-buttons {
+    position: relative;
+  }
+}
 
 @media (width <= 640px) {
   .container {
     padding: 0px calc(var(--index) * 0.75);
+  }
+
+  .navbar-top-panel {
+    height: 45px !important;
+    font-size: 16px;
+    justify-content: center !important;
   }
   #navbar {
     display: none !important;
@@ -548,6 +596,19 @@
     display: grid;
     grid-template-columns: 115px 1fr;
   }
+  .btn-add-alt {
+    margin-left: 15px;
+    width: calc(100%-30px);
+  }
+  .navbar-top-panel {
+    height: 38px !important;
+  }
+  .back-to-mobile-menu {
+    font-size: 16px;
+  }
+  h3 {
+    font-size: 16px !important;
+  }
   td {
     font-size: 14px;
   }
@@ -609,7 +670,9 @@
   input[type='text'],
   .btn__menu,
   .btn__table,
-  .main__select {
+  .main__select,
+  .edit-label > input,
+  .btn-add-alt {
     height: 38px !important;
     font-size: 14px !important;
   }

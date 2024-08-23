@@ -6,7 +6,7 @@ window.addEventListener('scroll', () => {
   scrollPosition = window.scrollY;
   localStorage.setItem('pos', scrollPosition);
 });
-
+let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
 window.onload = () => {
   window.scrollTo({ top: scroll });
@@ -67,7 +67,7 @@ function tableRender(dataValue) {
           </div>
         </td>
         <td>
-        <div class="td-name">Абревиатура\nИНН\nГод</div>
+        <div class="td-name">Аббревиатура\nИНН\nГод</div>
         <div>
         <p>${checkUndef(school.inn)}</p>
           <p>${checkUndef(school.abbr)}</p>
@@ -78,44 +78,44 @@ function tableRender(dataValue) {
           <div class="td-name">Полное название</div>
           <p class="fullname"> ${school.fullName}</p>
         </td>
-        <td >
+        <td class="td-alt">
         <div class="td-name">Альтернативное\nназвание</div>
-          <div>
+          <div class="alt-name">
             <p>${checkUndef(school.alt1)}</p>
             <p class="table__year">${checkUndef(school.year1)}</p>
           </div>
         </td>
-        <td>
+        <td class="td-alt">
         <div class="td-name">Альтернативное\nназвание</div>
-          <div>
+          <div class="alt-name">
             <p>${checkUndef(school.alt2)}</p>
             <p class="table__year">${checkUndef(school.year2)}</p>
           </div>
         </td>
-        <td >
+        <td class="td-alt">
         <div class="td-name">Альтернативное\nназвание</div>
-          <div>
+          <div class="alt-name">
             <p>${checkUndef(school.alt3)}</p>
             <p class="table__year">${checkUndef(school.year3)}</p>
           </div>
         </td>
-        <td>
+        <td class="td-alt">
         <div class="td-name">Альтернативное\nназвание</div>
-          <div>
+          <div class="alt-name">
             <p>${checkUndef(school.alt4)}</p>
             <p class="table__year">${checkUndef(school.year4)}</p>
           </div>
         </td>
-        <td>
+        <td class="td-alt">
         <div class="td-name">Альтернативное\nназвание</div>
-          <div>
+          <div class="alt-name">
             <p>${checkUndef(school.alt5)}</p>
             <p class="table__year">${checkUndef(school.year5)}</p>
           </div>
         </td>
-        <td>
+        <td class="td-alt">
         <div class="td-name">Альтернативное\nназвание</div>
-          <div>
+          <div class="alt-name">
             <p>${checkUndef(school.alt6)}</p>
             <p class="table__year">${checkUndef(school.year6)}</p>
           </div>
@@ -132,6 +132,80 @@ function tableRender(dataValue) {
         </td>
     </tr>
     `);
+  });
+
+  editBtnArr = document.querySelectorAll('.edit-btn');
+
+  editBtnArr.forEach((edit) => {
+    edit.addEventListener('click', () => {
+      idTrTable = edit.dataset.valueId;
+      popupEdit.style.display = '';
+      const closeBtn = document.querySelectorAll('.popup-close');
+      closeBtn.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          popupEdit.style.display = 'none';
+          const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+          dataFormEl.forEach((formEl, index) => {
+            countAddALtClick = 1;
+            index != 0 ? formEl.remove() : false;
+          });
+        });
+      });
+      const btnSaveEdit = document.querySelector('.btn-save');
+      const inpNewValues = document.querySelectorAll('.edit-inp');
+      btnSaveEdit.addEventListener('click', () => {
+        if (n == 1 || i == 1 || j == 1) {
+          const inpNewValues = document.querySelectorAll('.edit-inp');
+          let editElement = dataFilters.find((el) => el.id == idTrTable);
+          editElement.inn = inpNewValues[0].value;
+          editElement.fullName = inpNewValues[1].value;
+          editElement.abbr = inpNewValues[2].value;
+          editElement.year = inpNewValues[3].value;
+          editElement.alt1 = inpNewValues[4].value;
+          editElement.alt2 = inpNewValues[5].value;
+          editElement.year1 = inpNewValues[6].value;
+          editElement.alt3 = inpNewValues[7].value;
+          editElement.year2 = inpNewValues[8].value;
+          editElement.alt4 = inpNewValues[9].value;
+          editElement.year3 = inpNewValues[10].value;
+          editElement.alt5 = inpNewValues[11].value;
+          editElement.year4 = inpNewValues[12].value;
+          editElement.alt6 = inpNewValues[13].value;
+          editElement.year5 = inpNewValues[14].value;
+          dataFilters.splice(idTrTable - 201, 1, editElement);
+          tableRender(dataFilters);
+        } else {
+          const inpNewValues = document.querySelectorAll('.edit-inp');
+          let editElement = dataSlice.find((el) => el.id == idTrTable);
+          editElement.inn = inpNewValues[0].value;
+          editElement.fullName = inpNewValues[1].value;
+          editElement.abbr = inpNewValues[2].value;
+          editElement.year = inpNewValues[3].value;
+          editElement.alt1 = inpNewValues[4].value;
+          if (countAddALtClick > 1) {
+            editElement.alt2 = inpNewValues[5].value;
+            editElement.year1 = inpNewValues[6].value;
+            editElement.alt3 = inpNewValues[7].value;
+            editElement.year2 = inpNewValues[8].value;
+            editElement.alt4 = inpNewValues[9].value;
+            editElement.year3 = inpNewValues[10].value;
+            editElement.alt5 = inpNewValues[11].value;
+            editElement.year4 = inpNewValues[12].value;
+            editElement.alt6 = inpNewValues[13].value;
+            editElement.year5 = inpNewValues[14].value;
+          }
+
+          dataSlice.splice(idTrTable - 201, 1, editElement);
+          tableRender(dataSlice);
+        }
+        popupEdit.style.display = 'none';
+        const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+        dataFormEl.forEach((formEl, index) => {
+          countAddALtClick = 1;
+          index != 0 ? formEl.remove() : false;
+        });
+      });
+    });
   });
   btnTotalEl.dataset.value = `нашлось: ${dataValue.length}`;
   fieldInTotalEl.innerText = dataValue.length;
@@ -160,7 +234,7 @@ function tableRender(dataValue) {
       }
       popupDel.style.display = 'none';
     });
-    if (i == 1 || j == 1) {
+    if (i == 1 || j == 1 || n == 1) {
       dataFilters = dataFilters.filter((el) => el.id != matchingId);
       tableRender(dataFilters.filter((el) => el.id != matchingId));
     } else {
@@ -182,7 +256,6 @@ const searchInput = document.querySelectorAll('.input-search');
 const btnSearchResetArr = document.querySelectorAll('.btn-reset-search');
 const exportBtnEl = document.querySelector('.js-popup-export');
 const popupExport = document.querySelector('.export');
-const editBtnArr = document.querySelectorAll('.edit-btn');
 const popupEdit = document.querySelector('.popup-edit');
 const delBtnArr = document.querySelectorAll('.del-btn');
 const popupDel = document.querySelector('.popup-delete');
@@ -216,19 +289,37 @@ searchInput.forEach((inp, indexInp) => {
   promptSearchArr.forEach((promptEl, promptIndex) => {
     inp.addEventListener('input', () => {
       n = 1;
-
       if (indexInp == promptIndex) {
         promptEl.style.display = 'block';
         let searchId = inp.dataset.searchValue;
         let valueInput = inp.value;
+        valueInput == '*' ? (valueInput = undefined) : false;
         let valuesSearchHTML = '';
         let regSearch = new RegExp(valueInput, 'gi');
+        let regHighlight = new RegExp(valueInput == '\\' ? '' : valueInput, 'gi');
+
         if (i == 1 || j == 1) {
-          dataFilters = dataFilters.filter((el) => el[searchId].match(regSearch)).slice(0, 6);
+          let textHighlight = '';
+          let textOriginal = '';
+          let replaceText = '';
+          if (valueInput == '*') {
+            dataFilters = dataFilters.filter((el) => el[searchId] === undefined).slice(0, 6);
+          }
+          dataFilters = dataFilters
+            .filter((el) => String(el[searchId]).match(regSearch))
+            .slice(0, 6);
           dataFilters.forEach((el) => {
-            valuesSearchHTML += `<div class="search-value">${el[searchId]}</div>`;
+            textHighlight = String(el[searchId]).match(regHighlight).join('');
+
+            textOriginal = String(el[searchId]).toLowerCase();
+            replaceText = textOriginal.replace(
+              textHighlight.toLowerCase(),
+              `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+            );
+            valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
             promptEl.innerHTML = valuesSearchHTML;
           });
+
           if (valueInput == '') {
             tableRender(dataSlice);
             dataFilters = dataSlice;
@@ -240,48 +331,180 @@ searchInput.forEach((inp, indexInp) => {
               valueInput = el.textContent;
               regSearch = new RegExp('^' + valueInput, 'gi');
               promptEl.style.display = 'none';
-              dataFilters = dataSlice.filter((el) => el[searchId].match(regSearch)).slice(0, 6);
-              tableRender(dataSlice.filter((el) => el[searchId].match(regSearch)).slice(0, 6));
+              dataFilters = dataSlice
+                .filter((el) => String(el[searchId]).match(regSearch))
+                .slice(0, 6);
+              tableRender(
+                dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6)
+              );
             });
           });
         } else {
-          dataFilters = dataSlice.filter((el) => el[searchId].match(regSearch)).slice(0, 6);
+          let textHighlight = '';
+          let textOriginal = '';
+          let replaceText = '';
+          if (valueInput == '*') {
+            dataSlice = dataSlice.filter((el) => el[searchId] === undefined).slice(0, 6);
+            valuesSearchHTML += `<div class="search-value">*</div>`;
+            promptEl.innerHTML = valuesSearchHTML;
+          }
           dataSlice
-            .filter((el) => el[searchId].match(regSearch))
+            .filter((el) => String(el[searchId]).match(regSearch))
             .slice(0, 6)
             .forEach((el) => {
-              valuesSearchHTML += `<div class="search-value">${el[searchId]}</div>`;
+              textHighlight = String(el[searchId]).match(regHighlight).join('');
+
+              textOriginal = String(el[searchId]).toLowerCase();
+              replaceText = textOriginal
+                .replace(
+                  textHighlight.toLowerCase(),
+                  `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+                )
+                .replaceAll(',', '');
+
+              valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
               promptEl.innerHTML = valuesSearchHTML;
             });
           if (valueInput == '') {
             promptEl.style.display = 'none';
-            tableRender(dataFilters);
+            tableRender(dataSlice);
           }
           document.querySelectorAll('.search-value').forEach((el) => {
+            el.innerText.includes('undefined') ? (el.innerText = ' ') : false;
             el.addEventListener('click', () => {
               inp.value = el.textContent;
               valueInput = el.textContent;
               regSearch = new RegExp('^' + valueInput, 'gi');
               promptEl.style.display = 'none';
-              dataFilters = dataSlice.filter((el) => el[searchId].match(regSearch)).slice(0, 6);
-              tableRender(dataSlice.filter((el) => el[searchId].match(regSearch))).slice(0, 6);
+              dataFilters = dataSlice
+                .filter((el) => String(el[searchId]).match(regSearch))
+                .slice(0, 6);
+              tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch))).slice(
+                0,
+                6
+              );
             });
           });
-          tableRender(dataSlice.filter((el) => el[searchId].match(regSearch)).slice(0, 6));
+          tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6));
           valueInput == '' ? tableRender(dataSlice) : false;
         }
       }
     });
   });
 });
+//Редактировать
+const btnAddAltEl = document.querySelector('.btn-add-alt');
+let countAddALtClick = 1;
+let newALtNameFormHTML = '';
+const newAltWrapper = document.querySelector('.wrap-forms-edit');
+
+btnAddAltEl.addEventListener('click', () => {
+  countAddALtClick++;
+  newALtNameFormHTML = ` 
+    <div class="popup-edit-content-wrapper" data-edit-form-id="${countAddALtClick}">
+      <div
+        class="input__wrapper"
+        style="flex-direction: column; align-items: flex-start">
+        <div class="popup-value__title">
+          <h3>Альтернативное название №${countAddALtClick}</h3>
+          <div
+            class="table-icon del-alt-name js-edit-btn-altDel"
+            data-value="Удалить"
+            data-edit-altDel="${countAddALtClick}">
+            <span class="icon control-edit delete"></span>
+          </div>
+        </div>
+          <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" /></label>
+          <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp" /></label>
+      </div>
+    </div>`;
+  newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
+  countAddALtClick == 7 ? (btnAddAltEl.disabled = true) : false;
+
+  const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
+  const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+  delNewAlt.forEach((del, indexDel) => {
+    dataFormEl.forEach((formEl, indexForm) => {
+      del.addEventListener('click', () => {
+        countAddALtClick = 1;
+        indexDel == indexForm && indexForm != 0 ? formEl.remove() : false;
+      });
+    });
+  });
+});
 //Кнопки редактирования и удаления
+const inpNewValues = document.querySelectorAll('.edit-inp');
+let idTrTable = '';
 editBtnArr.forEach((edit) => {
   edit.addEventListener('click', () => {
+    const btnSaveEdit = document.querySelector('.btn-save');
+
+    idTrTable = edit.dataset.valueId;
     popupEdit.style.display = '';
     const closeBtn = document.querySelectorAll('.popup-close');
     closeBtn.forEach((btn) => {
       btn.addEventListener('click', () => {
+        inpNewValues.forEach((inp) => (inp.value = ''));
         popupEdit.style.display = 'none';
+        const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+        dataFormEl.forEach((formEl, index) => {
+          countAddALtClick = 1;
+          index != 0 ? formEl.remove() : false;
+        });
+      });
+    });
+    inpNewValues.forEach((el) =>
+      el.value == '' ? (btnSaveEdit.disabled = true) : (btnSaveEdit.disabled = false)
+    );
+    btnSaveEdit.addEventListener('click', () => {
+      if (n == 1 || i == 1 || j == 1) {
+        let editElement = dataFilters.find((el) => el.id == idTrTable);
+        editElement.inn = inpNewValues[0].value;
+        editElement.fullName = inpNewValues[1].value;
+        editElement.abbr = inpNewValues[2].value;
+        editElement.year = inpNewValues[3].value;
+        editElement.alt1 = inpNewValues[4].value;
+        editElement.alt2 = inpNewValues[5].value;
+        editElement.year1 = inpNewValues[6].value;
+        editElement.alt3 = inpNewValues[7].value;
+        editElement.year2 = inpNewValues[8].value;
+        editElement.alt4 = inpNewValues[9].value;
+        editElement.year3 = inpNewValues[10].value;
+        editElement.alt5 = inpNewValues[11].value;
+        editElement.year4 = inpNewValues[12].value;
+        editElement.alt6 = inpNewValues[13].value;
+        editElement.year5 = inpNewValues[14].value;
+        dataFilters.splice(idTrTable - 201, 1, editElement);
+        tableRender(dataFilters);
+      } else {
+        let editElement = dataSlice.find((el) => el.id == idTrTable);
+        editElement.inn = inpNewValues[0].value;
+        editElement.fullName = inpNewValues[1].value;
+        editElement.abbr = inpNewValues[2].value;
+        editElement.year = inpNewValues[3].value;
+        editElement.alt1 = inpNewValues[4].value;
+        if (countAddALtClick > 1) {
+          editElement.alt2 = inpNewValues[5].value;
+          editElement.year1 = inpNewValues[6].value;
+          editElement.alt3 = inpNewValues[7].value;
+          editElement.year2 = inpNewValues[8].value;
+          editElement.alt4 = inpNewValues[9].value;
+          editElement.year3 = inpNewValues[10].value;
+          editElement.alt5 = inpNewValues[11].value;
+          editElement.year4 = inpNewValues[12].value;
+          editElement.alt6 = inpNewValues[13].value;
+          editElement.year5 = inpNewValues[14].value;
+        }
+
+        dataSlice.splice(idTrTable - 201, 1, editElement);
+        tableRender(dataSlice);
+      }
+      inpNewValues.forEach((inp) => (inp.value = ''));
+      popupEdit.style.display = 'none';
+      const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+      dataFormEl.forEach((formEl, index) => {
+        countAddALtClick = 1;
+        index != 0 ? formEl.remove() : false;
       });
     });
   });
@@ -424,19 +647,24 @@ btnRegionArr.forEach((btn) => {
     console.log(dataFilters);
   });
 });
-
+let arrSchoolTypeSelect = '';
 //Фильтр по типам
 const checkboxTypeSchoolArr = document.querySelectorAll('.js-checkbox-school-type');
 btnApply.addEventListener('click', () => {
   j = 1;
   arrFiltersType = [];
+  arrSchoolTypeSelect = '';
   checkboxTypeSchoolArr.forEach((checkbox) => {
     checkbox.checked ? arrFiltersType.push(checkbox.dataset.typeFilter) : false;
+    checkbox.checked ? (arrSchoolTypeSelect = checkbox.dataset.typeSelect) : false;
   });
 
   arrFiltersType.length == 4 ? arrFiltersType.shift() : false;
   if (arrFiltersType.length == 0) {
     inpTypeSchool.value = '';
+  } else if (arrFiltersType.length == 1) {
+    selectResetArr[0].style.display = 'block';
+    inpTypeSchool.value = `${arrSchoolTypeSelect}`;
   } else {
     selectResetArr[0].style.display = 'block';
     inpTypeSchool.value = `Тип учебного заведения (выбрано ${arrFiltersType.length})`;
@@ -532,7 +760,8 @@ searchInput.forEach((inp, indexInp) => {
   btnSearchResetArr.forEach((btn, indexBtn) => {
     if (indexInp == indexBtn) {
       inp.addEventListener('input', () => {
-        btn.style.display = 'block';
+        indexBtn == indexInp && inp.value == '' ? (btn.style.display = 'none') : false;
+        indexBtn == indexInp && inp.value !== '' ? (btn.style.display = 'block') : false;
       });
     }
     btn.addEventListener('click', () => {
@@ -620,5 +849,11 @@ document.querySelectorAll('.mobile-control__tab-name').forEach((tab) => {
     tab.innerText !== 'АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ'
       ? (main.style.display = 'none')
       : (main.style.display = 'block');
+  });
+});
+
+document.querySelectorAll('.td-alt').forEach((td, indexTd) => {
+  document.querySelectorAll('.alt-name').forEach((altEl, indexAlt) => {
+    altEl.innerText == '' && indexTd == indexAlt ? td.classList.add('empty') : false;
   });
 });

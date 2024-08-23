@@ -90,6 +90,7 @@
                       <input
                         class="js-checkbox-school-type"
                         data-type-filter="школа, гимназия, лицей-интернат"
+                        data-type-select="Школы, гимназии"
                         type="checkbox"
                         name=""
                         id=""
@@ -102,6 +103,7 @@
                         type="checkbox"
                         name=""
                         id=""
+                        data-type-select="Средние-специальные учебные заведения"
                         data-type-filter="колледж, техникум, училище, учреждение"
                     /></label>
                   </div>
@@ -112,6 +114,7 @@
                         class="js-checkbox-school-type"
                         type="checkbox"
                         data-type-filter="институт, университет"
+                        data-type-select="Высшие-специальные учебные заведения"
                         name=""
                         id=""
                     /></label>
@@ -184,18 +187,20 @@
               class="input-search"
               type="text"
               placeholder="Быстрый поиск по № или ID"
-              data-search-value="id num"
+              data-search-value="id"
             />
             <div class="prompt-search"></div>
             <button class="btn-search"><span class="icon loop"></span></button>
-            <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+            <button class="btn-reset-search">
+              <span class="litle-cross icon"></span>
+            </button>
           </div>
           <div class="search-wrapper">
             <input
               class="input-search"
               type="text"
               placeholder="Быстрый поиск по Аббревиатуре, ИНН, году"
-              data-search-value="abbr inn year"
+              data-search-value="abbr"
             />
             <div class="prompt-search"></div>
             <button class="btn-search"><span class="icon loop"></span></button>
@@ -217,7 +222,7 @@
               class="input-search"
               type="text"
               placeholder="Поиск по альтернативным названиям"
-              data-search-value="alts"
+              data-search-value="alt1"
             />
             <div class="prompt-search"></div>
             <button class="btn-search">
@@ -239,7 +244,10 @@
           <section class="table_desktop__wrapper">
             <table class="table_desktop">
               <tr class="tr_empty">
-                <td class="sort-table" data-sort-value="id num">№ ID</td>
+                <td>
+                  №
+                  <p class="sort-table" data-sort-value="id">ID</p>
+                </td>
                 <td>EDIT</td>
                 <td>DEL</td>
                 <td>
@@ -255,15 +263,17 @@
               <tr class="tr_empty">
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="number" class="input-search table" data-search-value="id num" />
+                  <input type="number" class="input-search table" data-search-value="id" />
                   <div class="prompt-search"></div>
-                  <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
+                  <button class="btn-reset-search reset_small">
+                    <span class="litle-cross icon"></span>
+                  </button>
                 </td>
                 <td></td>
                 <td></td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
-                  <input type="text" class="input-search table" data-search-value="abbr inn year" />
+                  <input type="text" class="input-search table" data-search-value="abbr" />
                   <div class="prompt-search"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
@@ -394,28 +404,49 @@
     </div>
     <!-- редактировать -->
     <div class="overlay popup-edit" style="display: none">
-      <div class="popup">
+      <div class="popup popup-edit-wrapper">
         <div class="popup-close__wrapper">
           <button class="btn-close-popup popup-close"><span class="icon cross"></span></button>
         </div>
+
         <div class="popup__title">
           <h2>Редактировать альтернативные названия</h2>
         </div>
-        <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
-          <div class="popup-value__title">
-            <h3>Альтернативное название №1</h3>
-            <div class="table-icon" data-value="Удалить">
-              <span class="icon control-edit delete"></span>
+        <div class="wrap-forms-edit">
+          <div class="popup-edit-content-wrapper" data-edit-form-id="1">
+            <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
+              <div class="popup-value__title">
+                <h3>Альтернативное название №1</h3>
+                <div
+                  class="table-icon del-alt-name js-edit-btn-altDel"
+                  data-value="Удалить"
+                  data-edit-altDel="1"
+                >
+                  <span class="icon control-edit delete"></span>
+                </div>
+              </div>
+              <label class="edit-label" data-edit-value="inn"
+                >ИНН <input class="edit-inp" type="number"
+              /></label>
+              <label class="edit-label" data-edit-value="fullName"
+                >Полное название <input type="text" class="edit-inp"
+              /></label>
+              <label class="edit-label" data-edit-value="abbr"
+                >Аббревиатура <input type="text" class="edit-inp"
+              /></label>
+              <label class="edit-label" data-edit-value="year"
+                >Год <input type="number" class="edit-inp"
+              /></label>
+              <label class="edit-label" data-edit-value="alt1"
+                >Альтернативное название <input type="text" class="edit-inp"
+              /></label>
             </div>
           </div>
-          <label class="edit-label">ИНН <input type="number" /></label>
-          <label class="edit-label">Полное название <input type="text" /></label>
-          <label class="edit-label">Аббревиатура <input type="text" /></label>
-          <label class="edit-label">Год <input type="number" /></label>
-          <button class="btn-add-alt">+ Добавить альтернативное</button>
         </div>
+
+        <button class="btn-add-alt">+ Добавить альтернативное</button>
         <div class="popup-buttons">
-          <button class="btn-download btn__main">Сохранить</button>
+          <button class="btn-save btn__main">Сохранить изменения</button>
           <button class="btn-cancel btn__main popup-close">Отменить</button>
         </div>
       </div>

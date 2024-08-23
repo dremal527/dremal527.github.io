@@ -46,6 +46,9 @@ class MobileControlMini extends HTMLElement {
   render() {
     const STYLE = /*html*/ `<style>
                 @media (width <= 640px) {
+                .navbar-top-panel{
+                        justify-content: center;
+                    }
                     div.mobile-control-wrapper__grid-nav-wrapper {
                         padding: 10px;
                         padding-top: 20px;
@@ -160,7 +163,6 @@ class MobileControlMini extends HTMLElement {
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
-                    }
                     .mobile-control-wrapper__icon-wrapper > span {
                         color: inherit;
                         font-weight: normal;
@@ -268,13 +270,33 @@ class MobileControlMini extends HTMLElement {
                 .back-to-mobile-menu {
                     display: none;
                 }
-
+                .brad-crumbs {
+                    padding-top: 20px;
+                    padding-left: 20px ;
+                    display:none;  
+                }
+                .brad_crumbs_active{
+                    display:flex
+                }
+                .brad-crumb__item__text_container{
+                  width: 90%;
+                  text-align: center;
+                }
+                .brad-crumb__item{
+                    display:flex;
+                    gap:45px;
+                    font-weight: 600;
+                }
+                .brad-crumb__item__button{
+                    background-color: unset;
+                    border:none
+                }
                 @media (width <= 641px) {
                     .back-to-mobile-menu {
                         display: flex;
                         height: 80px;
                         font-weight: bold;
-                        font-size: 20px;
+                        font-size: 18px;
                         align-items: center;
                         justify-content: center;
                         padding: 0px 60px;
@@ -295,7 +317,7 @@ class MobileControlMini extends HTMLElement {
             ${STYLE}
             <div class="back-to-mobile-menu">
                 <span class="icon"></span>
-                <p>Альтернативные учебные заведения</p>
+                <p>Журнал: Альтернативные учебные заведения</p>
             </div>
             <div class="mobile-menu-mini-wrapper">
                 <div class="mobile-menu-mini">
@@ -436,11 +458,8 @@ class MobileControlMini extends HTMLElement {
         const currentName = document.querySelector('.back-to-mobile-menu p');
         const tabName = tab.querySelector('p');
         tabName.style.textTransform = 'uppercase';
-        if (tabName.innerText == 'Альтернативные учебные заведения') {
-          currentName.innerHTML = 'Альтернативные учебные заведения';
-        } else {
-          currentName.innerHTML = `Альтернативные учебные заведения ${tabName.innerHTML.toUpperCase()}`;
-        }
+
+        currentName.innerHTML = `Журнал: ${tabName.innerHTML.toUpperCase()}`;
       };
     });
 
@@ -477,6 +496,21 @@ class MobileControlMini extends HTMLElement {
 
 customElements.define('mobile-ui', MobileControlMini);
 
+window.addEventListener('load', () => {
+  const clientW = window.innerWidth;
+  if (640 >= clientW) {
+    const journals = document.getElementById('journals');
+    const mobile_control = document.querySelectorAll('.mobile-control-wrapper__grid-nav');
+    journals.click();
+    mobile_control.forEach((item) => {
+      const mobile_control__tab = item.querySelector('.mobile-control__tab-name');
+      const text = mobile_control__tab.querySelector('p');
+      if (text.innerText == 'КВАЛИФИКАЦИИ СПЕЦИАЛЬНОСТИ') {
+        item.click();
+      }
+    });
+  }
+});
 //  if (tabName.textContent !== 'Альтернативные учебные заведения') {
 //           document.body.style.display = 'none';
 //         } else {
