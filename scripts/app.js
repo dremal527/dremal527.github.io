@@ -43,7 +43,7 @@ const pFileName = document.querySelector('.filename');
 const inpImportEl = document.querySelector('.input-import');
 let regionValueInput;
 let scrollPosition;
-let dataSlice = data.slice(0, 30);
+let dataSlice = data.slice(0, 50);
 let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
 let count = 0;
@@ -58,7 +58,6 @@ let j = 0;
 let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
 let countAllCheckbox = 0;
-
 function checkUndef(prop) {
   if (prop === undefined) {
     return '';
@@ -187,11 +186,12 @@ function tableRender(dataValue) {
     `);
   });
 
+  //edit btn table
   editBtnArr = document.querySelectorAll('.edit-btn');
-
   editBtnArr.forEach((edit) => {
     edit.addEventListener('click', () => {
       let inpNewValues = document.querySelectorAll('.edit-inp');
+      inpNewValues.forEach((el) => (el.value = ''));
       idTrTable = edit.dataset.valueId;
       popupEdit.style.display = '';
       const closeBtn = document.querySelectorAll('.popup-close');
@@ -205,71 +205,67 @@ function tableRender(dataValue) {
           });
         });
       });
-      const btnSaveEdit = document.querySelector('.btn-save');
-      let editElement = dataFilters.find((el) => el.id == idTrTable);
-      btnSaveEdit.addEventListener('click', () => {
-        if (n == 1 || i == 1 || j == 1) {
-          editElement.inn = inpNewValues[0].value;
-          editElement.fullName = inpNewValues[1].value;
-          editElement.abbr = inpNewValues[2].value;
-          editElement.year = inpNewValues[3].value;
-          editElement.alt1 = inpNewValues[4].value;
-          if (countAddALtClick >= 2) {
-            editElement.alt2 = inpNewValues[5].value;
-            editElement.year1 = inpNewValues[6].value;
-          } else if (countAddALtClick >= 3) {
-            editElement.alt3 = inpNewValues[7].value;
-            editElement.year2 = inpNewValues[8].value;
-          } else if (countAddALtClick >= 4) {
-            editElement.alt4 = inpNewValues[9].value;
-            editElement.year3 = inpNewValues[10].value;
-          } else if (countAddALtClick >= 5) {
-            editElement.alt5 = inpNewValues[11].value;
-            editElement.year4 = inpNewValues[12].value;
-          } else if (countAddALtClick >= 6) {
-            editElement.alt6 = inpNewValues[13].value;
-            editElement.year5 = inpNewValues[14].value;
-          }
-          dataFilters.splice(idTrTable - 201, 1, editElement);
-          tableRender(dataFilters);
-        } else {
-          let editElement = dataSlice.find((el) => el.id == idTrTable);
-          editElement.inn = inpNewValues[0].value;
-          editElement.fullName = inpNewValues[1].value;
-          editElement.abbr = inpNewValues[2].value;
-          editElement.year = inpNewValues[3].value;
-          editElement.alt1 = inpNewValues[4].value;
-          if (countAddALtClick >= 2) {
-            editElement.alt2 = inpNewValues[5].value;
-            editElement.year1 = inpNewValues[6].value;
-          } else if (countAddALtClick >= 3) {
-            editElement.alt3 = inpNewValues[7].value;
-            editElement.year2 = inpNewValues[8].value;
-          } else if (countAddALtClick >= 4) {
-            editElement.alt4 = inpNewValues[9].value;
-            editElement.year3 = inpNewValues[10].value;
-          } else if (countAddALtClick >= 5) {
-            editElement.alt5 = inpNewValues[11].value;
-            editElement.year4 = inpNewValues[12].value;
-          } else if (countAddALtClick >= 6) {
-            editElement.alt6 = inpNewValues[13].value;
-            editElement.year5 = inpNewValues[14].value;
-          }
-
-          dataSlice.splice(idTrTable - 201, 1, editElement);
-          tableRender(dataSlice);
-        }
-        popupEdit.style.display = 'none';
-        const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
-        dataFormEl.forEach((formEl, index) => {
-          countAddALtClick = 1;
-          index != 0 ? formEl.remove() : false;
+      inpNewValues.forEach((inp) => {
+        inp.addEventListener('input', () => {
+          inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
+            ? (btnSaveEdit.disabled = true)
+            : (btnSaveEdit.disabled = false);
         });
       });
     });
   });
+
+  //Save edit change
+  const btnSaveEdit = document.querySelector('.btn-save');
+  btnSaveEdit.addEventListener('click', (e) => {
+    e.preventDefault();
+    let editElement = dataSlice.find((el) => el.id == idTrTable);
+    inpNewValues = document.querySelectorAll('.edit-inp');
+    editElement.inn = inpNewValues[0].value;
+    editElement.fullName = inpNewValues[1].value;
+    editElement.abbr = inpNewValues[2].value;
+    editElement.year = inpNewValues[3].value;
+    editElement.alt1 = inpNewValues[4].value;
+    if (inpNewValues.length > 5) {
+      editElement.alt2 = inpNewValues[5].value;
+      editElement.year1 = inpNewValues[6].value;
+    }
+    if (inpNewValues.length > 7) {
+      editElement.alt3 = inpNewValues[7].value;
+      editElement.year2 = inpNewValues[8].value;
+    }
+    if (inpNewValues.length > 9) {
+      editElement.alt4 = inpNewValues[9].value;
+      editElement.year3 = inpNewValues[10].value;
+    }
+    if (inpNewValues.length > 11) {
+      editElement.alt5 = inpNewValues[11].value;
+      editElement.year4 = inpNewValues[12].value;
+    }
+    if (inpNewValues.length > 13) {
+      editElement.alt6 = inpNewValues[13].value;
+      editElement.year5 = inpNewValues[14].value;
+    }
+    if (n == 1 || i == 1 || j == 1) {
+      dataFilters.splice(idTrTable - 201, 1, editElement);
+      tableRender(dataFilters);
+    } else {
+      dataSlice.splice(idTrTable - 201, 1, editElement);
+      tableRender(dataSlice);
+    }
+    popupEdit.style.display = 'none';
+    const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+    dataFormEl.forEach((formEl, index) => {
+      countAddALtClick = 1;
+      index != 0 ? formEl.remove() : false;
+    });
+  });
+
+  //In total
   btnTotalEl.dataset.value = `нашлось: ${dataValue.length}`;
   fieldInTotalEl.innerText = dataValue.length;
+
+  //Btn Delete table
   const delBtnArr = document.querySelectorAll('.del-btn');
   delBtnArr.forEach((del) => {
     del.addEventListener('click', () => {
@@ -285,6 +281,8 @@ function tableRender(dataValue) {
       });
     });
   });
+
+  //Delete td
   const btnDeleteTr = document.querySelector('.btn-delete');
   let matchingId;
   const schoolTrElArr = document.querySelectorAll('.tr-school');
@@ -324,42 +322,30 @@ btnAddAltEl.addEventListener('click', (e) => {
             <span class="icon control-edit delete"></span>
           </div>
         </div>
-          <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" /></label>
-          <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp year-inp" maxlength="4" min="1800" max="2400"  placeholder="Введите год" /></label>
+          <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" data-edit-value="alt${countAddALtClick}" /></label>
+          <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${
+    countAddALtClick - 1
+  } maxlength="4" min="1800" max="2400"  placeholder="Введите год" /></label>
       </div>
     </div>`;
   newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
-  countAddALtClick == 7 ? (btnAddAltEl.disabled = true) : false;
-  inpNewValues = document.querySelectorAll('.edit-inp');
-  inpNewValues.forEach((inp) =>
-    inp.value == '' ? (btnSaveEdit.disabled = true) : (btnSaveEdit.disabled = false)
-  );
-  inpNewValues.forEach((inp) => {
-    inp.addEventListener('input', () => {
-      inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
-        ? (btnSaveEdit.disabled = true)
-        : (btnSaveEdit.disabled = false);
-    });
-  });
-
   const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
+  countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
   const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
   delNewAlt.forEach((del, indexDel) => {
     dataFormEl.forEach((formEl, indexForm) => {
       del.addEventListener('click', () => {
-        countAddALtClick = 1;
+        countAddALtClick = 0;
+        countAddALtClick++;
+        countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
         indexDel == indexForm && indexForm != 0 ? formEl.remove() : false;
       });
     });
   });
 });
-
 //Btn edit
 editBtnArr.forEach((edit) => {
   edit.addEventListener('click', () => {
-    inpNewValues.forEach((inp) => {
-      inp.value == '' ? (btnSaveEdit.disabled = true) : (btnSaveEdit.disabled = false);
-    });
     idTrTable = edit.dataset.valueId;
     popupEdit.style.display = '';
     const closeBtn = document.querySelectorAll('.popup-close');
@@ -373,68 +359,6 @@ editBtnArr.forEach((edit) => {
           countAddALtClick = 1;
           index != 0 ? formEl.remove() : false;
         });
-      });
-    });
-    btnSaveEdit.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (n == 1 || i == 1 || j == 1) {
-        let editElement = dataFilters.find((el) => el.id == idTrTable);
-        editElement.inn = inpNewValues[0].value;
-        editElement.fullName = inpNewValues[1].value;
-        editElement.abbr = inpNewValues[2].value;
-        editElement.year = inpNewValues[3].value;
-        editElement.alt1 = inpNewValues[4].value;
-        if (countAddALtClick >= 2) {
-          editElement.alt2 = inpNewValues[5].value;
-          editElement.year1 = inpNewValues[6].value;
-        } else if (countAddALtClick >= 3) {
-          editElement.alt3 = inpNewValues[7].value;
-          editElement.year2 = inpNewValues[8].value;
-        } else if (countAddALtClick >= 4) {
-          editElement.alt4 = inpNewValues[9].value;
-          editElement.year3 = inpNewValues[10].value;
-        } else if (countAddALtClick >= 5) {
-          editElement.alt5 = inpNewValues[11].value;
-          editElement.year4 = inpNewValues[12].value;
-        } else if (countAddALtClick >= 6) {
-          editElement.alt6 = inpNewValues[13].value;
-          editElement.year5 = inpNewValues[14].value;
-        }
-        dataFilters.splice(idTrTable - 201, 1, editElement);
-        tableRender(dataFilters);
-      } else {
-        let editElement = dataSlice.find((el) => el.id == idTrTable);
-        editElement.inn = inpNewValues[0].value;
-        editElement.fullName = inpNewValues[1].value;
-        editElement.abbr = inpNewValues[2].value;
-        editElement.year = inpNewValues[3].value;
-        editElement.alt1 = inpNewValues[4].value;
-        if (countAddALtClick >= 2) {
-          editElement.alt2 = inpNewValues[5].value;
-          editElement.year1 = inpNewValues[6].value;
-        } else if (countAddALtClick >= 3) {
-          editElement.alt3 = inpNewValues[7].value;
-          editElement.year2 = inpNewValues[8].value;
-        } else if (countAddALtClick >= 4) {
-          editElement.alt4 = inpNewValues[9].value;
-          editElement.year3 = inpNewValues[10].value;
-        } else if (countAddALtClick >= 5) {
-          editElement.alt5 = inpNewValues[11].value;
-          editElement.year4 = inpNewValues[12].value;
-        } else if (countAddALtClick >= 6) {
-          editElement.alt6 = inpNewValues[13].value;
-          editElement.year5 = inpNewValues[14].value;
-        }
-
-        dataSlice.splice(idTrTable - 201, 1, editElement);
-        tableRender(dataSlice);
-      }
-      inpNewValues.forEach((inp) => (inp.value = ''));
-      popupEdit.style.display = 'none';
-      const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
-      dataFormEl.forEach((formEl, index) => {
-        countAddALtClick = 1;
-        index != 0 ? formEl.remove() : false;
       });
     });
   });

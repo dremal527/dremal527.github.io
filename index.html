@@ -427,9 +427,9 @@
                   <span class="icon control-edit delete"></span>
                 </div>
               </div>
-              <label class="edit-label" data-edit-value="inn"
+              <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}"
                 >ИНН
-                <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" aria-invalid="false"
+                <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn"
               /> <div class="prompt-edit">
                 <span class="icon" style="color: red"></span>
                 <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -438,7 +438,7 @@
             </label>
               <label class="edit-label " data-edit-value="fullName"
                 >Полное название
-                <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-invalid='false'
+                <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName"
               />
               <div class="prompt-edit">
                 <span class="icon" style="color: red"></span>
@@ -448,7 +448,7 @@
             </label>
               <label class="edit-label" data-edit-value="abbr"
                 >Аббревиатура
-                <input type="text" class="edit-inp" placeholder="Введите аббревиатуру"
+                <input type="text" class="edit-inp" placeholder="Введите аббревиатуру" data-edit-value="abbr"
               /></label>
               <label class="edit-label" data-edit-value="year"
                 >Год
@@ -459,13 +459,14 @@
                   min="1800"
                   max="2024"
                   placeholder="Введите год"
+                  pattern="[0-9]{4}" data-edit-value="year"
               /></label>
               <label class="edit-label" data-edit-value="alt1"
                 >Альтернативное название
                 <input
                   type="text"
                   class="edit-inp"
-                  placeholder="Введите альтернативное название №1"
+                  placeholder="Введите альтернативное название №1" data-edit-value="year"
                 />
              
               </label>
