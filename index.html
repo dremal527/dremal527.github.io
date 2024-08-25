@@ -4,13 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Альтернативные учебные заведения</title>
-
-    <script src="navbar.js"></script>
-
-    <script src="mobile_control.js"></script>
-
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="media.css" />
+    <script src="scripts/utils/navbar.js"></script>
+    <script src="scripts/utils/mobile_control.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/media.css" />
   </head>
   <body>
     <navbar-elem></navbar-elem>
@@ -329,7 +326,8 @@
         </section>
       </div>
     </div>
-    <!-- Импорт -->
+
+    <!-- Попап импорт -->
     <div class="overlay import" style="display: none">
       <div class="popup">
         <div class="popup-close__wrapper">
@@ -354,7 +352,7 @@
       </div>
     </div>
 
-    <!-- экспорт -->
+    <!-- Попап экспорт-->
     <div class="overlay export" style="display: none">
       <div class="popup">
         <div class="popup-close__wrapper">
@@ -384,7 +382,8 @@
         </div>
       </div>
     </div>
-    <!-- удалить -->
+
+    <!-- Попап удалить-->
     <div class="overlay popup-delete" style="display: none">
       <div class="popup">
         <div class="popup-close__wrapper">
@@ -394,7 +393,7 @@
           <h2>Удалить учебное заведение</h2>
         </div>
         <p class="warning-text">
-          <span class="icon" style="color: red"></span>
+          <span class="icon" style="color: #D11521"></span>
           Вы собираетесь удалить учебное заведение <span class="school-id"></span> -
           <span class="school-name"></span>
         </p>
@@ -404,7 +403,8 @@
         </div>
       </div>
     </div>
-    <!-- редактировать -->
+
+    <!-- Попап редактировать -->
     <div class="overlay popup-edit" style="display: none">
       <form class="popup popup-edit-wrapper">
         <div class="popup-close__wrapper">
@@ -431,7 +431,7 @@
                 >ИНН
                 <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn"
               /> <div class="prompt-edit">
-                <span class="icon" style="color: red"></span>
+                <span class="icon" style="color: #D11521"></span>
                 <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
                  
               </div>
@@ -441,7 +441,7 @@
                 <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName"
               />
               <div class="prompt-edit">
-                <span class="icon" style="color: red"></span>
+                <span class="icon" style="color: #D11521"></span>
                 <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
                   
               </div>
@@ -473,7 +473,6 @@
             </div>
           </div>
         </div>
-
         <button class="btn-add-alt">+ Добавить альтернативное</button>
         <div class="popup-buttons">
           <button class="btn-save btn__main" disabled>Сохранить изменения</button>
@@ -483,6 +482,5 @@
     </div>
 
     <script src="scripts/app.js" type="module"></script>
-  
   </body>
 </html>

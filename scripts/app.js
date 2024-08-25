@@ -119,10 +119,10 @@ function tableRender(dataValue) {
           </div>
         </td>
         <td>
-        <div class="td-name">Аббревиатура\nИНН\nГод</div>
+        <div class="td-name">ИНН\nАббревиатура\nГод</div>
         <div>
         <p>${checkUndef(school.inn)}</p>
-          <p>${checkUndef(school.abbr)}</p>
+          <p class="table__abbr">${checkUndef(school.abbr)}</p>
           <p class="table__year">${checkUndef(school.year)}</p>
         </div>
         </td>
@@ -197,6 +197,7 @@ function tableRender(dataValue) {
       const closeBtn = document.querySelectorAll('.popup-close');
       closeBtn.forEach((btn) => {
         btn.addEventListener('click', () => {
+          countAddALtClick = 1;
           popupEdit.style.display = 'none';
           const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
           dataFormEl.forEach((formEl, index) => {
@@ -346,6 +347,8 @@ btnAddAltEl.addEventListener('click', (e) => {
 //Btn edit
 editBtnArr.forEach((edit) => {
   edit.addEventListener('click', () => {
+    btnAddAltEl.disabled = false;
+    countAddALtClick = 1;
     idTrTable = edit.dataset.valueId;
     popupEdit.style.display = '';
     const closeBtn = document.querySelectorAll('.popup-close');
@@ -570,7 +573,7 @@ document.querySelectorAll('.mobile-control__tab-name').forEach((tab) => {
 });
 document.querySelectorAll('.third-panel__tab').forEach((tab) => {
   tab.addEventListener('click', () => {
-    tab.innerText.includes('АЛЬТЕР') || tab.classList.contains('more')
+    tab.innerText.includes('Альтер') || tab.classList.contains('more')
       ? (main.style.display = 'block')
       : (main.style.display = 'none');
   });

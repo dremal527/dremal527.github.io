@@ -14,6 +14,9 @@
       padding: 25px 38px;
     }
   }
+  h1 {
+    font-size: 18px;
+  }
   .btn-add-alt {
     margin-left: 38px;
   }
@@ -35,10 +38,6 @@
 
   .second-panel__tab:first-child {
     word-break: inherit;
-  }
-
-  h1 {
-    font-size: 22px;
   }
   table {
     font-size: 16px;
@@ -69,7 +68,32 @@
   .third-panel__tab {
     width: 120px;
   }
-
+  td {
+    font-size: 16px;
+  }
+  td:nth-child(1) {
+    width: 48px;
+  }
+  td:nth-child(2),
+  td:nth-child(3) {
+    width: 45px;
+  }
+  td:nth-child(4) {
+    width: 22%;
+  }
+  td {
+    padding: 11px 5px !important;
+  }
+  td:nth-child(5) {
+    width: 25%;
+    word-break: break-word;
+  }
+  td:nth-child(6),
+  td:nth-child(7),
+  td:nth-child(8),
+  td:nth-child(9) {
+    width: 60%;
+  }
   .third-panel__tab[data-value='объявления'],
   .third-panel__tab[data-value='соискатели'],
   .third-panel__tab[data-value='вакансии объединённые'],
@@ -203,6 +227,9 @@
 @media (max-width: 1024px) {
   .prompt-edit-text {
     font-size: 17.5px;
+  }
+  td:nth-child(1) {
+    width: 35px;
   }
 }
 @media (width <= 880px) {

@@ -75,7 +75,7 @@ class Navbar extends HTMLElement {
                       text-decoration: none;
                       cursor: pointer;
                       display: flex;
-                      align-items: center;
+                      align-items: flex-end;
                       
                     }
                 }
