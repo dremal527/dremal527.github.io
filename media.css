@@ -28,9 +28,11 @@
     height: 80px;
     background-color: #414f51;
   }
-  .btn-close-popup {
-    right: 50px;
+  .btn-close-popup,
+  .popup-edit-wrapper > .popup-close__wrapper > .btn-close-popup {
+    right: 38px;
   }
+
   .second-panel__tab:first-child {
     word-break: inherit;
   }
@@ -52,9 +54,6 @@
   }
 }
 @media (max-width: 1280px) {
-  .section__btn__menu {
-    flex-wrap: wrap;
-  }
   .btn__menu {
     width: 33.333%;
   }
@@ -67,6 +66,72 @@
   .table__btn__wrapper {
     margin-top: 22px;
   }
+  .third-panel__tab {
+    width: 120px;
+  }
+
+  .third-panel__tab[data-value='объявления'],
+  .third-panel__tab[data-value='соискатели'],
+  .third-panel__tab[data-value='вакансии объединённые'],
+  .third-panel__tab[data-value='Телефонные коды'],
+  .third-panel__tab[data-value='РУБРИКАТОР'],
+  .third-panel__tab[data-value='СОКРАЩЕННЫЕ ЮРИДИЧЕСКИЕ⠀ФОРМЫ'],
+  .third-panel__tab[data-value='Альтернативные учебные⠀заведения'],
+  .third-panel__tab[data-value='Филиалы учебных⠀заведений'],
+  .third-panel__tab[data-value='Квалификации Специальности'],
+  .third-panel__tab[data-value='Администраторы'] {
+    position: relative;
+    text-overflow: ellipsis;
+  }
+  .third-panel__tab[data-value='объявления']:hover::after,
+  .third-panel__tab[data-value='соискатели']:hover::after,
+  .third-panel__tab[data-value='вакансии объединённые']:hover::after,
+  .third-panel__tab[data-value='Телефонные коды']:hover::after,
+  .third-panel__tab[data-value='РУБРИКАТОР']:hover::after,
+  .third-panel__tab[data-value='СОКРАЩЕННЫЕ ЮРИДИЧЕСКИЕ⠀ФОРМЫ']:hover::after,
+  .third-panel__tab[data-value='Альтернативные учебные⠀заведения']:hover::after,
+  .third-panel__tab[data-value='Филиалы учебных⠀заведений']:hover::after,
+  .third-panel__tab[data-value='Квалификации Специальности']:hover::after,
+  .third-panel__tab[data-value='Администраторы']:hover::after {
+    content: attr(data-value);
+    text-transform: uppercase;
+    color: gray;
+    display: block;
+    position: absolute;
+    background-color: var(--light-gray);
+    padding: 8px;
+    box-sizing: border-box;
+    font-weight: 500 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    max-width: 250px;
+    top: 100%;
+    z-index: 1000;
+  }
+  .third-panel__tab[data-value='объявления']:hover::before,
+  .third-panel__tab[data-value='соискатели']:hover::before,
+  .third-panel__tab[data-value='вакансии объединённые']:hover::before,
+  .third-panel__tab[data-value='Телефонные коды']:hover::before,
+  .third-panel__tab[data-value='РУБРИКАТОР']:hover::before,
+  .third-panel__tab[data-value='СОКРАЩЕННЫЕ ЮРИДИЧЕСКИЕ⠀ФОРМЫ']:hover::before,
+  .third-panel__tab[data-value='Альтернативные учебные⠀заведения']:hover::before,
+  .third-panel__tab[data-value='Филиалы учебных⠀заведений']:hover::before,
+  .third-panel__tab[data-value='Квалификации Специальности']:hover::before,
+  .third-panel__tab[data-value='Администраторы']:hover::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    top: 92%;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid var(--light-gray);
+    z-index: 1000;
+  }
 }
 @media (width <= 1100px) {
   .first-panel > div.control {
@@ -78,7 +143,44 @@
   .second-panel .tab {
     width: 95px;
   }
-
+  .third-panel__tab[data-value='Учебные заведения'],
+  .third-panel__tab[data-value='Компании'] {
+    position: relative;
+    text-overflow: ellipsis;
+  }
+  .third-panel__tab[data-value='Учебные заведения']:hover::after,
+  .third-panel__tab[data-value='Компании']:hover::after {
+    content: attr(data-value);
+    text-transform: uppercase;
+    color: gray;
+    display: block;
+    position: absolute;
+    background-color: var(--light-gray);
+    padding: 8px;
+    box-sizing: border-box;
+    font-weight: 500 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    max-width: 250px;
+    top: 100%;
+    z-index: 1000;
+  }
+  .third-panel__tab[data-value='Учебные заведения']:hover::before,
+  .third-panel__tab[data-value='Компании']:hover::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    top: 92%;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid var(--light-gray);
+    z-index: 1000;
+  }
   .will-removed {
     display: none;
   }
@@ -98,13 +200,33 @@
     word-break: inherit;
   }
 }
+@media (max-width: 1024px) {
+  .prompt-edit-text {
+    font-size: 17.5px;
+  }
+}
 @media (width <= 880px) {
   tbody {
     display: flex;
     flex-direction: column;
   }
+  .search-value {
+    padding: 10px 2%;
+  }
+  .title-page__wrapper {
+    display: block;
+  }
+  .prompt-edit-text {
+    font-size: 20px;
+  }
+  .prompt-edit {
+    left: 0;
+  }
   .popup-edit-wrapper > .popup-buttons {
     position: relative;
+  }
+  .edit-prompt {
+    font-size: 18px;
   }
   .edit-label {
     flex-direction: column;
@@ -120,7 +242,7 @@
     height: 45px;
   }
   .btn-add-alt {
-    width: calc(100% - 78px);
+    width: calc(100% - 60px);
   }
   .navbar-top-panel {
     a {
@@ -237,13 +359,13 @@
     align-items: start;
   }
   .input__wrapper > label {
-    margin-bottom: 12px;
+    margin-bottom: 30px;
   }
   .pseudo-input {
     width: 100%;
   }
   .popup-close__wrapper {
-    height: 47px;
+    height: 47px !important;
   }
   .btn-close-popup {
     right: 32px;
@@ -508,13 +630,37 @@
   .popup-edit-wrapper > .popup-buttons {
     position: relative;
   }
+  .btn__menu {
+    width: 50%;
+  }
 }
 
 @media (width <= 640px) {
   .container {
     padding: 0px calc(var(--index) * 0.75);
   }
-
+  .title-page__wrapper {
+    display: none;
+  }
+  .btn-close-popup,
+  .popup-edit-wrapper > .popup-close__wrapper > .btn-close-popup {
+    right: 30px;
+  }
+  .prompt-edit {
+    top: 80%;
+  }
+  .prompt-edit-text {
+    font-size: 18px;
+  }
+  .edit-inp[data-invalid='true'] {
+    margin-bottom: 30px;
+  }
+  .prompt-edit > .icon {
+    margin-right: 2.5px;
+  }
+  .btn__menu_value {
+    margin-left: 3.5px;
+  }
   .navbar-top-panel {
     height: 45px !important;
     font-size: 16px;
@@ -539,9 +685,7 @@
   .main {
     margin: 20px 0px 40px 0px;
   }
-  .btn__menu {
-    width: 50%;
-  }
+
   .popup-buttons > * {
     width: calc(100% - 60px);
   }
@@ -596,9 +740,22 @@
     display: grid;
     grid-template-columns: 115px 1fr;
   }
+  .prompt-edit-text {
+    font-size: 14px;
+  }
+  .prompt-edit > .icon {
+    font-size: 18px !important;
+  }
   .btn-add-alt {
     margin-left: 15px;
-    width: calc(100%-30px);
+    width: calc(100% - 30px);
+  }
+  .btn-close-popup,
+  .popup-edit-wrapper > .popup-close__wrapper > .btn-close-popup {
+    right: 15px;
+  }
+  .popup-edit-content-wrapper > .input__wrapper {
+    padding: 0px 15px;
   }
   .navbar-top-panel {
     height: 38px !important;

@@ -1,30 +1,83 @@
 import { data } from '../data/data.js';
 import { regions } from '../data/regions.js';
 
+// variables
+const inpRegion = document.querySelector('.js-select-region');
+const inpTypeSchool = document.querySelector('.js-select-type-school');
+const selectElArr = document.querySelectorAll('.main__select');
+const selectArrowArr = document.querySelectorAll('.btn-select');
+const selectResetArr = document.querySelectorAll('.btn-select-reset');
+const promptArr = document.querySelectorAll('.prompt-filter');
+const btnApply = document.querySelector('.btn-apply-filter');
+const searchInput = document.querySelectorAll('.input-search');
+const btnSearchResetArr = document.querySelectorAll('.btn-reset-search');
+const exportBtnEl = document.querySelector('.js-popup-export');
+const popupExport = document.querySelector('.export');
+const popupEdit = document.querySelector('.popup-edit');
+const delBtnArr = document.querySelectorAll('.del-btn');
+const popupDel = document.querySelector('.popup-delete');
+const schoolIdEl = document.querySelector('.school-id');
+const schoolFullNameEl = document.querySelector('.school-name');
+const filtersWrapper = document.querySelector('.js-region-filters__wrapper');
+const promptSearchArr = document.querySelectorAll('.prompt-search');
+const btnTotalEl = document.querySelector('.js-btn-total');
+const fieldInTotalEl = document.querySelector('.js-total-value');
+const loopIconsArr = document.querySelectorAll('.search-table');
+const btnAddAltEl = document.querySelector('.btn-add-alt');
+const newAltWrapper = document.querySelector('.wrap-forms-edit');
+const btnSaveEdit = document.querySelector('.btn-save');
+const importBtnEl = document.querySelector('.js-popup-import');
+const popupImport = document.querySelector('.import');
+const titlePage = document.querySelector('.title-page__wrapper');
+const btnRegionArr = document.querySelectorAll('.filter-region');
+const checkboxTypeSchoolArr = document.querySelectorAll('.js-checkbox-school-type');
+const inputArr = document.querySelectorAll('input');
+const main = document.querySelector('.main');
+const inpExportEl = document.querySelector('.input-export');
+const linkDownloadEl = document.querySelector('.link-download');
+const inpFullName = document.querySelector('.edit-fullname');
+const inpInn = document.querySelector('.edit-inn');
+const promptSpanIdArr = document.querySelectorAll('.js-edit-id');
+const promptEditArr = document.querySelectorAll('.prompt-edit');
+const pFileName = document.querySelector('.filename');
+const inpImportEl = document.querySelector('.input-import');
+let regionValueInput;
 let scrollPosition;
-window.addEventListener('scroll', () => {
-  scrollPosition = window.scrollY;
-  localStorage.setItem('pos', scrollPosition);
-});
+let dataSlice = data.slice(0, 30);
 let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
-window.onload = () => {
-  window.scrollTo({ top: scroll });
-};
-let dataSlice = data.slice(0, 30);
+let count = 0;
+let n = 0;
+let countAddALtClick = 1;
+let newALtNameFormHTML = '';
+let idTrTable = '';
+let inpNewValues = document.querySelectorAll('.edit-inp');
+let dataFilters = [];
+let i = 0;
+let j = 0;
+let arrFiltersType = [];
+let arrSchoolTypeSelect = '';
+let countAllCheckbox = 0;
+
 function checkUndef(prop) {
   if (prop === undefined) {
     return '';
   } else return prop;
 }
-const btnTotalEl = document.querySelector('.js-btn-total');
-const fieldInTotalEl = document.querySelector('.js-total-value');
-let counter = 0;
+
+// Scroll position
+window.addEventListener('scroll', () => {
+  scrollPosition = window.scrollY;
+  localStorage.setItem('pos', scrollPosition);
+});
+window.onload = () => {
+  window.scrollTo({ top: scroll });
+};
+//Render table
 function tableRender(dataValue) {
   const tbodyWrapperEl = document.querySelector('.tr-wrapper');
-
   tbodyWrapperEl.innerHTML = '';
-
+  // Render HTML
   dataValue.forEach((school, index) => {
     return (tbodyWrapperEl.innerHTML += `
       <tr class="tr-school" data-value-id="${school.id}" >
@@ -138,6 +191,7 @@ function tableRender(dataValue) {
 
   editBtnArr.forEach((edit) => {
     edit.addEventListener('click', () => {
+      let inpNewValues = document.querySelectorAll('.edit-inp');
       idTrTable = edit.dataset.valueId;
       popupEdit.style.display = '';
       const closeBtn = document.querySelectorAll('.popup-close');
@@ -152,45 +206,52 @@ function tableRender(dataValue) {
         });
       });
       const btnSaveEdit = document.querySelector('.btn-save');
-      const inpNewValues = document.querySelectorAll('.edit-inp');
+      let editElement = dataFilters.find((el) => el.id == idTrTable);
       btnSaveEdit.addEventListener('click', () => {
         if (n == 1 || i == 1 || j == 1) {
-          const inpNewValues = document.querySelectorAll('.edit-inp');
-          let editElement = dataFilters.find((el) => el.id == idTrTable);
           editElement.inn = inpNewValues[0].value;
           editElement.fullName = inpNewValues[1].value;
           editElement.abbr = inpNewValues[2].value;
           editElement.year = inpNewValues[3].value;
           editElement.alt1 = inpNewValues[4].value;
-          editElement.alt2 = inpNewValues[5].value;
-          editElement.year1 = inpNewValues[6].value;
-          editElement.alt3 = inpNewValues[7].value;
-          editElement.year2 = inpNewValues[8].value;
-          editElement.alt4 = inpNewValues[9].value;
-          editElement.year3 = inpNewValues[10].value;
-          editElement.alt5 = inpNewValues[11].value;
-          editElement.year4 = inpNewValues[12].value;
-          editElement.alt6 = inpNewValues[13].value;
-          editElement.year5 = inpNewValues[14].value;
+          if (countAddALtClick >= 2) {
+            editElement.alt2 = inpNewValues[5].value;
+            editElement.year1 = inpNewValues[6].value;
+          } else if (countAddALtClick >= 3) {
+            editElement.alt3 = inpNewValues[7].value;
+            editElement.year2 = inpNewValues[8].value;
+          } else if (countAddALtClick >= 4) {
+            editElement.alt4 = inpNewValues[9].value;
+            editElement.year3 = inpNewValues[10].value;
+          } else if (countAddALtClick >= 5) {
+            editElement.alt5 = inpNewValues[11].value;
+            editElement.year4 = inpNewValues[12].value;
+          } else if (countAddALtClick >= 6) {
+            editElement.alt6 = inpNewValues[13].value;
+            editElement.year5 = inpNewValues[14].value;
+          }
           dataFilters.splice(idTrTable - 201, 1, editElement);
           tableRender(dataFilters);
         } else {
-          const inpNewValues = document.querySelectorAll('.edit-inp');
           let editElement = dataSlice.find((el) => el.id == idTrTable);
           editElement.inn = inpNewValues[0].value;
           editElement.fullName = inpNewValues[1].value;
           editElement.abbr = inpNewValues[2].value;
           editElement.year = inpNewValues[3].value;
           editElement.alt1 = inpNewValues[4].value;
-          if (countAddALtClick > 1) {
+          if (countAddALtClick >= 2) {
             editElement.alt2 = inpNewValues[5].value;
             editElement.year1 = inpNewValues[6].value;
+          } else if (countAddALtClick >= 3) {
             editElement.alt3 = inpNewValues[7].value;
             editElement.year2 = inpNewValues[8].value;
+          } else if (countAddALtClick >= 4) {
             editElement.alt4 = inpNewValues[9].value;
             editElement.year3 = inpNewValues[10].value;
+          } else if (countAddALtClick >= 5) {
             editElement.alt5 = inpNewValues[11].value;
             editElement.year4 = inpNewValues[12].value;
+          } else if (countAddALtClick >= 6) {
             editElement.alt6 = inpNewValues[13].value;
             editElement.year5 = inpNewValues[14].value;
           }
@@ -243,162 +304,11 @@ function tableRender(dataValue) {
     }
   });
 }
-
 tableRender(dataSlice);
-const inpRegion = document.querySelector('.js-select-region');
-const inpTypeSchool = document.querySelector('.js-select-type-school');
-const selectElArr = document.querySelectorAll('.main__select');
-const selectArrowArr = document.querySelectorAll('.btn-select');
-const selectResetArr = document.querySelectorAll('.btn-select-reset');
-const promptArr = document.querySelectorAll('.prompt-filter');
-const btnApply = document.querySelector('.btn-apply-filter');
-const searchInput = document.querySelectorAll('.input-search');
-const btnSearchResetArr = document.querySelectorAll('.btn-reset-search');
-const exportBtnEl = document.querySelector('.js-popup-export');
-const popupExport = document.querySelector('.export');
-const popupEdit = document.querySelector('.popup-edit');
-const delBtnArr = document.querySelectorAll('.del-btn');
-const popupDel = document.querySelector('.popup-delete');
-const schoolIdEl = document.querySelector('.school-id');
-const schoolFullNameEl = document.querySelector('.school-name');
-const filtersWrapper = document.querySelector('.js-region-filters__wrapper');
-const promptSearchArr = document.querySelectorAll('.prompt-search');
-let n = 0;
 
-//search
-searchInput.forEach((inp, indexInp) => {
-  btnSearchResetArr.forEach((reset, indexReset) => {
-    reset.addEventListener('click', () => {
-      document.querySelectorAll('input').forEach((inp) => (inp.value = ''));
-      n = 0;
-      dataFilters = dataSlice;
-      tableRender(dataSlice);
-    });
-    indexReset == indexInp && inp.value == '' ? (reset.style.display = 'none') : false;
-  });
-});
-promptSearchArr.forEach((promptEl, promptIndex) => {
-  btnSearchResetArr.forEach((reset, indexReset) => {
-    reset.addEventListener('click', () => {
-      indexReset == promptIndex ? (promptEl.style.display = 'none') : false;
-    });
-  });
-});
-
-searchInput.forEach((inp, indexInp) => {
-  promptSearchArr.forEach((promptEl, promptIndex) => {
-    inp.addEventListener('input', () => {
-      n = 1;
-      if (indexInp == promptIndex) {
-        promptEl.style.display = 'block';
-        let searchId = inp.dataset.searchValue;
-        let valueInput = inp.value;
-        valueInput == '*' ? (valueInput = undefined) : false;
-        let valuesSearchHTML = '';
-        let regSearch = new RegExp(valueInput, 'gi');
-        let regHighlight = new RegExp(valueInput == '\\' ? '' : valueInput, 'gi');
-
-        if (i == 1 || j == 1) {
-          let textHighlight = '';
-          let textOriginal = '';
-          let replaceText = '';
-          if (valueInput == '*') {
-            dataFilters = dataFilters.filter((el) => el[searchId] === undefined).slice(0, 6);
-          }
-          dataFilters = dataFilters
-            .filter((el) => String(el[searchId]).match(regSearch))
-            .slice(0, 6);
-          dataFilters.forEach((el) => {
-            textHighlight = String(el[searchId]).match(regHighlight).join('');
-
-            textOriginal = String(el[searchId]).toLowerCase();
-            replaceText = textOriginal.replace(
-              textHighlight.toLowerCase(),
-              `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
-            );
-            valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
-            promptEl.innerHTML = valuesSearchHTML;
-          });
-
-          if (valueInput == '') {
-            tableRender(dataSlice);
-            dataFilters = dataSlice;
-            promptEl.style.display = 'none';
-          }
-          document.querySelectorAll('.search-value').forEach((el) => {
-            el.addEventListener('click', () => {
-              inp.value = el.textContent;
-              valueInput = el.textContent;
-              regSearch = new RegExp('^' + valueInput, 'gi');
-              promptEl.style.display = 'none';
-              dataFilters = dataSlice
-                .filter((el) => String(el[searchId]).match(regSearch))
-                .slice(0, 6);
-              tableRender(
-                dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6)
-              );
-            });
-          });
-        } else {
-          let textHighlight = '';
-          let textOriginal = '';
-          let replaceText = '';
-          if (valueInput == '*') {
-            dataSlice = dataSlice.filter((el) => el[searchId] === undefined).slice(0, 6);
-            valuesSearchHTML += `<div class="search-value">*</div>`;
-            promptEl.innerHTML = valuesSearchHTML;
-          }
-          dataSlice
-            .filter((el) => String(el[searchId]).match(regSearch))
-            .slice(0, 6)
-            .forEach((el) => {
-              textHighlight = String(el[searchId]).match(regHighlight).join('');
-
-              textOriginal = String(el[searchId]).toLowerCase();
-              replaceText = textOriginal
-                .replace(
-                  textHighlight.toLowerCase(),
-                  `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
-                )
-                .replaceAll(',', '');
-
-              valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
-              promptEl.innerHTML = valuesSearchHTML;
-            });
-          if (valueInput == '') {
-            promptEl.style.display = 'none';
-            tableRender(dataSlice);
-          }
-          document.querySelectorAll('.search-value').forEach((el) => {
-            el.innerText.includes('undefined') ? (el.innerText = ' ') : false;
-            el.addEventListener('click', () => {
-              inp.value = el.textContent;
-              valueInput = el.textContent;
-              regSearch = new RegExp('^' + valueInput, 'gi');
-              promptEl.style.display = 'none';
-              dataFilters = dataSlice
-                .filter((el) => String(el[searchId]).match(regSearch))
-                .slice(0, 6);
-              tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch))).slice(
-                0,
-                6
-              );
-            });
-          });
-          tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6));
-          valueInput == '' ? tableRender(dataSlice) : false;
-        }
-      }
-    });
-  });
-});
-//Редактировать
-const btnAddAltEl = document.querySelector('.btn-add-alt');
-let countAddALtClick = 1;
-let newALtNameFormHTML = '';
-const newAltWrapper = document.querySelector('.wrap-forms-edit');
-
-btnAddAltEl.addEventListener('click', () => {
+//Add new inputs in edit popup
+btnAddAltEl.addEventListener('click', (e) => {
+  e.preventDefault();
   countAddALtClick++;
   newALtNameFormHTML = ` 
     <div class="popup-edit-content-wrapper" data-edit-form-id="${countAddALtClick}">
@@ -414,12 +324,23 @@ btnAddAltEl.addEventListener('click', () => {
             <span class="icon control-edit delete"></span>
           </div>
         </div>
-          <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" /></label>
-          <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp" /></label>
+          <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" /></label>
+          <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp year-inp" maxlength="4" min="1800" max="2400"  placeholder="Введите год" /></label>
       </div>
     </div>`;
   newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
   countAddALtClick == 7 ? (btnAddAltEl.disabled = true) : false;
+  inpNewValues = document.querySelectorAll('.edit-inp');
+  inpNewValues.forEach((inp) =>
+    inp.value == '' ? (btnSaveEdit.disabled = true) : (btnSaveEdit.disabled = false)
+  );
+  inpNewValues.forEach((inp) => {
+    inp.addEventListener('input', () => {
+      inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
+        ? (btnSaveEdit.disabled = true)
+        : (btnSaveEdit.disabled = false);
+    });
+  });
 
   const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
   const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
@@ -432,18 +353,19 @@ btnAddAltEl.addEventListener('click', () => {
     });
   });
 });
-//Кнопки редактирования и удаления
-const inpNewValues = document.querySelectorAll('.edit-inp');
-let idTrTable = '';
+
+//Btn edit
 editBtnArr.forEach((edit) => {
   edit.addEventListener('click', () => {
-    const btnSaveEdit = document.querySelector('.btn-save');
-
+    inpNewValues.forEach((inp) => {
+      inp.value == '' ? (btnSaveEdit.disabled = true) : (btnSaveEdit.disabled = false);
+    });
     idTrTable = edit.dataset.valueId;
     popupEdit.style.display = '';
     const closeBtn = document.querySelectorAll('.popup-close');
     closeBtn.forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         inpNewValues.forEach((inp) => (inp.value = ''));
         popupEdit.style.display = 'none';
         const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
@@ -453,10 +375,8 @@ editBtnArr.forEach((edit) => {
         });
       });
     });
-    inpNewValues.forEach((el) =>
-      el.value == '' ? (btnSaveEdit.disabled = true) : (btnSaveEdit.disabled = false)
-    );
-    btnSaveEdit.addEventListener('click', () => {
+    btnSaveEdit.addEventListener('click', (e) => {
+      e.preventDefault();
       if (n == 1 || i == 1 || j == 1) {
         let editElement = dataFilters.find((el) => el.id == idTrTable);
         editElement.inn = inpNewValues[0].value;
@@ -464,16 +384,22 @@ editBtnArr.forEach((edit) => {
         editElement.abbr = inpNewValues[2].value;
         editElement.year = inpNewValues[3].value;
         editElement.alt1 = inpNewValues[4].value;
-        editElement.alt2 = inpNewValues[5].value;
-        editElement.year1 = inpNewValues[6].value;
-        editElement.alt3 = inpNewValues[7].value;
-        editElement.year2 = inpNewValues[8].value;
-        editElement.alt4 = inpNewValues[9].value;
-        editElement.year3 = inpNewValues[10].value;
-        editElement.alt5 = inpNewValues[11].value;
-        editElement.year4 = inpNewValues[12].value;
-        editElement.alt6 = inpNewValues[13].value;
-        editElement.year5 = inpNewValues[14].value;
+        if (countAddALtClick >= 2) {
+          editElement.alt2 = inpNewValues[5].value;
+          editElement.year1 = inpNewValues[6].value;
+        } else if (countAddALtClick >= 3) {
+          editElement.alt3 = inpNewValues[7].value;
+          editElement.year2 = inpNewValues[8].value;
+        } else if (countAddALtClick >= 4) {
+          editElement.alt4 = inpNewValues[9].value;
+          editElement.year3 = inpNewValues[10].value;
+        } else if (countAddALtClick >= 5) {
+          editElement.alt5 = inpNewValues[11].value;
+          editElement.year4 = inpNewValues[12].value;
+        } else if (countAddALtClick >= 6) {
+          editElement.alt6 = inpNewValues[13].value;
+          editElement.year5 = inpNewValues[14].value;
+        }
         dataFilters.splice(idTrTable - 201, 1, editElement);
         tableRender(dataFilters);
       } else {
@@ -483,15 +409,19 @@ editBtnArr.forEach((edit) => {
         editElement.abbr = inpNewValues[2].value;
         editElement.year = inpNewValues[3].value;
         editElement.alt1 = inpNewValues[4].value;
-        if (countAddALtClick > 1) {
+        if (countAddALtClick >= 2) {
           editElement.alt2 = inpNewValues[5].value;
           editElement.year1 = inpNewValues[6].value;
+        } else if (countAddALtClick >= 3) {
           editElement.alt3 = inpNewValues[7].value;
           editElement.year2 = inpNewValues[8].value;
+        } else if (countAddALtClick >= 4) {
           editElement.alt4 = inpNewValues[9].value;
           editElement.year3 = inpNewValues[10].value;
+        } else if (countAddALtClick >= 5) {
           editElement.alt5 = inpNewValues[11].value;
           editElement.year4 = inpNewValues[12].value;
+        } else if (countAddALtClick >= 6) {
           editElement.alt6 = inpNewValues[13].value;
           editElement.year5 = inpNewValues[14].value;
         }
@@ -509,6 +439,8 @@ editBtnArr.forEach((edit) => {
     });
   });
 });
+
+//Btn delete
 delBtnArr.forEach((del) => {
   del.addEventListener('click', () => {
     schoolIdEl.textContent = `id${del.dataset.valueId}`;
@@ -524,36 +456,236 @@ delBtnArr.forEach((del) => {
   });
 });
 
-exportBtnEl.addEventListener('click', () => {
-  popupExport.style.display = '';
-  const closeBtn = document.querySelectorAll('.popup-close');
-  closeBtn.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      popupExport.style.display = 'none';
+//Apply select
+btnApply.addEventListener('click', () => {
+  j = 1;
+  arrFiltersType = [];
+  arrSchoolTypeSelect = '';
+  checkboxTypeSchoolArr.forEach((checkbox) => {
+    checkbox.checked ? arrFiltersType.push(checkbox.dataset.typeFilter) : false;
+    checkbox.checked ? (arrSchoolTypeSelect = checkbox.dataset.typeSelect) : false;
+  });
+
+  arrFiltersType.length == 4 ? arrFiltersType.shift() : false;
+  if (arrFiltersType.length == 0) {
+    inpTypeSchool.value = '';
+  } else if (arrFiltersType.length == 1) {
+    selectResetArr[0].style.display = 'block';
+    inpTypeSchool.value = `${arrSchoolTypeSelect}`;
+  } else {
+    selectResetArr[0].style.display = 'block';
+    inpTypeSchool.value = `Тип учебного заведения (выбрано ${arrFiltersType.length})`;
+  }
+  if (arrFiltersType.length >= 3) {
+    true;
+  } else {
+    let regTypeSchool = new RegExp(arrFiltersType.join('').replaceAll(', ', '|'), 'gi');
+    i == 1 || n == 1
+      ? tableRender(dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
+      : tableRender(dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
+    i !== 1 || n !== 1
+      ? (dataFilters = dataSlice.filter((school) => school.fullName.match(regTypeSchool)))
+      : (dataFilters = dataFilters.filter((school) => school.fullName.match(regTypeSchool)));
+  }
+});
+
+//Select Reset
+selectResetArr.forEach((reset) => {
+  reset.addEventListener('click', () => {
+    i = 0;
+    j = 0;
+    selectResetArr.forEach((reset) => (reset.style.display = 'none'));
+    selectElArr.forEach((select) => {
+      select.value = '';
+    });
+    tableRender(dataSlice);
+  });
+});
+
+// Select settings
+selectElArr.forEach((select, indexSelect) => {
+  selectResetArr.forEach((reset, indexReset) => {
+    if (indexReset == indexSelect) {
+      select.addEventListener('input', () => {
+        reset.style.display = 'block';
+      });
+    }
+  });
+  let countArrowClick = 0;
+  promptArr.forEach((promptEl, indexPrompt) => {
+    selectArrowArr.forEach((arrow, indexArrow) => {
+      if (indexArrow == indexSelect && indexSelect == indexPrompt) {
+        btnApply.addEventListener('click', () => {
+          select.dataset.active = 'close';
+          arrow.dataset.active = 'close';
+          promptEl.dataset.active = 'close';
+        });
+        arrow.addEventListener('click', () => {
+          countArrowClick++;
+          if (countArrowClick % 2) {
+            select.dataset.active = 'open';
+            arrow.dataset.active = 'open';
+            promptEl.dataset.active = 'open';
+          } else {
+            select.dataset.active = 'close';
+            arrow.dataset.active = 'close';
+            promptEl.dataset.active = 'close';
+          }
+        });
+        select.addEventListener('click', () => {
+          select.dataset.active = 'open';
+
+          arrow.dataset.active = 'open';
+          promptEl.dataset.active = 'open';
+        });
+        select.addEventListener('blur', () => {
+          select.dataset.active = 'close';
+          arrow.dataset.active = 'close';
+          setTimeout(() => {
+            promptEl.dataset.active = 'close';
+          }, 100);
+        });
+      }
     });
   });
 });
-//Импорт
-const importBtnEl = document.querySelector('.js-popup-import');
-const popupImport = document.querySelector('.import');
 
-importBtnEl.addEventListener('click', () => {
-  popupImport.style.display = '';
-  const closeBtn = document.querySelectorAll('.popup-close');
-  closeBtn.forEach((btn) => {
+//Clear search
+searchInput.forEach((inp, indexInp) => {
+  btnSearchResetArr.forEach((btn, indexBtn) => {
+    if (indexInp == indexBtn) {
+      inp.addEventListener('input', () => {
+        indexBtn == indexInp && inp.value == '' ? (btn.style.display = 'none') : false;
+        indexBtn == indexInp && inp.value !== '' ? (btn.style.display = 'block') : false;
+      });
+    }
     btn.addEventListener('click', () => {
-      popupImport.style.display = 'none';
+      indexInp == indexBtn ? (inp.value = '') : false;
+      btn.style.display = 'none';
     });
   });
 });
-let dataFilters = [];
-let i = 0;
-let j = 0;
 
-//Фильтр региона
-let arrFiltersType = [];
-const btnRegionArr = document.querySelectorAll('.filter-region');
-let regionValueInput;
+//Btn deselect
+document.querySelector('.js-btn-deselect').addEventListener('click', () => {
+  inputArr.forEach((inp) => {
+    inp.value = '';
+    inp.checked = false;
+    dataFilters = [];
+    dataSlice = data.slice(0, 50);
+    i = 0;
+    j = 0;
+    n = 0;
+    selectResetArr.forEach((reset) => (reset.style.display = 'none'));
+    btnSearchResetArr.forEach((reset) => (reset.style.display = 'none'));
+  });
+  tableRender(dataSlice);
+});
+
+//Inputs check valid
+inpFullName.addEventListener('input', () => {
+  let checkVar = dataSlice.some((el) => el.fullName == inpFullName.value);
+  if (checkVar == false) {
+    inpFullName.dataset.invalid = 'false';
+    btnSaveEdit.disabled = false;
+    promptEditArr[1].style.display = 'none';
+  } else {
+    inpFullName.dataset.invalid = 'true';
+    btnSaveEdit.disabled = true;
+    promptSpanIdArr[1].innerText = dataSlice.find((el) => el.fullName == inpFullName.value).id;
+    promptEditArr[1].style.display = 'block';
+  }
+});
+inpInn.addEventListener('input', () => {
+  let checkVar = dataSlice.some((el) => el.inn == inpInn.value);
+  if (checkVar == false) {
+    inpInn.dataset.invalid = 'false';
+    btnSaveEdit.disabled = false;
+    promptEditArr[0].style.display = 'none';
+  } else {
+    inpInn.dataset.invalid = 'true';
+    btnSaveEdit.disabled = true;
+    promptSpanIdArr[0].innerText = dataSlice.find((el) => el.inn == inpInn.value).id;
+    promptEditArr[0].style.display = 'block';
+  }
+});
+
+//Sort
+function bySort(sortPar) {
+  return (a, b) => (a[sortPar] > b[sortPar] ? 1 : -1);
+}
+function bySortRev(sortPar) {
+  return (a, b) => (a[sortPar] < b[sortPar] ? 1 : -1);
+}
+document.querySelectorAll('.sort-table').forEach((sort) => {
+  sort.addEventListener('click', () => {
+    let sortValues = sort.dataset.sortValue;
+    let sortData;
+    count++;
+    if (count % 2) {
+      i == 1 || j == 1 || n == 1
+        ? (sortData = dataFilters.sort(bySort(sortValues)))
+        : (sortData = dataSlice.sort(bySort(sortValues)));
+      tableRender(sortData);
+    } else {
+      i == 1 || j == 1 || n == 1
+        ? (sortData = dataFilters.sort(bySortRev(sortValues)))
+        : (sortData = dataSlice.sort(bySortRev(sortValues)));
+      tableRender(sortData);
+    }
+  });
+});
+
+//Check page
+document.querySelectorAll('.mobile-control__tab-name').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    tab.innerText !== 'АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ'
+      ? (main.style.display = 'none')
+      : (main.style.display = 'block');
+  });
+});
+document.querySelectorAll('.third-panel__tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    tab.innerText.includes('АЛЬТЕР') || tab.classList.contains('more')
+      ? (main.style.display = 'block')
+      : (main.style.display = 'none');
+  });
+});
+
+//Empty td hidden in mobile
+document.querySelectorAll('.td-alt').forEach((td, indexTd) => {
+  document.querySelectorAll('.alt-name').forEach((altEl, indexAlt) => {
+    altEl.innerText == '' && indexTd == indexAlt ? td.classList.add('empty') : false;
+  });
+});
+
+// Render tabName
+document.querySelectorAll('.third-panel__tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    tab.classList.contains('third-panel__tab_active')
+      ? (titlePage.innerText = `Журнал: ${tab.textContent
+          .trim()
+          .replace(/\s+/g, ' ')
+          .slice(1)
+          .toUpperCase()}`)
+      : false;
+  });
+});
+
+//Filter Types school
+checkboxTypeSchoolArr[0].addEventListener('click', () => {
+  countAllCheckbox++;
+  countAllCheckbox % 2
+    ? checkboxTypeSchoolArr.forEach((el) => (el.checked = true))
+    : checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+});
+checkboxTypeSchoolArr.forEach((el) => {
+  el.addEventListener('click', () => {
+    promptArr[0].dataset.active = 'open';
+  });
+});
+
+//Filter Region
 inpRegion.addEventListener('input', () => {
   regionValueInput = inpRegion.value;
   let myReg = new RegExp('^' + regionValueInput, 'gi');
@@ -612,7 +744,6 @@ inpRegion.addEventListener('input', () => {
         j !== 1 || n !== 1
           ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
           : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
-        console.log(dataFilters);
       });
     });
   });
@@ -628,7 +759,6 @@ inpRegion.addEventListener('input', () => {
       j !== 1 || n !== 1
         ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
         : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
-      console.log(dataFilters);
     });
   });
 });
@@ -644,152 +774,175 @@ btnRegionArr.forEach((btn) => {
     j !== 1 || n !== 1
       ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
       : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
-    console.log(dataFilters);
   });
 });
-let arrSchoolTypeSelect = '';
-//Фильтр по типам
-const checkboxTypeSchoolArr = document.querySelectorAll('.js-checkbox-school-type');
-btnApply.addEventListener('click', () => {
-  j = 1;
-  arrFiltersType = [];
-  arrSchoolTypeSelect = '';
-  checkboxTypeSchoolArr.forEach((checkbox) => {
-    checkbox.checked ? arrFiltersType.push(checkbox.dataset.typeFilter) : false;
-    checkbox.checked ? (arrSchoolTypeSelect = checkbox.dataset.typeSelect) : false;
-  });
 
-  arrFiltersType.length == 4 ? arrFiltersType.shift() : false;
-  if (arrFiltersType.length == 0) {
-    inpTypeSchool.value = '';
-  } else if (arrFiltersType.length == 1) {
-    selectResetArr[0].style.display = 'block';
-    inpTypeSchool.value = `${arrSchoolTypeSelect}`;
-  } else {
-    selectResetArr[0].style.display = 'block';
-    inpTypeSchool.value = `Тип учебного заведения (выбрано ${arrFiltersType.length})`;
-  }
-  if (arrFiltersType.length >= 3) {
-    true;
-  } else {
-    let regTypeSchool = new RegExp(arrFiltersType.join('').replaceAll(', ', '|'), 'gi');
-    i == 1 || n == 1
-      ? tableRender(dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
-      : tableRender(dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
-    i !== 1 || n !== 1
-      ? (dataFilters = dataSlice.filter((school) => school.fullName.match(regTypeSchool)))
-      : (dataFilters = dataFilters.filter((school) => school.fullName.match(regTypeSchool)));
-  }
-});
-//
-
-selectResetArr.forEach((reset) => {
-  reset.addEventListener('click', () => {
-    i = 0;
-    j = 0;
-    selectResetArr.forEach((reset) => (reset.style.display = 'none'));
-    selectElArr.forEach((select) => {
-      select.value = '';
+//Search
+searchInput.forEach((inp, indexInp) => {
+  btnSearchResetArr.forEach((reset, indexReset) => {
+    reset.addEventListener('click', () => {
+      selectResetArr.forEach((el) => (el.style.display = 'none'));
+      btnSearchResetArr.forEach((el) => (el.style.display = 'none'));
+      loopIconsArr.forEach((icon) => (icon.style.display = 'block'));
+      document.querySelectorAll('input').forEach((inp) => (inp.value = ''));
+      inp.style.padding = '0px 43px 0px 40px';
+      n = 0;
+      dataFilters = dataSlice;
+      tableRender(dataSlice);
     });
-
-    tableRender(dataSlice);
+    indexReset == indexInp && inp.value == '' ? (reset.style.display = 'none') : false;
   });
 });
-//
-let countAllCheckbox = 0;
-checkboxTypeSchoolArr[0].addEventListener('click', () => {
-  countAllCheckbox++;
-  countAllCheckbox % 2
-    ? checkboxTypeSchoolArr.forEach((el) => (el.checked = true))
-    : checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
-});
-checkboxTypeSchoolArr.forEach((el) => {
-  el.addEventListener('click', () => {
-    promptArr[0].dataset.active = 'open';
+promptSearchArr.forEach((promptEl) => {
+  btnSearchResetArr.forEach((reset) => {
+    reset.addEventListener('click', () => {
+      promptEl.style.display = 'none';
+    });
   });
 });
-selectElArr.forEach((select, indexSelect) => {
-  selectResetArr.forEach((reset, indexReset) => {
-    if (indexReset == indexSelect) {
-      select.addEventListener('input', () => {
-        reset.style.display = 'block';
-      });
-    }
+searchInput.forEach((inp, indexInp) => {
+  loopIconsArr.forEach((icon, iconIndex) => {
+    inp.addEventListener('blur', () => {
+      if (iconIndex + 4 == indexInp && inp.value == '') {
+        icon.style.display = 'block';
+      }
+    });
+    inp.addEventListener('input', () => {
+      inp.value == '' ? (inp.style.padding = '0px 43px 0px 40px') : false;
+      if (iconIndex + 4 == indexInp && inp.value != '') {
+        icon.style.display = 'none';
+        inp.style.padding = '0px 43px 0px 11px';
+      }
+    });
   });
+  promptSearchArr.forEach((promptEl, promptIndex) => {
+    inp.addEventListener('blur', () => {
+      if (indexInp == promptIndex) {
+        setTimeout(() => {
+          promptEl.style.display = 'none';
+        }, 100);
+      }
+    });
+    inp.addEventListener('input', () => {
+      if (indexInp == promptIndex) {
+        promptEl.style.display = 'block';
+        inp.value == '' ? inp.blur() : false;
+        let searchId = inp.dataset.searchValue;
+        let valueInput =
+          inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1);
+        valueInput == '*' ? (valueInput = undefined) : false;
+        let valuesSearchHTML = '';
+        let regSearch = new RegExp(valueInput, 'gi');
+        let regHighlight = new RegExp(valueInput == '//' ? '' : valueInput, 'gi');
 
-  let countArrowClick = 0;
+        searchId == 'fullName'
+          ? (regHighlight = new RegExp(valueInput == '//' ? '' : valueInput, 'g'))
+          : false;
+        if (i == 1 || j == 1 || n == 1) {
+          let textHighlight = '';
+          let textOriginal = '';
+          let replaceText = '';
 
-  promptArr.forEach((promptEl, indexPrompt) => {
-    selectArrowArr.forEach((arrow, indexArrow) => {
-      if (indexArrow == indexSelect && indexSelect == indexPrompt) {
-        btnApply.addEventListener('click', () => {
-          select.dataset.active = 'close';
-          arrow.dataset.active = 'close';
-          promptEl.dataset.active = 'close';
-        });
+          dataFilters = dataFilters
+            .filter((el) => String(el[searchId]).match(regSearch))
+            .slice(0, 6);
+          dataFilters.forEach((el) => {
+            textHighlight = String(el[searchId]).match(regHighlight).join('');
 
-        arrow.addEventListener('click', () => {
-          countArrowClick++;
-          if (countArrowClick % 2) {
-            select.dataset.active = 'open';
-            arrow.dataset.active = 'open';
-            promptEl.dataset.active = 'open';
-          } else {
-            select.dataset.active = 'close';
-            arrow.dataset.active = 'close';
-            promptEl.dataset.active = 'close';
+            textOriginal = String(el[searchId]).toLowerCase();
+            replaceText = textOriginal
+              .replace(
+                textHighlight.toLowerCase(),
+                `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+              )
+              .replaceAll(',', '');
+
+            valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
+            promptEl.innerHTML = valuesSearchHTML;
+          });
+
+          if (valueInput == '') {
+            tableRender(dataFilters);
+            promptEl.style.display = 'none';
           }
-        });
-        select.addEventListener('click', () => {
-          select.dataset.active = 'open';
+          document.querySelectorAll('.search-value').forEach((el) => {
+            el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
+            el.addEventListener('click', () => {
+              n = 1;
+              inp.value = el.textContent;
+              valueInput = el.textContent;
+              inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
+              regSearch = new RegExp('^' + valueInput, 'gi');
+              promptEl.style.display = 'none';
+              dataFilters = dataSlice
+                .filter((el) => String(el[searchId]).match(regSearch))
+                .slice(0, 6);
+              tableRender(
+                dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6)
+              );
+            });
+          });
+        } else {
+          let textHighlight = '';
+          let textOriginal = '';
+          let replaceText = '';
+          dataSlice
+            .filter((el) => String(el[searchId]).match(regSearch))
+            .slice(0, 6)
+            .forEach((el) => {
+              textHighlight = String(el[searchId]).match(regHighlight).join('');
 
-          arrow.dataset.active = 'open';
-          promptEl.dataset.active = 'open';
-        });
-        select.addEventListener('blur', () => {
-          select.dataset.active = 'close';
-          arrow.dataset.active = 'close';
-          promptEl.dataset.active = 'close';
-        });
+              textOriginal = String(el[searchId]).toLowerCase();
+              replaceText = textOriginal
+                .replace(
+                  textHighlight.toLowerCase(),
+                  `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+                )
+                .replaceAll(',', '');
+              valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
+              promptEl.innerHTML = valuesSearchHTML;
+            });
+          if (valueInput == '') {
+            promptEl.style.display = 'none';
+            tableRender(dataSlice);
+          }
+          document.querySelectorAll('.search-value').forEach((el) => {
+            el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
+            el.addEventListener('click', () => {
+              n = 1;
+              inp.value = el.textContent;
+              valueInput = el.textContent;
+              inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
+              regSearch = new RegExp('^' + valueInput, 'gi');
+              promptEl.style.display = 'none';
+              dataFilters = dataSlice
+                .filter((el) => String(el[searchId]).match(regSearch))
+                .slice(0, 6);
+              tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch))).slice(
+                0,
+                6
+              );
+            });
+          });
+          tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6));
+          valueInput == '' ? tableRender(dataSlice) : false;
+        }
       }
     });
   });
 });
-//Очистить инпут
-searchInput.forEach((inp, indexInp) => {
-  btnSearchResetArr.forEach((btn, indexBtn) => {
-    if (indexInp == indexBtn) {
-      inp.addEventListener('input', () => {
-        indexBtn == indexInp && inp.value == '' ? (btn.style.display = 'none') : false;
-        indexBtn == indexInp && inp.value !== '' ? (btn.style.display = 'block') : false;
-      });
-    }
+
+//POPUPS
+//export
+exportBtnEl.addEventListener('click', () => {
+  popupExport.style.display = '';
+  const closeBtn = document.querySelectorAll('.popup-close');
+  closeBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
-      indexInp == indexBtn ? (inp.value = '') : false;
-      btn.style.display = 'none';
+      popupExport.style.display = 'none';
     });
   });
 });
-
-const inputArr = document.querySelectorAll('input');
-document.querySelector('.js-btn-deselect').addEventListener('click', () => {
-  inputArr.forEach((inp) => {
-    inp.value = '';
-    inp.checked = false;
-    dataFilters = [];
-    dataSlice = data.slice(0, 50);
-    i = 0;
-    j = 0;
-    n = 0;
-    selectResetArr.forEach((reset) => (reset.style.display = 'none'));
-    btnSearchResetArr.forEach((reset) => (reset.style.display = 'none'));
-  });
-  tableRender(dataSlice);
-});
-const inpExportEl = document.querySelector('.input-export');
-
-const linkDownloadEl = document.querySelector('.link-download');
-
 linkDownloadEl.addEventListener('click', () => {
   let date = new Date();
   let month = date.getMonth();
@@ -802,58 +955,22 @@ linkDownloadEl.addEventListener('click', () => {
     month
   )}.${yearDate} ${time}`;
   let nameFile = inpExportEl.value;
-
   inpExportEl.value == '' ? (nameFile = str) : undefined;
   linkDownloadEl.setAttribute('download', nameFile);
   inpExportEl.value = '';
 });
-const pFileName = document.querySelector('.filename');
-const inpImportEl = document.querySelector('.input-import');
 
+// import
 inpImportEl.addEventListener('change', (e) => {
   pFileName.innerText = e.target.files[0].name;
   document.querySelector('.placeholder').style.display = 'none';
 });
-
-function bySort(sortPar) {
-  return (a, b) => (a[sortPar] > b[sortPar] ? 1 : -1);
-}
-function bySortRev(sortPar) {
-  return (a, b) => (a[sortPar] < b[sortPar] ? 1 : -1);
-}
-let count = 0;
-document.querySelectorAll('.sort-table').forEach((sort) => {
-  sort.addEventListener('click', () => {
-    let sortValues = sort.dataset.sortValue;
-    let sortData;
-    count++;
-
-    if (count % 2) {
-      i == 1 || j == 1 || n == 1
-        ? (sortData = dataFilters.sort(bySort(sortValues)))
-        : (sortData = dataSlice.sort(bySort(sortValues)));
-
-      tableRender(sortData);
-    } else {
-      i == 1 || j == 1 || n == 1
-        ? (sortData = dataFilters.sort(bySortRev(sortValues)))
-        : (sortData = dataSlice.sort(bySortRev(sortValues)));
-
-      tableRender(sortData);
-    }
-  });
-});
-const main = document.querySelector('.main');
-document.querySelectorAll('.mobile-control__tab-name').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    tab.innerText !== 'АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ'
-      ? (main.style.display = 'none')
-      : (main.style.display = 'block');
-  });
-});
-
-document.querySelectorAll('.td-alt').forEach((td, indexTd) => {
-  document.querySelectorAll('.alt-name').forEach((altEl, indexAlt) => {
-    altEl.innerText == '' && indexTd == indexAlt ? td.classList.add('empty') : false;
+importBtnEl.addEventListener('click', () => {
+  popupImport.style.display = '';
+  const closeBtn = document.querySelectorAll('.popup-close');
+  closeBtn.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      popupImport.style.display = 'none';
+    });
   });
 });

@@ -458,9 +458,7 @@ class Navbar extends HTMLElement {
       const menu = document.querySelector('#navbar');
       menu.classList.remove('mobile-menu-wrapper_active');
     });
-
   }
 }
 
 customElements.define('navbar-elem', Navbar);
-

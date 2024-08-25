@@ -511,8 +511,3 @@ window.addEventListener('load', () => {
     });
   }
 });
-//  if (tabName.textContent !== 'Альтернативные учебные заведения') {
-//           document.body.style.display = 'none';
-//         } else {
-//           document.body.style.display = 'block';
-//         }

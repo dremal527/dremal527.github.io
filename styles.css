@@ -694,6 +694,7 @@ div.mobile-wrapper__input > div.hint {
 }
 .section__btn__menu {
   display: flex;
+  flex-wrap: wrap;
 }
 .btn__menu {
   border: 1px solid #cbcbcb;
@@ -707,7 +708,7 @@ div.mobile-wrapper__input > div.hint {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 20%;
   cursor: pointer;
   position: relative;
 }
@@ -754,9 +755,12 @@ div.mobile-wrapper__input > div.hint {
   height: 24px;
   margin-right: 2.5px;
 }
-
+.title-page__wrapper {
+  display: none;
+}
 .js-btn-deselect {
   color: #414141;
+  width: 100%;
 }
 .js-btn-deselect span {
   color: #d21c28 !important;
@@ -1091,7 +1095,14 @@ tr:hover {
 .control-edit.delete:hover {
   color: var(--blue);
 }
-
+.title-page__wrapper {
+  display: none;
+  font-size: 22px;
+  margin-top: 20px;
+  color: #414141;
+  font-weight: 700;
+  line-height: 137.02%;
+}
 .overlay {
   position: fixed;
   height: 100lvh;
@@ -1259,6 +1270,28 @@ h3 {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 30px;
+  position: relative;
+}
+
+.prompt-edit {
+  position: absolute;
+  top: 85%;
+  left: 35%;
+  display: none;
+}
+.edit-inp[data-invalid='true'] {
+  margin-bottom: 20px;
+}
+.prompt-edit > .icon {
+  margin-right: 10px;
+  font-size: 22px !important;
+  vertical-align: middle;
+}
+.prompt-edit-text {
+  color: rgb(209, 21, 33);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 137.02%;
 }
 .edit-label > input {
   border: 1px solid #c1c1c1;
@@ -1335,6 +1368,19 @@ h3 {
   font-size: 18px;
   padding: 0px 43px 0px 40px;
 }
+.input-search[data-search-value='alt2'] + .prompt-search {
+  text-transform: uppercase;
+}
+.input-search[data-search-value='abbr'],
+.input-search[data-search-value='alt1'],
+.input-search[data-search-value='alt2'],
+.input-search[data-search-value='alt3'],
+.input-search[data-search-value='alt4'],
+.input-search[data-search-value='alt5'],
+.input-search[data-search-value='alt6'],
+.prompt_upper {
+  text-transform: uppercase;
+}
 
 td > .btn-reset-search {
   position: absolute;
@@ -1376,7 +1422,7 @@ table {
 }
 .sort-table:hover {
   color: var(--blue);
-  text-decoration: underline dashed var(--blue);
+  text-decoration: underline dotted #09687e;
 }
 .sort-table {
   cursor: pointer;
@@ -1543,6 +1589,14 @@ td:nth-child(9) {
   border: 2px solid var(--blue);
   color: var(--blue);
 }
-.edit-inp:invalid {
+.edit-inp:invalid,
+.edit-inp[data-invalid='true'] {
   border: 2px solid #d11521;
+}
+
+.edit-inp::placeholder {
+  text-transform: none;
+}
+input::placeholder {
+  text-transform: none;
 }

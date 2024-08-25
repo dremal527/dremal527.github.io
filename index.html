@@ -15,11 +15,13 @@
   <body>
     <navbar-elem></navbar-elem>
     <mobile-ui></mobile-ui>
+
     <div class="container">
+      <div class="title-page__wrapper">
+        Журнал: АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ
+      </div>
       <div class="main">
         <div class="section__table__content top">
-          <h1>Альтернативные названия учебных заведений</h1>
-
           <div class="table__btn__wrapper">
             <button class="btn__table">Сокращенные юр. формы</button>
             <button class="btn__table">Все учебные заведения</button>
@@ -28,16 +30,12 @@
 
         <section class="section__btn__menu">
           <button class="btn__menu" data-value="введите дату начала поиска">
-            ДАТА ОТ<span class="btn__menu_value">23 СЕН 2024</span>
+            ДАТА ОТ<span class="btn__menu_value">23 СЕНТЯБРЯ 2024</span>
           </button>
           <button class="btn__menu" data-value="введите дату конца поиска">
-            ДАТА ДО<span class="btn__menu_value">30 СЕН 2024</span>
+            ДАТА ДО<span class="btn__menu_value">30 СЕНТЯБРЯ 2024</span>
           </button>
-
-          <button class="btn__menu js-btn-deselect" data-value="Удалить юридическую форму">
-            <span class="icon control-panel__segment-icon"></span>
-            DESELECT
-          </button>
+         
           <button class="btn__menu js-btn-total" data-value="">
             <span class="icon control-panel__segment-icon"></span>
             IN TOTAL: <span class="btn__menu_value js-total-value"></span>
@@ -49,6 +47,10 @@
           <button class="btn__menu js-popup-import" data-value="импортировать данные">
             <span class="icon control-panel__segment-icon"></span>
             IMPORT
+          </button>
+          <button class="btn__menu js-btn-deselect" data-value="Удалить юридическую форму">
+            <span class="icon control-panel__segment-icon"></span>
+            DESELECT
           </button>
         </section>
         <section class="section-select">
@@ -202,7 +204,7 @@
               placeholder="Быстрый поиск по Аббревиатуре, ИНН, году"
               data-search-value="abbr"
             />
-            <div class="prompt-search"></div>
+            <div class="prompt-search prompt_upper"></div>
             <button class="btn-search"><span class="icon loop"></span></button>
             <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
           </div>
@@ -274,7 +276,7 @@
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
                   <input type="text" class="input-search table" data-search-value="abbr" />
-                  <div class="prompt-search"></div>
+                  <div class="prompt-search prompt_upper"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
@@ -286,7 +288,7 @@
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
                   <input type="text" class="input-search table" data-search-value="alt1" />
-                  <div class="prompt-search"></div>
+                  <div class="prompt-search prompt_upper"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
@@ -298,25 +300,25 @@
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
                   <input type="text" class="input-search table" data-search-value="alt3" />
-                  <div class="prompt-search"></div>
+                  <div class="prompt-search prompt_upper"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
                   <input type="text" class="input-search table" data-search-value="alt4" />
-                  <div class="prompt-search"></div>
+                  <div class="prompt-search prompt_upper"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
                   <input type="text" class="input-search table" data-search-value="alt5" />
-                  <div class="prompt-search"></div>
+                  <div class="prompt-search prompt_upper"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
                 <td>
                   <div class="search-table"><span class="icon loop"></span></div>
                   <input type="text" class="input-search table" data-search-value="alt6" />
-                  <div class="prompt-search"></div>
+                  <div class="prompt-search prompt_upper"></div>
                   <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
                 </td>
               </tr>
@@ -404,7 +406,7 @@
     </div>
     <!-- редактировать -->
     <div class="overlay popup-edit" style="display: none">
-      <div class="popup popup-edit-wrapper">
+      <form class="popup popup-edit-wrapper">
         <div class="popup-close__wrapper">
           <button class="btn-close-popup popup-close"><span class="icon cross"></span></button>
         </div>
@@ -426,32 +428,60 @@
                 </div>
               </div>
               <label class="edit-label" data-edit-value="inn"
-                >ИНН <input class="edit-inp" type="number"
-              /></label>
-              <label class="edit-label" data-edit-value="fullName"
-                >Полное название <input type="text" class="edit-inp"
-              /></label>
+                >ИНН
+                <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" aria-invalid="false"
+              /> <div class="prompt-edit">
+                <span class="icon" style="color: red"></span>
+                <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+                 
+              </div>
+            </label>
+              <label class="edit-label " data-edit-value="fullName"
+                >Полное название
+                <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-invalid='false'
+              />
+              <div class="prompt-edit">
+                <span class="icon" style="color: red"></span>
+                <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+                  
+              </div>
+            </label>
               <label class="edit-label" data-edit-value="abbr"
-                >Аббревиатура <input type="text" class="edit-inp"
+                >Аббревиатура
+                <input type="text" class="edit-inp" placeholder="Введите аббревиатуру"
               /></label>
               <label class="edit-label" data-edit-value="year"
-                >Год <input type="number" class="edit-inp"
+                >Год
+                <input
+                  type="number"
+                  class="edit-inp year-inp"
+                  maxlength="4"
+                  min="1800"
+                  max="2024"
+                  placeholder="Введите год"
               /></label>
               <label class="edit-label" data-edit-value="alt1"
-                >Альтернативное название <input type="text" class="edit-inp"
-              /></label>
+                >Альтернативное название
+                <input
+                  type="text"
+                  class="edit-inp"
+                  placeholder="Введите альтернативное название №1"
+                />
+             
+              </label>
             </div>
           </div>
         </div>
 
         <button class="btn-add-alt">+ Добавить альтернативное</button>
         <div class="popup-buttons">
-          <button class="btn-save btn__main">Сохранить изменения</button>
+          <button class="btn-save btn__main" disabled>Сохранить изменения</button>
           <button class="btn-cancel btn__main popup-close">Отменить</button>
         </div>
-      </div>
+      </form>
     </div>
 
     <script src="scripts/app.js" type="module"></script>
+  
   </body>
 </html>
