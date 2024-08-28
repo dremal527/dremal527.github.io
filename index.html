@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Альтернативные учебные заведения</title>
-    <script src="scripts/utils/navbar.js"></script>
-    <script src="scripts/utils/mobile_control.js"></script>
+    <script src="scripts/utils/navbar.js" defer></script>
+    <script src="scripts/utils/mobile_control.js"defer></script>
+
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/media.css" />
   </head>
@@ -189,7 +190,7 @@
               data-search-value="id"
             />
             <div class="prompt-search"></div>
-            <button class="btn-search"><span class="icon loop"></span></button>
+            <div class="btn-search search-table"><span class="icon loop"></span></div>
             <button class="btn-reset-search">
               <span class="litle-cross icon"></span>
             </button>
@@ -202,7 +203,7 @@
               data-search-value="abbr"
             />
             <div class="prompt-search prompt_upper"></div>
-            <button class="btn-search"><span class="icon loop"></span></button>
+            <div class="btn-search search-table"><span class="icon loop"></span></div>
             <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
           </div>
           <div class="search-wrapper">
@@ -213,7 +214,7 @@
               data-search-value="fullName"
             />
             <div class="prompt-search"></div>
-            <button class="btn-search"><span class="icon loop"></span></button>
+            <div class="btn-search search-table"><span class="icon loop"></span></div>
             <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
           </div>
           <div class="search-wrapper">
@@ -224,9 +225,9 @@
               data-search-value="alt1"
             />
             <div class="prompt-search"></div>
-            <button class="btn-search">
+            <div class="btn-search search-table">
               <span class="icon loop"></span>
-            </button>
+            </div>
             <button class="btn-reset-search"><span class="litle-cross icon"></span></button>
           </div>
         </section>
@@ -321,6 +322,7 @@
               </tr>
 
               <tbody class="tr-wrapper"></tbody>
+              
             </table>
           </section>
         </section>
@@ -480,7 +482,7 @@
         </div>
       </form>
     </div>
-
-    <script src="scripts/app.js" type="module"></script>
+    <script src="scripts/app.js" type="module" ></script>
+  
   </body>
 </html>

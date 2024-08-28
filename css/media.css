@@ -232,6 +232,15 @@
     width: 35px;
   }
 }
+@media (width > 880px) {
+  .td-num {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+  }
+}
 @media (width <= 880px) {
   tbody {
     display: flex;
@@ -911,6 +920,7 @@
   .table_mobile-tfoot {
     display: flex;
     justify-content: center;
+    order: 1;
   }
   .table_mobile-tfoot > * {
     padding: 15px;

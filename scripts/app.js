@@ -41,9 +41,10 @@ const promptSpanIdArr = document.querySelectorAll('.js-edit-id');
 const promptEditArr = document.querySelectorAll('.prompt-edit');
 const pFileName = document.querySelector('.filename');
 const inpImportEl = document.querySelector('.input-import');
+let dataPrev = [];
 let regionValueInput;
 let scrollPosition;
-let dataSlice = data.slice(0, 50);
+let dataSlice = data.slice(0);
 let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
 let count = 0;
@@ -58,12 +59,12 @@ let j = 0;
 let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
 let countAllCheckbox = 0;
+let renderTableHTML = '';
 function checkUndef(prop) {
   if (prop === undefined) {
     return '';
   } else return prop;
 }
-
 // Scroll position
 window.addEventListener('scroll', () => {
   scrollPosition = window.scrollY;
@@ -72,121 +73,200 @@ window.addEventListener('scroll', () => {
 window.onload = () => {
   window.scrollTo({ top: scroll });
 };
+
 //Render table
 function tableRender(dataValue) {
   const tbodyWrapperEl = document.querySelector('.tr-wrapper');
   tbodyWrapperEl.innerHTML = '';
-  // Render HTML
+  renderTableHTML = '';
+
   dataValue.forEach((school, index) => {
-    return (tbodyWrapperEl.innerHTML += `
-      <tr class="tr-school" data-value-id="${school.id}" >
+    let trEl = document.createElement('tr');
+    trEl.classList.add('tr-school');
+    let htmlThead = `
         <td class="table_mobile-thead">
         <div class="thead-container"> 
          <div class="thead-mobile-name">${school.fullName}</div>
           <div class="icons-wrapper-thead">
             <div class="thead-icon">
-              <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${
-                school.id
-              }">
+              <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
                 <span class="icon control-edit edit" ></span>
               </div>
             </div>
             <div class="thead-icon">
-              <div class="table-icon del-btn" data-value="Удалить" data-value-id="${
-                school.id
-              }" data-full-name="${school.fullName}">
+              <div class="table-icon del-btn" data-value="Удалить" data-value-id="${school.id}" data-full-name="${school.fullName}">
                 <span class="icon control-edit delete"></span>
               </div>
             </div>
           </div>
         </div>
       </td>
-        <td data-prop="№">
-          <div class="td-name">№</div>
-          <p>${index + 1}</p>
-          <p class="table__value__id">${school.id}</p>
-        </td>
-        <td class="td-wrapper-icon">
-          <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
-            <span class="icon control-edit edit" ></span>
-          </div>
-        </td>
-        <td class="td-wrapper-icon" >
-          <div class="table-icon del-btn" data-value="Удалить" data-value-id="${
-            school.id
-          }" data-full-name="${school.fullName}">
-            <span class="icon control-edit delete"></span>
-          </div>
-        </td>
-        <td>
-        <div class="td-name">ИНН\nАббревиатура\nГод</div>
-        <div>
-        <p>${checkUndef(school.inn)}</p>
-          <p class="table__abbr">${checkUndef(school.abbr)}</p>
-          <p class="table__year">${checkUndef(school.year)}</p>
-        </div>
-        </td>
-        <td>
-          <div class="td-name">Полное название</div>
-          <p class="fullname"> ${school.fullName}</p>
-        </td>
-        <td class="td-alt">
-        <div class="td-name">Альтернативное\nназвание</div>
-          <div class="alt-name">
-            <p>${checkUndef(school.alt1)}</p>
-            <p class="table__year">${checkUndef(school.year1)}</p>
-          </div>
-        </td>
-        <td class="td-alt">
-        <div class="td-name">Альтернативное\nназвание</div>
-          <div class="alt-name">
-            <p>${checkUndef(school.alt2)}</p>
-            <p class="table__year">${checkUndef(school.year2)}</p>
-          </div>
-        </td>
-        <td class="td-alt">
-        <div class="td-name">Альтернативное\nназвание</div>
-          <div class="alt-name">
-            <p>${checkUndef(school.alt3)}</p>
-            <p class="table__year">${checkUndef(school.year3)}</p>
-          </div>
-        </td>
-        <td class="td-alt">
-        <div class="td-name">Альтернативное\nназвание</div>
-          <div class="alt-name">
-            <p>${checkUndef(school.alt4)}</p>
-            <p class="table__year">${checkUndef(school.year4)}</p>
-          </div>
-        </td>
-        <td class="td-alt">
-        <div class="td-name">Альтернативное\nназвание</div>
-          <div class="alt-name">
-            <p>${checkUndef(school.alt5)}</p>
-            <p class="table__year">${checkUndef(school.year5)}</p>
-          </div>
-        </td>
-        <td class="td-alt">
-        <div class="td-name">Альтернативное\nназвание</div>
-          <div class="alt-name">
-            <p>${checkUndef(school.alt6)}</p>
-            <p class="table__year">${checkUndef(school.year6)}</p>
-          </div>
-        </td>
-        <td class="table_mobile-tfoot">
-           <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
-            <span class="icon control-edit edit" ></span>
-          </div>
-           <div class="table-icon del-btn" data-value="Удалить" data-value-id="${
-             school.id
-           }" data-full-name="${school.fullName}">
-            <span class="icon control-edit delete"></span>
-          </div>
-        </td>
-    </tr>
-    `);
+    `;
+
+    let htmlTdNum = `<td data-prop="№">
+      <div class="td-name">№</div>
+      <p class="td-num">${index + 1}</p>
+      <p class="table__value__id">${school.id}</p>
+      </td>
+      <td class="td-wrapper-icon">
+      <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
+        <span class="icon control-edit edit" ></span>
+      </div>
+      </td>
+      <td class="td-wrapper-icon" >
+      <div class="table-icon del-btn" data-value="Удалить" data-value-id="${
+        school.id
+      }" data-full-name="${school.fullName}">
+        <span class="icon control-edit delete"></span>
+      </div>
+      </td>`;
+    let htmlTdInfoAndFullNames = `   
+      <td>
+      <div class="td-name">ИНН\nАббревиатура\nГод</div>
+      <div>
+      <p>${checkUndef(school.inn)}</p>
+      <p class="table__abbr">${checkUndef(school.abbr)}</p>
+      <p class="table__year">${checkUndef(school.year)}</p>
+      </div>
+      </td>
+      <td>
+      <div class="td-name">Полное название</div>
+      <p class="fullname"> ${school.fullName}</p>
+      </td>
+    `;
+    let htmlTfoot = `
+    <td class="table_mobile-tfoot">
+    <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
+      <span class="icon control-edit edit" ></span>
+    </div>
+    <div class="table-icon del-btn" data-value="Удалить" data-value-id="${school.id}" data-full-name="${school.fullName}">
+      <span class="icon control-edit delete"></span>
+    </div>
+    </td>`;
+
+    setTimeout(() => {
+      let altName1 = document.createElement('td');
+      altName1.classList.add('td-alt');
+      let tdTitleMobile = document.createElement('div');
+      tdTitleMobile.classList.add('td-name');
+      tdTitleMobile.innerText = `Альтернативное\nназвание`;
+      altName1.append(tdTitleMobile);
+      let altNameValues = document.createElement('div');
+      altName1.append(altNameValues);
+      altNameValues.classList.add('alt-name');
+      let pNameAlt = document.createElement('p');
+      let pYearAlt = document.createElement('p');
+      pYearAlt.classList.add('table__year');
+      pNameAlt.innerText = `${checkUndef(school.alt1)}`;
+      pYearAlt.innerText = `${checkUndef(school.year1)}`;
+
+      altNameValues.append(pNameAlt);
+      altNameValues.append(pYearAlt);
+      trEl.append(altName1);
+      let altName2 = document.createElement('td');
+      altName2.classList.add('td-alt');
+      let tdTitleMobile2 = document.createElement('div');
+      tdTitleMobile2.classList.add('td-name');
+      tdTitleMobile2.innerText = `Альтернативное\nназвание`;
+      altName2.append(tdTitleMobile2);
+      let altNameValues2 = document.createElement('div');
+      altName2.append(altNameValues2);
+      altNameValues2.classList.add('alt-name');
+      let pNameAlt2 = document.createElement('p');
+      let pYearAlt2 = document.createElement('p');
+      pYearAlt2.classList.add('table__year');
+      pNameAlt2.innerText = `${checkUndef(school.alt2)}`;
+      pYearAlt2.innerText = `${checkUndef(school.year2)}`;
+      altNameValues2.append(pNameAlt2);
+      altNameValues2.append(pYearAlt2);
+      trEl.append(altName2);
+    }, 0);
+    setTimeout(() => {
+      let altName3 = document.createElement('td');
+      altName3.classList.add('td-alt');
+      let tdTitleMobile3 = document.createElement('div');
+      tdTitleMobile3.classList.add('td-name');
+      tdTitleMobile3.innerText = `Альтернативное\nназвание`;
+      altName3.append(tdTitleMobile3);
+      let altNameValues3 = document.createElement('div');
+      altName3.append(altNameValues3);
+      altNameValues3.classList.add('alt-name');
+      let pNameAlt3 = document.createElement('p');
+      let pYearAlt3 = document.createElement('p');
+      pYearAlt3.classList.add('table__year');
+      pNameAlt3.innerText = `${checkUndef(school.alt3)}`;
+      pYearAlt3.innerText = `${checkUndef(school.year3)}`;
+      altNameValues3.append(pNameAlt3);
+      altNameValues3.append(pYearAlt3);
+      trEl.append(altName3);
+      let altName4 = document.createElement('td');
+      altName4.classList.add('td-alt');
+      let tdTitleMobile4 = document.createElement('div');
+      tdTitleMobile4.classList.add('td-name');
+      tdTitleMobile4.innerText = `Альтернативное\nназвание`;
+      altName4.append(tdTitleMobile4);
+      let altNameValues4 = document.createElement('div');
+      altName4.append(altNameValues4);
+      altNameValues4.classList.add('alt-name');
+      let pNameAlt4 = document.createElement('p');
+      let pYearAlt4 = document.createElement('p');
+      pYearAlt4.classList.add('table__year');
+      pNameAlt4.innerText = `${checkUndef(school.alt4)}`;
+      pYearAlt4.innerText = `${checkUndef(school.year4)}`;
+      altNameValues4.append(pNameAlt4);
+      altNameValues4.append(pYearAlt4);
+      trEl.append(altName4);
+    }, 2);
+    setTimeout(() => {
+      let altName5 = document.createElement('td');
+      altName5.classList.add('td-alt');
+      let tdTitleMobile5 = document.createElement('div');
+      tdTitleMobile5.classList.add('td-name');
+      tdTitleMobile5.innerText = `Альтернативное\nназвание`;
+      altName5.append(tdTitleMobile5);
+      let altNameValues5 = document.createElement('div');
+      altName5.append(altNameValues5);
+      altNameValues5.classList.add('alt-name');
+      let pNameAlt5 = document.createElement('p');
+      let pYearAlt5 = document.createElement('p');
+      pYearAlt5.classList.add('table__year');
+      pNameAlt5.innerText = `${checkUndef(school.alt5)}`;
+      pYearAlt5.innerText = `${checkUndef(school.year5)}`;
+      altNameValues5.append(pNameAlt5);
+      altNameValues5.append(pYearAlt5);
+      trEl.append(altName5);
+      let altName6 = document.createElement('td');
+      altName6.classList.add('td-alt');
+      let tdTitleMobile6 = document.createElement('div');
+      tdTitleMobile6.classList.add('td-name');
+      tdTitleMobile6.innerText = `Альтернативное\nназвание`;
+      altName6.append(tdTitleMobile6);
+      let altNameValues6 = document.createElement('div');
+      altName6.append(altNameValues6);
+      altNameValues6.classList.add('alt-name');
+      let pNameAlt6 = document.createElement('p');
+      let pYearAlt6 = document.createElement('p');
+      pYearAlt6.classList.add('table__year');
+      pNameAlt6.innerText = `${checkUndef(school.alt6)}`;
+      pYearAlt6.innerText = `${checkUndef(school.year6)}`;
+      altNameValues6.append(pNameAlt6);
+      altNameValues6.append(pYearAlt6);
+      trEl.append(altName6);
+    }, 7);
+    setTimeout(() => {
+      document.querySelectorAll('.alt-name').forEach((el) => {
+        el.innerText == '' ? el.parentNode.classList.add('empty') : false;
+      });
+    }, 10);
+
+    trEl.setAttribute('data-value-id', school.id);
+    trEl.insertAdjacentHTML('beforeend', htmlThead);
+    trEl.insertAdjacentHTML('beforeend', htmlTdNum);
+    trEl.insertAdjacentHTML('beforeend', htmlTdInfoAndFullNames);
+    trEl.insertAdjacentHTML('beforeend', htmlTfoot);
+    tbodyWrapperEl.append(trEl);
   });
 
-  //edit btn table
   editBtnArr = document.querySelectorAll('.edit-btn');
   editBtnArr.forEach((edit) => {
     edit.addEventListener('click', () => {
@@ -407,6 +487,10 @@ btnApply.addEventListener('click', () => {
     true;
   } else {
     let regTypeSchool = new RegExp(arrFiltersType.join('').replaceAll(', ', '|'), 'gi');
+    i == 1
+      ? (dataPrev = dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
+      : (dataPrev = dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
+
     i == 1 || n == 1
       ? tableRender(dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
       : tableRender(dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
@@ -499,6 +583,7 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
     inp.value = '';
     inp.checked = false;
     dataFilters = [];
+    dataPrev = [];
     dataSlice = data.slice(0, 50);
     i = 0;
     j = 0;
@@ -578,14 +663,6 @@ document.querySelectorAll('.third-panel__tab').forEach((tab) => {
       : (main.style.display = 'none');
   });
 });
-
-//Empty td hidden in mobile
-document.querySelectorAll('.td-alt').forEach((td, indexTd) => {
-  document.querySelectorAll('.alt-name').forEach((altEl, indexAlt) => {
-    altEl.innerText == '' && indexTd == indexAlt ? td.classList.add('empty') : false;
-  });
-});
-
 // Render tabName
 document.querySelectorAll('.third-panel__tab').forEach((tab) => {
   tab.addEventListener('click', () => {
@@ -680,6 +757,10 @@ inpRegion.addEventListener('input', () => {
       inpRegion.value = btn.innerText;
       regionValueInput = inpRegion.value;
       selectResetArr[1].style.display = 'block';
+      j == 1
+        ? (dataPrev = dataFilters.filter((school) => school.address.match(regionValueInput)))
+        : dataPrev.filter((school) => school.address.match(regionValueInput));
+
       j == 1 || n == 1
         ? tableRender(dataFilters.filter((school) => school.address.match(regionValueInput)))
         : tableRender(dataSlice.filter((school) => school.address.match(regionValueInput)));
@@ -708,14 +789,14 @@ btnRegionArr.forEach((btn) => {
 searchInput.forEach((inp, indexInp) => {
   btnSearchResetArr.forEach((reset, indexReset) => {
     reset.addEventListener('click', () => {
+      dataFilters = dataSlice;
+      n = 0;
+      tableRender(dataSlice);
       selectResetArr.forEach((el) => (el.style.display = 'none'));
       btnSearchResetArr.forEach((el) => (el.style.display = 'none'));
       loopIconsArr.forEach((icon) => (icon.style.display = 'block'));
       document.querySelectorAll('input').forEach((inp) => (inp.value = ''));
       inp.style.padding = '0px 43px 0px 40px';
-      n = 0;
-      dataFilters = dataSlice;
-      tableRender(dataSlice);
     });
     indexReset == indexInp && inp.value == '' ? (reset.style.display = 'none') : false;
   });
@@ -730,13 +811,13 @@ promptSearchArr.forEach((promptEl) => {
 searchInput.forEach((inp, indexInp) => {
   loopIconsArr.forEach((icon, iconIndex) => {
     inp.addEventListener('blur', () => {
-      if (iconIndex + 4 == indexInp && inp.value == '') {
+      if (iconIndex == indexInp && inp.value == '') {
         icon.style.display = 'block';
       }
     });
     inp.addEventListener('input', () => {
       inp.value == '' ? (inp.style.padding = '0px 43px 0px 40px') : false;
-      if (iconIndex + 4 == indexInp && inp.value != '') {
+      if (iconIndex == indexInp && inp.value != '') {
         icon.style.display = 'none';
         inp.style.padding = '0px 43px 0px 11px';
       }
@@ -755,60 +836,61 @@ searchInput.forEach((inp, indexInp) => {
         promptEl.style.display = 'block';
         inp.value == '' ? inp.blur() : false;
         let searchId = inp.dataset.searchValue;
-        let valueInput =
-          inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1);
+        let valueInput = '';
+        inp.value !== ''
+          ? (valueInput =
+              inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
+          : (valueInput = '');
         valueInput == '*' ? (valueInput = undefined) : false;
         let valuesSearchHTML = '';
-        let regSearch = new RegExp(valueInput, 'gi');
-        let regHighlight = new RegExp(valueInput == '//' ? '' : valueInput, 'gi');
-
-        searchId == 'fullName'
-          ? (regHighlight = new RegExp(valueInput == '//' ? '' : valueInput, 'g'))
-          : false;
+        let regSearch = new RegExp('^' + valueInput, 'gi');
+        let regHighlight = new RegExp(valueInput, 'gi');
+        searchId == 'fullName' ? (regHighlight = new RegExp(valueInput, 'g')) : false;
         if (i == 1 || j == 1 || n == 1) {
           let textHighlight = '';
           let textOriginal = '';
           let replaceText = '';
-
-          dataFilters = dataFilters
-            .filter((el) => String(el[searchId]).match(regSearch))
-            .slice(0, 6);
-          dataFilters.forEach((el) => {
-            textHighlight = String(el[searchId]).match(regHighlight).join('');
-
-            textOriginal = String(el[searchId]).toLowerCase();
-            replaceText = textOriginal
-              .replace(
-                textHighlight.toLowerCase(),
-                `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
-              )
-              .replaceAll(',', '');
-
-            valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
-            promptEl.innerHTML = valuesSearchHTML;
-          });
-
-          if (valueInput == '') {
-            tableRender(dataFilters);
+          if (valueInput == '' || inp.value === undefined) {
+            searchInput.forEach((el) => (el.value = ''));
+            btnSearchResetArr.forEach((reset) => (reset.style.display = 'none'));
+            loopIconsArr.forEach((icon) => (icon.style.display = 'block'));
             promptEl.style.display = 'none';
-          }
-          document.querySelectorAll('.search-value').forEach((el) => {
-            el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
-            el.addEventListener('click', () => {
-              n = 1;
-              inp.value = el.textContent;
-              valueInput = el.textContent;
-              inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
-              regSearch = new RegExp('^' + valueInput, 'gi');
-              promptEl.style.display = 'none';
-              dataFilters = dataSlice
-                .filter((el) => String(el[searchId]).match(regSearch))
-                .slice(0, 6);
-              tableRender(
-                dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6)
-              );
+            inp.blur();
+            n = 0;
+            if (j == 1 || i == 1) {
+              tableRender(dataPrev);
+            } else tableRender(dataSlice);
+          } else {
+            let currentData = dataFilters;
+            currentData
+              .filter((el) => String(el[searchId]).match(regSearch))
+              .slice(0, 6)
+              .forEach((el) => {
+                textHighlight = String(el[searchId]).match(regHighlight).join('');
+                textOriginal = String(el[searchId]).toLowerCase();
+                replaceText = textOriginal
+                  .replace(
+                    textHighlight.toLowerCase(),
+                    `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+                  )
+                  .replaceAll(',', '');
+                valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
+                promptEl.innerHTML = valuesSearchHTML;
+              });
+            document.querySelectorAll('.search-value').forEach((el) => {
+              el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
+              el.addEventListener('click', () => {
+                n = 1;
+                inp.value = el.textContent;
+                valueInput = el.textContent;
+                regSearch = new RegExp('^' + valueInput, 'gi');
+                inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
+                promptEl.style.display = 'none';
+                tableRender(dataFilters.filter((el) => String(el[searchId]).match(regSearch)));
+              });
             });
-          });
+            valueInput == '' ? tableRender(dataFilters) : false;
+          }
         } else {
           let textHighlight = '';
           let textOriginal = '';
@@ -818,7 +900,6 @@ searchInput.forEach((inp, indexInp) => {
             .slice(0, 6)
             .forEach((el) => {
               textHighlight = String(el[searchId]).match(regHighlight).join('');
-
               textOriginal = String(el[searchId]).toLowerCase();
               replaceText = textOriginal
                 .replace(
@@ -842,16 +923,11 @@ searchInput.forEach((inp, indexInp) => {
               inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
               regSearch = new RegExp('^' + valueInput, 'gi');
               promptEl.style.display = 'none';
-              dataFilters = dataSlice
-                .filter((el) => String(el[searchId]).match(regSearch))
-                .slice(0, 6);
-              tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch))).slice(
-                0,
-                6
-              );
+              dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
+              tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
             });
           });
-          tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)).slice(0, 6));
+          tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
           valueInput == '' ? tableRender(dataSlice) : false;
         }
       }
