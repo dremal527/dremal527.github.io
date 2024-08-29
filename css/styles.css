@@ -881,7 +881,7 @@ td:first-child > .search-table {
   font-size: 18px;
   max-width: 190px;
   top: 100%;
-  left: -200%;
+  left: -85px;
   z-index: 1000;
 }
 .td-wrapper-icon > .table-icon:hover::before {
@@ -925,7 +925,7 @@ td:first-child > .search-table {
 }
 .filter-value > label {
   color: #414141;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 148.02%;
   display: flex;
   justify-content: space-between;
@@ -950,7 +950,7 @@ td:first-child > .search-table {
   color: #fff !important;
 }
 .td-wrapper-icon:nth-child(even) > .table-icon:hover::after {
-  left: -110% !important;
+  left: -23px !important;
 }
 .td-wrapper-icon:nth-child(even) > .table-icon:hover::before {
   left: 33.333% !important;
@@ -1347,11 +1347,24 @@ h3 {
   position: relative;
 }
 .popup-edit-wrapper > .popup-close__wrapper {
+  position: fixed;
+  width: auto;
+  right: 187px;
   height: 80px;
   background-color: #414f51;
 }
 .popup-edit-wrapper > .popup-close__wrapper > .btn-close-popup {
-  right: 50px;
+  right: 0;
+}
+.table__year:empty::before {
+  content: 'До ' attr(data-prev-value);
+  text-transform: none;
+}
+.empty > .alt-name .table__year:empty::before {
+  content: '';
+}
+.empty > .alt-name .table__year {
+  color: rgba(0, 0, 0, 0);
 }
 .input-search.table {
   position: absolute;
@@ -1461,6 +1474,7 @@ tr {
   vertical-align: sub;
 }
 .table__year,
+.table__year-name,
 .table__value__id {
   position: absolute;
   bottom: 10%;
@@ -1484,7 +1498,6 @@ td:nth-child(1) {
 td:nth-child(4) {
   width: 15%;
 }
-
 td:nth-child(5) {
   width: 20%;
   word-break: break-word;
@@ -1505,10 +1518,10 @@ td:nth-child(9) {
 .td-name {
   display: none;
 }
-.alt-name,
 .table__abbr {
-  text-transform: uppercase;
+  padding-bottom: 40px;
 }
+
 .table_mobile-thead {
   display: none;
 }

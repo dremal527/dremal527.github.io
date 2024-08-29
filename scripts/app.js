@@ -35,19 +35,21 @@ const inputArr = document.querySelectorAll('input');
 const main = document.querySelector('.main');
 const inpExportEl = document.querySelector('.input-export');
 const linkDownloadEl = document.querySelector('.link-download');
-const inpFullName = document.querySelector('.edit-fullname');
-const inpInn = document.querySelector('.edit-inn');
-const promptSpanIdArr = document.querySelectorAll('.js-edit-id');
-const promptEditArr = document.querySelectorAll('.prompt-edit');
+let inpFullName = document.querySelector('.edit-fullname');
+let inpInn = document.querySelector('.edit-inn');
+
 const pFileName = document.querySelector('.filename');
 const inpImportEl = document.querySelector('.input-import');
 let dataPrev = [];
+let inputEditsHTML = '';
+let inputEditsWrapper = [];
 let regionValueInput;
 let scrollPosition;
 let dataSlice = data.slice(0);
 let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
 let count = 0;
+let matchingTr = [];
 let n = 0;
 let countAddALtClick = 1;
 let newALtNameFormHTML = '';
@@ -60,6 +62,11 @@ let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
 let countAllCheckbox = 0;
 let renderTableHTML = '';
+function checkAbbr(abbr, fullName) {
+  if (abbr == undefined) {
+    return fullName;
+  } else return abbr;
+}
 function checkUndef(prop) {
   if (prop === undefined) {
     return '';
@@ -102,7 +109,6 @@ function tableRender(dataValue) {
         </div>
       </td>
     `;
-
     let htmlTdNum = `<td data-prop="№">
       <div class="td-name">№</div>
       <p class="td-num">${index + 1}</p>
@@ -125,8 +131,8 @@ function tableRender(dataValue) {
       <div class="td-name">ИНН\nАббревиатура\nГод</div>
       <div>
       <p>${checkUndef(school.inn)}</p>
-      <p class="table__abbr">${checkUndef(school.abbr)}</p>
-      <p class="table__year">${checkUndef(school.year)}</p>
+      <p class="table__abbr">${checkAbbr(school.abbr, school.fullName)}</p>
+      <p class="table__year-name">${checkUndef(school.year)}</p>
       </div>
       </td>
       <td>
@@ -156,10 +162,10 @@ function tableRender(dataValue) {
       altNameValues.classList.add('alt-name');
       let pNameAlt = document.createElement('p');
       let pYearAlt = document.createElement('p');
+      pYearAlt.dataset.prevValue = checkUndef(school.year);
       pYearAlt.classList.add('table__year');
       pNameAlt.innerText = `${checkUndef(school.alt1)}`;
       pYearAlt.innerText = `${checkUndef(school.year1)}`;
-
       altNameValues.append(pNameAlt);
       altNameValues.append(pYearAlt);
       trEl.append(altName1);
@@ -177,6 +183,7 @@ function tableRender(dataValue) {
       pYearAlt2.classList.add('table__year');
       pNameAlt2.innerText = `${checkUndef(school.alt2)}`;
       pYearAlt2.innerText = `${checkUndef(school.year2)}`;
+      pYearAlt2.dataset.prevValue = checkUndef(school.year1);
       altNameValues2.append(pNameAlt2);
       altNameValues2.append(pYearAlt2);
       trEl.append(altName2);
@@ -193,6 +200,7 @@ function tableRender(dataValue) {
       altNameValues3.classList.add('alt-name');
       let pNameAlt3 = document.createElement('p');
       let pYearAlt3 = document.createElement('p');
+      pYearAlt3.dataset.prevValue = checkUndef(school.year2);
       pYearAlt3.classList.add('table__year');
       pNameAlt3.innerText = `${checkUndef(school.alt3)}`;
       pYearAlt3.innerText = `${checkUndef(school.year3)}`;
@@ -213,10 +221,11 @@ function tableRender(dataValue) {
       pYearAlt4.classList.add('table__year');
       pNameAlt4.innerText = `${checkUndef(school.alt4)}`;
       pYearAlt4.innerText = `${checkUndef(school.year4)}`;
+      pYearAlt4.dataset.prevValue = checkUndef(school.year3);
       altNameValues4.append(pNameAlt4);
       altNameValues4.append(pYearAlt4);
       trEl.append(altName4);
-    }, 2);
+    }, 4);
     setTimeout(() => {
       let altName5 = document.createElement('td');
       altName5.classList.add('td-alt');
@@ -232,6 +241,7 @@ function tableRender(dataValue) {
       pYearAlt5.classList.add('table__year');
       pNameAlt5.innerText = `${checkUndef(school.alt5)}`;
       pYearAlt5.innerText = `${checkUndef(school.year5)}`;
+      pYearAlt5.dataset.prevValue = checkUndef(school.year4);
       altNameValues5.append(pNameAlt5);
       altNameValues5.append(pYearAlt5);
       trEl.append(altName5);
@@ -249,6 +259,7 @@ function tableRender(dataValue) {
       pYearAlt6.classList.add('table__year');
       pNameAlt6.innerText = `${checkUndef(school.alt6)}`;
       pYearAlt6.innerText = `${checkUndef(school.year6)}`;
+      pYearAlt6.dataset.prevValue = checkUndef(school.year5);
       altNameValues6.append(pNameAlt6);
       altNameValues6.append(pYearAlt6);
       trEl.append(altName6);
@@ -257,7 +268,7 @@ function tableRender(dataValue) {
       document.querySelectorAll('.alt-name').forEach((el) => {
         el.innerText == '' ? el.parentNode.classList.add('empty') : false;
       });
-    }, 10);
+    }, 8);
 
     trEl.setAttribute('data-value-id', school.id);
     trEl.insertAdjacentHTML('beforeend', htmlThead);
@@ -267,35 +278,325 @@ function tableRender(dataValue) {
     tbodyWrapperEl.append(trEl);
   });
 
+  //Btn edit
   editBtnArr = document.querySelectorAll('.edit-btn');
   editBtnArr.forEach((edit) => {
     edit.addEventListener('click', () => {
-      let inpNewValues = document.querySelectorAll('.edit-inp');
-      inpNewValues.forEach((el) => (el.value = ''));
+      btnAddAltEl.disabled = false;
       idTrTable = edit.dataset.valueId;
+      matchingTr = dataSlice.filter((el) => el.id == idTrTable);
+      let valuesCount = +matchingTr.map((el) => Object.keys(el).length).join('');
+      inputEditsWrapper = document.querySelector('.popup-edit-content-wrapper');
+      matchingTr.forEach((trValue) => {
+        if (valuesCount == 17) {
+          countAddALtClick = 6;
+        } else if (valuesCount == 7) {
+          countAddALtClick == 1;
+        } else if (valuesCount == 9) {
+          countAddALtClick == 2;
+        } else if (valuesCount == 11) {
+          countAddALtClick == 3;
+        } else if (valuesCount == 13) {
+          countAddALtClick == 4;
+        } else if (valuesCount == 15) {
+          countAddALtClick == 5;
+        }
+        inputEditsHTML = `
+        <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
+       <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}"
+         >ИНН
+         <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn" value="${
+           trValue.inn
+         }"
+       /> <div class="prompt-edit">
+         <span class="icon" style="color: #D11521"></span>
+         <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+           
+       </div>
+     </label>
+       <label class="edit-label " data-edit-value="fullName"
+         >Полное название
+         <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName" value="${
+           trValue.fullName
+         }"
+       />
+       <div class="prompt-edit">
+         <span class="icon" style="color: #D11521"></span>
+         <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+       </div>
+     </label>
+       <label class="edit-label" data-edit-value="abbr"
+         >Аббревиатура
+         <input type="text" class="edit-inp" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${
+           trValue.abbr
+         }"
+       /></label>
+       <label class="edit-label" data-edit-value="year"
+         >Год
+         <input
+           type="number"
+           class="edit-inp year-inp"
+           maxlength="4"
+           min="1800"
+           max="2024"
+           placeholder="Введите год"
+           pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(trValue.year)}"
+       /></label>
+       <label class="edit-label" data-edit-value="alt1"
+         >Альтернативное название
+         <input
+           type="text"
+           class="edit-inp"
+           placeholder="Введите альтернативное название №1" data-edit-value="year" value="${checkUndef(
+             trValue.alt1
+           )}"
+         />
+       </label>
+     </div>
+        `;
+        matchingId = trValue.id;
+      });
+      inputEditsWrapper.innerHTML = inputEditsHTML;
+      if (valuesCount == 17) {
+        for (let k = 1; k < 6; k++) {
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+                  <div
+                    class="input__wrapper"
+                    style="flex-direction: column; align-items: flex-start">
+                    <div class="popup-value__title">
+                      <h3>Альтернативное название №${k + 1}</h3>
+                      <div
+                        class="table-icon del-alt-name js-edit-btn-altDel"
+                        data-value="Удалить"
+                        data-edit-altDel="${k}">
+                        <span class="icon control-edit delete"></span>
+                      </div>
+                    </div>
+                      <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
+                      <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+                class="edit-inp year-inp" data-edit-value="alt${
+                  k - 1
+                } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+                  </div>
+                    </div>`
+          );
+        }
+      } else if (valuesCount == 9) {
+        for (let k = 1; k < 2; k++) {
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+                  <div
+                    class="input__wrapper"
+                    style="flex-direction: column; align-items: flex-start">
+                    <div class="popup-value__title">
+                      <h3>Альтернативное название №${k + 1}</h3>
+                      <div
+                        class="table-icon del-alt-name js-edit-btn-altDel"
+                        data-value="Удалить"
+                        data-edit-altDel="${k}">
+                        <span class="icon control-edit delete"></span>
+                      </div>
+                    </div>
+                      <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
+                      <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+                class="edit-inp year-inp" data-edit-value="alt${
+                  k - 1
+                } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+                  </div>
+                    </div>`
+          );
+        }
+      } else if (valuesCount == 11) {
+        for (let k = 1; k < 3; k++) {
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+                <div
+                  class="input__wrapper"
+                  style="flex-direction: column; align-items: flex-start">
+                  <div class="popup-value__title">
+                    <h3>Альтернативное название №${k + 1}</h3>
+                    <div
+                      class="table-icon del-alt-name js-edit-btn-altDel"
+                      data-value="Удалить"
+                      data-edit-altDel="${k}">
+                      <span class="icon control-edit delete"></span>
+                    </div>
+                  </div>
+                    <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
+                    <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+              class="edit-inp year-inp" data-edit-value="alt${
+                k - 1
+              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+                </div>
+                  </div>`
+          );
+        }
+      } else if (valuesCount == 13) {
+        for (let k = 1; k < 4; k++) {
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+                <div
+                  class="input__wrapper"
+                  style="flex-direction: column; align-items: flex-start">
+                  <div class="popup-value__title">
+                    <h3>Альтернативное название №${k + 1}</h3>
+                    <div
+                      class="table-icon del-alt-name js-edit-btn-altDel"
+                      data-value="Удалить"
+                      data-edit-altDel="${k}">
+                      <span class="icon control-edit delete"></span>
+                    </div>
+                  </div>
+                    <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
+                    <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+              class="edit-inp year-inp" data-edit-value="alt${
+                k - 1
+              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+                </div>
+                  </div>`
+          );
+        }
+      } else if (valuesCount == 15) {
+        for (let k = 1; k < 5; k++) {
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+                <div
+                  class="input__wrapper"
+                  style="flex-direction: column; align-items: flex-start">
+                  <div class="popup-value__title">
+                    <h3>Альтернативное название №${k + 1}</h3>
+                    <div
+                      class="table-icon del-alt-name js-edit-btn-altDel"
+                      data-value="Удалить"
+                      data-edit-altDel="${k}">
+                      <span class="icon control-edit delete"></span>
+                    </div>
+                  </div>
+                    <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
+                    <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+              class="edit-inp year-inp" data-edit-value="alt${
+                k - 1
+              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+                </div>
+                  </div>`
+          );
+        }
+      }
+      countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
+
+      let inpNewValues = document.querySelectorAll('.edit-inp');
+      matchingTr.forEach((el) => {
+        if (inpNewValues.length > 5) {
+          inpNewValues[5].value = el.alt2;
+          el.year2 === undefined
+            ? (inpNewValues[6].value = el.year1)
+            : (inpNewValues[6].value = el.year2);
+        }
+        if (inpNewValues.length > 7) {
+          inpNewValues[7].value = el.alt3;
+          el.year3 === undefined
+            ? (inpNewValues[8].value = el.year2)
+            : (inpNewValues[8].value = el.year3);
+        }
+        if (inpNewValues.length > 9) {
+          inpNewValues[9].value = el.alt4;
+          el.year4 === undefined
+            ? (inpNewValues[10].value = el.year3)
+            : (inpNewValues[10].value = el.year4);
+        }
+        if (inpNewValues.length > 11) {
+          inpNewValues[11].value = el.alt5;
+          el.year5 === undefined
+            ? (inpNewValues[12].value = el.year4)
+            : (inpNewValues[12].value = el.year5);
+        }
+        if (inpNewValues.length > 13) {
+          inpNewValues[13].value = el.alt6;
+          inpNewValues[14].value = el.year5;
+        }
+      });
+
       popupEdit.style.display = '';
       const closeBtn = document.querySelectorAll('.popup-close');
-      closeBtn.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          countAddALtClick = 1;
-          popupEdit.style.display = 'none';
-          const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
-          dataFormEl.forEach((formEl, index) => {
-            countAddALtClick = 1;
-            index != 0 ? formEl.remove() : false;
-          });
-        });
+      inpFullName = document.querySelector('.edit-fullname');
+      inpInn = document.querySelector('.edit-inn');
+      const promptSpanIdArr = document.querySelectorAll('.js-edit-id');
+      const promptEditArr = document.querySelectorAll('.prompt-edit');
+      inpFullName.addEventListener('input', () => {
+        let checkVar = dataSlice
+          .filter((el) => el.id != idTrTable)
+          .some((el) => el.fullName == inpFullName.value);
+        if (checkVar == false) {
+          inpFullName.dataset.invalid = 'false';
+          btnSaveEdit.disabled = false;
+          promptEditArr[1].style.display = 'none';
+        } else {
+          inpFullName.dataset.invalid = 'true';
+          btnSaveEdit.disabled = true;
+          promptSpanIdArr[1].innerText = dataSlice.find(
+            (el) => el.fullName == inpFullName.value
+          ).id;
+          promptEditArr[1].style.display = 'block';
+        }
       });
+      inpInn.addEventListener('input', () => {
+        let checkVar = dataSlice
+          .filter((el) => el.id != idTrTable)
+          .some((el) => el.inn == inpInn.value);
+        if (checkVar == false) {
+          inpInn.dataset.invalid = 'false';
+          btnSaveEdit.disabled = false;
+          promptEditArr[0].style.display = 'none';
+        } else {
+          inpInn.dataset.invalid = 'true';
+          btnSaveEdit.disabled = true;
+          promptSpanIdArr[0].innerText = dataSlice.find((el) => el.inn == inpInn.value).id;
+          promptEditArr[0].style.display = 'block';
+        }
+      });
+      inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
+        ? (btnSaveEdit.disabled = true)
+        : (btnSaveEdit.disabled = false);
       inpNewValues.forEach((inp) => {
         inp.addEventListener('input', () => {
           inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
             ? (btnSaveEdit.disabled = true)
             : (btnSaveEdit.disabled = false);
         });
+        closeBtn.forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            inpNewValues.forEach((inp) => (inp.value = ''));
+            popupEdit.style.display = 'none';
+            const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+            dataFormEl.forEach((formEl, index) => {
+              countAddALtClick = 1;
+              index != 0 ? formEl.remove() : false;
+            });
+          });
+        });
+        const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+        const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
+        delNewAlt.forEach((del, indexDel) => {
+          dataFormEl.forEach((formEl, indexForm) => {
+            del.addEventListener('click', () => {
+              countAddALtClick = indexDel + 1;
+              countAddALtClick == 6
+                ? (btnAddAltEl.disabled = true)
+                : (btnAddAltEl.disabled = false);
+              indexDel + 1 == indexForm ? formEl.remove() : false;
+            });
+          });
+        });
       });
     });
   });
-
   //Save edit change
   const btnSaveEdit = document.querySelector('.btn-save');
   btnSaveEdit.addEventListener('click', (e) => {
@@ -410,38 +711,27 @@ btnAddAltEl.addEventListener('click', (e) => {
       </div>
     </div>`;
   newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
+  let inpNewValues = document.querySelectorAll('.edit-inp');
+  inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
+    ? (btnSaveEdit.disabled = true)
+    : (btnSaveEdit.disabled = false);
   const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
   countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
+
+  inpNewValues.forEach((inp) => {
+    inp.addEventListener('input', () => {
+      inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
+        ? (btnSaveEdit.disabled = true)
+        : (btnSaveEdit.disabled = false);
+    });
+  });
   const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
   delNewAlt.forEach((del, indexDel) => {
     dataFormEl.forEach((formEl, indexForm) => {
       del.addEventListener('click', () => {
-        countAddALtClick = 0;
-        countAddALtClick++;
+        countAddALtClick = indexDel + 1;
         countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
-        indexDel == indexForm && indexForm != 0 ? formEl.remove() : false;
-      });
-    });
-  });
-});
-//Btn edit
-editBtnArr.forEach((edit) => {
-  edit.addEventListener('click', () => {
-    btnAddAltEl.disabled = false;
-    countAddALtClick = 1;
-    idTrTable = edit.dataset.valueId;
-    popupEdit.style.display = '';
-    const closeBtn = document.querySelectorAll('.popup-close');
-    closeBtn.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        inpNewValues.forEach((inp) => (inp.value = ''));
-        popupEdit.style.display = 'none';
-        const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
-        dataFormEl.forEach((formEl, index) => {
-          countAddALtClick = 1;
-          index != 0 ? formEl.remove() : false;
-        });
+        indexDel + 1 == indexForm ? formEl.remove() : false;
       });
     });
   });
@@ -534,6 +824,7 @@ selectElArr.forEach((select, indexSelect) => {
         arrow.addEventListener('click', () => {
           countArrowClick++;
           if (countArrowClick % 2) {
+            select.focus();
             select.dataset.active = 'open';
             arrow.dataset.active = 'open';
             promptEl.dataset.active = 'open';
@@ -541,6 +832,7 @@ selectElArr.forEach((select, indexSelect) => {
             select.dataset.active = 'close';
             arrow.dataset.active = 'close';
             promptEl.dataset.active = 'close';
+            select.blur();
           }
         });
         select.addEventListener('click', () => {
@@ -570,10 +862,6 @@ searchInput.forEach((inp, indexInp) => {
         indexBtn == indexInp && inp.value !== '' ? (btn.style.display = 'block') : false;
       });
     }
-    btn.addEventListener('click', () => {
-      indexInp == indexBtn ? (inp.value = '') : false;
-      btn.style.display = 'none';
-    });
   });
 });
 
@@ -584,7 +872,7 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
     inp.checked = false;
     dataFilters = [];
     dataPrev = [];
-    dataSlice = data.slice(0, 50);
+    dataSlice = data.slice(0);
     i = 0;
     j = 0;
     n = 0;
@@ -592,34 +880,6 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
     btnSearchResetArr.forEach((reset) => (reset.style.display = 'none'));
   });
   tableRender(dataSlice);
-});
-
-//Inputs check valid
-inpFullName.addEventListener('input', () => {
-  let checkVar = dataSlice.some((el) => el.fullName == inpFullName.value);
-  if (checkVar == false) {
-    inpFullName.dataset.invalid = 'false';
-    btnSaveEdit.disabled = false;
-    promptEditArr[1].style.display = 'none';
-  } else {
-    inpFullName.dataset.invalid = 'true';
-    btnSaveEdit.disabled = true;
-    promptSpanIdArr[1].innerText = dataSlice.find((el) => el.fullName == inpFullName.value).id;
-    promptEditArr[1].style.display = 'block';
-  }
-});
-inpInn.addEventListener('input', () => {
-  let checkVar = dataSlice.some((el) => el.inn == inpInn.value);
-  if (checkVar == false) {
-    inpInn.dataset.invalid = 'false';
-    btnSaveEdit.disabled = false;
-    promptEditArr[0].style.display = 'none';
-  } else {
-    inpInn.dataset.invalid = 'true';
-    btnSaveEdit.disabled = true;
-    promptSpanIdArr[0].innerText = dataSlice.find((el) => el.inn == inpInn.value).id;
-    promptEditArr[0].style.display = 'block';
-  }
 });
 
 //Sort
@@ -786,12 +1046,17 @@ btnRegionArr.forEach((btn) => {
 });
 
 //Search
+btnSearchResetArr.forEach((reset) => {
+  reset.addEventListener('click', () => {
+    tableRender(dataSlice);
+  });
+});
+
 searchInput.forEach((inp, indexInp) => {
   btnSearchResetArr.forEach((reset, indexReset) => {
     reset.addEventListener('click', () => {
       dataFilters = dataSlice;
       n = 0;
-      tableRender(dataSlice);
       selectResetArr.forEach((el) => (el.style.display = 'none'));
       btnSearchResetArr.forEach((el) => (el.style.display = 'none'));
       loopIconsArr.forEach((icon) => (icon.style.display = 'block'));
@@ -813,6 +1078,12 @@ searchInput.forEach((inp, indexInp) => {
     inp.addEventListener('blur', () => {
       if (iconIndex == indexInp && inp.value == '') {
         icon.style.display = 'block';
+      }
+    });
+    inp.addEventListener('click', () => {
+      if (iconIndex == indexInp) {
+        icon.style.display = 'none';
+        inp.style.padding = '0px 43px 0px 11px';
       }
     });
     inp.addEventListener('input', () => {

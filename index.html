@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Альтернативные учебные заведения</title>
     <script src="scripts/utils/navbar.js" defer></script>
-    <script src="scripts/utils/mobile_control.js"defer></script>
+    <script src="scripts/utils/mobile_control.js" defer></script>
 
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/media.css" />
@@ -15,9 +15,7 @@
     <mobile-ui></mobile-ui>
 
     <div class="container">
-      <div class="title-page__wrapper">
-        Журнал: АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ
-      </div>
+      <div class="title-page__wrapper">Журнал: АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ</div>
       <div class="main">
         <div class="section__table__content top">
           <div class="table__btn__wrapper">
@@ -33,7 +31,7 @@
           <button class="btn__menu" data-value="введите дату конца поиска">
             ДАТА ДО<span class="btn__menu_value">30 СЕНТЯБРЯ 2024</span>
           </button>
-         
+
           <button class="btn__menu js-btn-total" data-value="">
             <span class="icon control-panel__segment-icon"></span>
             IN TOTAL: <span class="btn__menu_value js-total-value"></span>
@@ -322,7 +320,6 @@
               </tr>
 
               <tbody class="tr-wrapper"></tbody>
-              
             </table>
           </section>
         </section>
@@ -395,7 +392,7 @@
           <h2>Удалить учебное заведение</h2>
         </div>
         <p class="warning-text">
-          <span class="icon" style="color: #D11521"></span>
+          <span class="icon" style="color: #d11521"></span>
           Вы собираетесь удалить учебное заведение <span class="school-id"></span> -
           <span class="school-name"></span>
         </p>
@@ -417,63 +414,7 @@
           <h2>Редактировать альтернативные названия</h2>
         </div>
         <div class="wrap-forms-edit">
-          <div class="popup-edit-content-wrapper" data-edit-form-id="1">
-            <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
-              <div class="popup-value__title">
-                <h3>Альтернативное название №1</h3>
-                <div
-                  class="table-icon del-alt-name js-edit-btn-altDel"
-                  data-value="Удалить"
-                  data-edit-altDel="1"
-                >
-                  <span class="icon control-edit delete"></span>
-                </div>
-              </div>
-              <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}"
-                >ИНН
-                <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn"
-              /> <div class="prompt-edit">
-                <span class="icon" style="color: #D11521"></span>
-                <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
-                 
-              </div>
-            </label>
-              <label class="edit-label " data-edit-value="fullName"
-                >Полное название
-                <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName"
-              />
-              <div class="prompt-edit">
-                <span class="icon" style="color: #D11521"></span>
-                <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
-                  
-              </div>
-            </label>
-              <label class="edit-label" data-edit-value="abbr"
-                >Аббревиатура
-                <input type="text" class="edit-inp" placeholder="Введите аббревиатуру" data-edit-value="abbr"
-              /></label>
-              <label class="edit-label" data-edit-value="year"
-                >Год
-                <input
-                  type="number"
-                  class="edit-inp year-inp"
-                  maxlength="4"
-                  min="1800"
-                  max="2024"
-                  placeholder="Введите год"
-                  pattern="[0-9]{4}" data-edit-value="year"
-              /></label>
-              <label class="edit-label" data-edit-value="alt1"
-                >Альтернативное название
-                <input
-                  type="text"
-                  class="edit-inp"
-                  placeholder="Введите альтернативное название №1" data-edit-value="year"
-                />
-             
-              </label>
-            </div>
-          </div>
+          <div class="popup-edit-content-wrapper" data-edit-form-id="1"></div>
         </div>
         <button class="btn-add-alt">+ Добавить альтернативное</button>
         <div class="popup-buttons">
@@ -482,7 +423,6 @@
         </div>
       </form>
     </div>
-    <script src="scripts/app.js" type="module" ></script>
-  
+    <script src="scripts/app.js" type="module"></script>
   </body>
 </html>
