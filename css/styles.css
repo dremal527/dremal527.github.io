@@ -53,8 +53,8 @@ input.mobile {
   height: 50px;
   font-size: 18px;
 }
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+input[data-search-value='id']::-webkit-outer-spin-button,
+input[data-search-value='id']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -1164,10 +1164,14 @@ tr:hover {
     line-height: 137.02%;
   }
 }
-.input__wrapper > label {
+.input__wrapper > label,
+.row-inputs > label {
   color: #898989;
   font-size: 20px;
   line-height: 137.02%;
+}
+.year-inp {
+  width: 110px !important;
 }
 .input__wrapper {
   display: flex;
@@ -1270,7 +1274,27 @@ h3 {
   margin-bottom: 30px;
   position: relative;
 }
-
+.row-inputs {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.row-inputs > label:nth-child(2) {
+  justify-content: flex-end;
+}
+.fullAlt {
+  text-transform: none !important;
+}
+.row-inputs > label:nth-child(1) {
+  justify-content: space-between;
+  width: 250vw;
+}
+.row-inputs > label:nth-child(1) > input {
+  width: calc(55.5% - 4px);
+}
+.row-inputs > label > input {
+  margin-left: 40px;
+}
 .prompt-edit {
   position: absolute;
   top: 85%;

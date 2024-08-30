@@ -14,6 +14,9 @@
       padding: 25px 38px;
     }
   }
+  .row-inputs > label:nth-child(1) > input {
+    width: calc(55.5% - 30px);
+  }
   h1 {
     font-size: 18px;
   }
@@ -69,6 +72,15 @@
 @media (max-width: 1280px) {
   .btn__menu {
     width: 33.333%;
+  }
+  .container {
+    padding: 0px calc(var(--index) * 1);
+  }
+  .row-inputs > label:nth-child(2) {
+    margin-left: 20px;
+  }
+  .row-inputs > label:nth-child(1) > input {
+    width: calc(55.5% - 28px);
   }
   .section__table__content.bottom {
     display: block;
@@ -245,6 +257,9 @@
   td:nth-child(1) {
     width: 35px;
   }
+  .row-inputs > label:nth-child(1) > input {
+    width: calc(55.5% - 22px);
+  }
 }
 @media (width > 880px) {
   .td-num {
@@ -259,6 +274,28 @@
   tbody {
     display: flex;
     flex-direction: column;
+  }
+  .row-inputs > label:nth-child(2) {
+    margin-left: 50px;
+    width: 95px;
+    align-items: flex-end;
+  }
+  .row-inputs > label > input {
+    margin-left: 0px;
+  }
+  .row-inputs > label:nth-child(1) > input {
+    width: 100%;
+  }
+  .td-info-wrapper {
+    width: 100%;
+    max-width: 50%;
+  }
+  .btn-add-alt {
+    margin-left: 30px;
+  }
+  .fullname-abbr {
+    width: calc(100% - 32px);
+    width: auto !important;
   }
   .table__abbr {
     padding-bottom: 0px;
@@ -412,7 +449,8 @@
     flex-direction: column;
     align-items: start;
   }
-  .input__wrapper > label {
+  .input__wrapper > label,
+  .row-inputs > label {
     margin-bottom: 30px;
   }
   .pseudo-input {
@@ -693,6 +731,7 @@
   .container {
     padding: 0px calc(var(--index) * 0.75);
   }
+
   .title-page__wrapper {
     display: none;
   }
@@ -794,6 +833,13 @@
     display: grid;
     grid-template-columns: 115px 1fr;
   }
+  .row-inputs > label:nth-child(2) {
+    margin-left: 25px;
+  }
+  .td-info-wrapper {
+    padding-left: 4.7%;
+    max-width: inherit;
+  }
   .filter-value > label {
     font-size: 14px;
   }
@@ -860,7 +906,8 @@
   .pseudo-input {
     height: 38px;
   }
-  .input__wrapper > label {
+  .input__wrapper > label,
+  .row-inputs > label {
     font-size: 13px;
   }
   .mobile-wrapper__row-number {
@@ -948,6 +995,9 @@
   }
   .table_mobile-tfoot > * {
     display: block;
+  }
+  .td-info-wrapper {
+    padding-left: calc(var(--index) * 2);
   }
 }
 @media (max-width: 320px) {

@@ -62,11 +62,7 @@ let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
 let countAllCheckbox = 0;
 let renderTableHTML = '';
-function checkAbbr(abbr, fullName) {
-  if (abbr == undefined) {
-    return fullName;
-  } else return abbr;
-}
+
 function checkUndef(prop) {
   if (prop === undefined) {
     return '';
@@ -129,9 +125,10 @@ function tableRender(dataValue) {
     let htmlTdInfoAndFullNames = `   
       <td>
       <div class="td-name">ИНН\nАббревиатура\nГод</div>
-      <div>
+      <div class="td-info-wrapper">
       <p>${checkUndef(school.inn)}</p>
-      <p class="table__abbr">${checkAbbr(school.abbr, school.fullName)}</p>
+      <p class="fullname fullname-abbr">${school.fullName}</p>
+      <p class="table__abbr">${checkUndef(school.abbr)}</p>
       <p class="table__year-name">${checkUndef(school.year)}</p>
       </div>
       </td>
@@ -288,17 +285,17 @@ function tableRender(dataValue) {
       let valuesCount = +matchingTr.map((el) => Object.keys(el).length).join('');
       inputEditsWrapper = document.querySelector('.popup-edit-content-wrapper');
       matchingTr.forEach((trValue) => {
-        if (valuesCount == 17) {
+        if (valuesCount == 23) {
           countAddALtClick = 6;
-        } else if (valuesCount == 7) {
+        } else if (valuesCount == 8) {
           countAddALtClick == 1;
-        } else if (valuesCount == 9) {
-          countAddALtClick == 2;
         } else if (valuesCount == 11) {
+          countAddALtClick == 2;
+        } else if (valuesCount == 14) {
           countAddALtClick == 3;
-        } else if (valuesCount == 13) {
+        } else if (valuesCount == 17) {
           countAddALtClick == 4;
-        } else if (valuesCount == 15) {
+        } else if (valuesCount == 20) {
           countAddALtClick == 5;
         }
         inputEditsHTML = `
@@ -324,44 +321,38 @@ function tableRender(dataValue) {
          <span class="icon" style="color: #D11521"></span>
          <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
        </div>
-     </label>
-       <label class="edit-label" data-edit-value="abbr"
-         >Аббревиатура
-         <input type="text" class="edit-inp" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${
-           trValue.abbr
-         }"
-       /></label>
-       <label class="edit-label" data-edit-value="year"
-         >Год
-         <input
-           type="number"
-           class="edit-inp year-inp"
-           maxlength="4"
-           min="1800"
-           max="2024"
-           placeholder="Введите год"
-           pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(trValue.year)}"
-       /></label>
-       <label class="edit-label" data-edit-value="alt1"
-         >Альтернативное название
-         <input
-           type="text"
-           class="edit-inp"
-           placeholder="Введите альтернативное название №1" data-edit-value="year" value="${checkUndef(
-             trValue.alt1
-           )}"
-         />
-       </label>
+      </label>
+      <div class="row-inputs">
+     
+          <label class="edit-label" data-edit-value="abbr"
+            >Аббревиатура
+            <input type="text" class="edit-inp" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${checkUndef(
+              trValue.abbr
+            )}"
+          /></label>
+          <label class="edit-label" data-edit-value="year"
+
+            > <span>Год</span>
+            <input
+              type="number"
+              class="edit-inp year-inp"
+              maxlength="4"
+              min="1800"
+              max="2024"
+              placeholder="Введите год"
+              pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(trValue.year)}"
+          /></label>
+      </div>
      </div>
         `;
         matchingId = trValue.id;
       });
       inputEditsWrapper.innerHTML = inputEditsHTML;
-      if (valuesCount == 17) {
-        for (let k = 1; k < 6; k++) {
+      if (valuesCount == 23) {
+        for (let k = 0; k < 6; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
                   <div
                     class="input__wrapper"
                     style="flex-direction: column; align-items: flex-start">
@@ -374,46 +365,71 @@ function tableRender(dataValue) {
                         <span class="icon control-edit delete"></span>
                       </div>
                     </div>
-                      <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
-                      <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
-                class="edit-inp year-inp" data-edit-value="alt${
-                  k - 1
-                } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-                  </div>
-                    </div>`
-          );
-        }
-      } else if (valuesCount == 9) {
-        for (let k = 1; k < 2; k++) {
-          newAltWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
-                  <div
-                    class="input__wrapper"
-                    style="flex-direction: column; align-items: flex-start">
-                    <div class="popup-value__title">
-                      <h3>Альтернативное название №${k + 1}</h3>
-                      <div
-                        class="table-icon del-alt-name js-edit-btn-altDel"
-                        data-value="Удалить"
-                        data-edit-altDel="${k}">
-                        <span class="icon control-edit delete"></span>
-                      </div>
+                         <label class="edit-label" data-edit-value="alt${
+                           k + 1
+                         }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
+              k + 1
+            }" data-edit-value="fullName${k + 1}" /></label>
+                    <div class="row-inputs">
+                      <label class="edit-label" data-edit-value="alt${
+                        k + 1
+                      }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
+              k + 1
+            }" data-edit-value="alt${k + 1}" /></label>
+                      <label class="edit-label" data-edit-value="year${
+                        k + 1
+                      }">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${
+              k + 1
+            } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
                     </div>
-                      <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
-                      <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
-                class="edit-inp year-inp" data-edit-value="alt${
-                  k - 1
-                } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
                   </div>
-                    </div>`
+              </div>`
           );
         }
       } else if (valuesCount == 11) {
-        for (let k = 1; k < 3; k++) {
+        for (let k = 0; k < 2; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
+                  <div
+                    class="input__wrapper"
+                    style="flex-direction: column; align-items: flex-start">
+                    <div class="popup-value__title">
+                      <h3>Альтернативное название №${k + 1}</h3>
+                      <div
+                        class="table-icon del-alt-name js-edit-btn-altDel"
+                        data-value="Удалить"
+                        data-edit-altDel="${k + 1}">
+                        <span class="icon control-edit delete"></span>
+                      </div>
+                    </div>
+                         <label class="edit-label" data-edit-value="alt${
+                           k + 1
+                         }">Полное наименование <input class="edit-inp" type="text" placeholder="Введите полное наименование №${
+              k + 1
+            }" data-edit-value="fullName${k + 1}" /></label>
+                    <div class="row-inputs">
+                      <label class="edit-label" data-edit-value="alt${
+                        k + 1
+                      }">Альтернативное название <input class="edit-inp fullAlt" type="text" placeholder="Введите альтернативное название №${
+              k + 1
+            }" data-edit-value="alt${k + 1}" /></label>
+                      <label class="edit-label" data-edit-value="year${
+                        k + 1
+                      }">Год <input type="number" 
+                class="edit-inp year-inp" data-edit-value="alt${
+                  k - 1
+                } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+              </div>
+                  </div>
+                    </div>`
+          );
+        }
+      } else if (valuesCount == 14) {
+        for (let k = 0; k < 3; k++) {
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
                 <div
                   class="input__wrapper"
                   style="flex-direction: column; align-items: flex-start">
@@ -422,24 +438,37 @@ function tableRender(dataValue) {
                     <div
                       class="table-icon del-alt-name js-edit-btn-altDel"
                       data-value="Удалить"
-                      data-edit-altDel="${k}">
+                      data-edit-altDel="${k + 1}">
                       <span class="icon control-edit delete"></span>
                     </div>
                   </div>
-                    <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
-                    <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+                       <label class="edit-label" data-edit-value="alt${
+                         k + 1
+                       }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
+              k + 1
+            }" data-edit-value="fullName${k + 1}" /></label>
+                  <div class="row-inputs">
+                    <label class="edit-label" data-edit-value="alt${
+                      k + 1
+                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
+              k + 1
+            }" data-edit-value="alt${k + 1}" /></label>
+                    <label class="edit-label" data-edit-value="year${
+                      k + 1
+                    }">Год <input type="number" 
               class="edit-inp year-inp" data-edit-value="alt${
                 k - 1
               } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+              </div>
                 </div>
                   </div>`
           );
         }
-      } else if (valuesCount == 13) {
-        for (let k = 1; k < 4; k++) {
+      } else if (valuesCount == 17) {
+        for (let k = 0; k < 4; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
                 <div
                   class="input__wrapper"
                   style="flex-direction: column; align-items: flex-start">
@@ -448,24 +477,37 @@ function tableRender(dataValue) {
                     <div
                       class="table-icon del-alt-name js-edit-btn-altDel"
                       data-value="Удалить"
-                      data-edit-altDel="${k}">
+                      data-edit-altDel="${k + 1}">
                       <span class="icon control-edit delete"></span>
                     </div>
                   </div>
-                    <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
-                    <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+                       <label class="edit-label" data-edit-value="alt${
+                         k + 1
+                       }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
+              k + 1
+            }" data-edit-value="fullName${k + 1}" /></label>
+                  <div class="row-inputs">
+                    <label class="edit-label" data-edit-value="alt${
+                      k + 1
+                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
+              k + 1
+            }" data-edit-value="alt${k + 1}" /></label>
+                    <label class="edit-label" data-edit-value="year${
+                      k + 1
+                    }">Год <input type="number" 
               class="edit-inp year-inp" data-edit-value="alt${
                 k - 1
               } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+            </div>
                 </div>
                   </div>`
           );
         }
-      } else if (valuesCount == 15) {
-        for (let k = 1; k < 5; k++) {
+      } else if (valuesCount == 20) {
+        for (let k = 0; k < 5; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k}">
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
                 <div
                   class="input__wrapper"
                   style="flex-direction: column; align-items: flex-start">
@@ -474,15 +516,67 @@ function tableRender(dataValue) {
                     <div
                       class="table-icon del-alt-name js-edit-btn-altDel"
                       data-value="Удалить"
-                      data-edit-altDel="${k}">
+                      data-edit-altDel="${k + 1}">
                       <span class="icon control-edit delete"></span>
                     </div>
                   </div>
-                    <label class="edit-label" data-edit-value="alt${k}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${k}" data-edit-value="alt${k}" /></label>
-                    <label class="edit-label" data-edit-value="year${k}">Год <input type="number" 
+                   <label class="edit-label" data-edit-value="alt${
+                     k + 1
+                   }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
+              k + 1
+            }" data-edit-value="fullName${k + 1}" /></label>
+                  <div class="row-inputs">
+                    <label class="edit-label" data-edit-value="alt${
+                      k + 1
+                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
+              k + 1
+            }" data-edit-value="alt${k + 1}" /></label>
+                    <label class="edit-label" data-edit-value="year${
+                      k + 1
+                    }">Год <input type="number" 
               class="edit-inp year-inp" data-edit-value="alt${
                 k - 1
               } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+              </div>
+                </div>
+                  </div>`
+          );
+        }
+      } else if (valuesCount == 8) {
+        for (let k = 0; k < 1; k++) {
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
+                <div
+                  class="input__wrapper"
+                  style="flex-direction: column; align-items: flex-start">
+                  <div class="popup-value__title">
+                    <h3>Альтернативное название №${k + 1}</h3>
+                    <div
+                      class="table-icon del-alt-name js-edit-btn-altDel"
+                      data-value="Удалить"
+                      data-edit-altDel="${k + 1}">
+                      <span class="icon control-edit delete"></span>
+                    </div>
+                  </div>
+                   <label class="edit-label" data-edit-value="alt${
+                     k + 1
+                   }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
+              k + 1
+            }" data-edit-value="fullName${k + 1}" /></label>
+                  <div class="row-inputs">
+                    <label class="edit-label" data-edit-value="alt${
+                      k + 1
+                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
+              k + 1
+            }" data-edit-value="alt${k}" /></label>
+                    <label class="edit-label" data-edit-value="year${
+                      k + 1
+                    }">Год <input type="number" 
+              class="edit-inp year-inp" data-edit-value="alt${
+                k - 1
+              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+              </div>
                 </div>
                   </div>`
           );
@@ -493,32 +587,44 @@ function tableRender(dataValue) {
       let inpNewValues = document.querySelectorAll('.edit-inp');
       matchingTr.forEach((el) => {
         if (inpNewValues.length > 5) {
-          inpNewValues[5].value = el.alt2;
-          el.year2 === undefined
-            ? (inpNewValues[6].value = el.year1)
-            : (inpNewValues[6].value = el.year2);
-        }
-        if (inpNewValues.length > 7) {
-          inpNewValues[7].value = el.alt3;
-          el.year3 === undefined
-            ? (inpNewValues[8].value = el.year2)
-            : (inpNewValues[8].value = el.year3);
-        }
-        if (inpNewValues.length > 9) {
-          inpNewValues[9].value = el.alt4;
-          el.year4 === undefined
-            ? (inpNewValues[10].value = el.year3)
-            : (inpNewValues[10].value = el.year4);
+          inpNewValues[4].value = el.fullName1;
+          inpNewValues[5].value = el.alt1;
+          el.year1 === undefined
+            ? (inpNewValues[6].value = el.year)
+            : (inpNewValues[6].value = el.year1);
         }
         if (inpNewValues.length > 11) {
-          inpNewValues[11].value = el.alt5;
-          el.year5 === undefined
-            ? (inpNewValues[12].value = el.year4)
-            : (inpNewValues[12].value = el.year5);
+          inpNewValues[7].value = el.fullname2;
+          inpNewValues[8].value = el.alt2;
+          el.year2 === undefined
+            ? (inpNewValues[9].value = el.year1)
+            : (inpNewValues[9].value = el.year2);
         }
-        if (inpNewValues.length > 13) {
-          inpNewValues[13].value = el.alt6;
-          inpNewValues[14].value = el.year5;
+        if (inpNewValues.length > 14) {
+          inpNewValues[10].value = el.fullName3;
+          inpNewValues[11].value = el.alt3;
+          el.year3 === undefined
+            ? (inpNewValues[12].value = el.year1)
+            : (inpNewValues[12].value = el.year2);
+        }
+        if (inpNewValues.length > 17) {
+          inpNewValues[13].value = el.fullName4;
+          inpNewValues[14].value = el.alt4;
+          el.year4 === undefined
+            ? (inpNewValues[15].value = el.year3)
+            : (inpNewValues[15].value = el.year4);
+        }
+        if (inpNewValues.length > 19) {
+          inpNewValues[16].value = el.fullName5;
+          inpNewValues[17].value = el.alt5;
+          el.year5 === undefined
+            ? (inpNewValues[18].value = el.year4)
+            : (inpNewValues[18].value = el.year5);
+        }
+        if (inpNewValues.length > 21) {
+          inpNewValues[19].value = el.fullName6;
+          inpNewValues[20].value = el.alt6;
+          inpNewValues[21].value = el.year5;
         }
       });
 
@@ -586,7 +692,7 @@ function tableRender(dataValue) {
         delNewAlt.forEach((del, indexDel) => {
           dataFormEl.forEach((formEl, indexForm) => {
             del.addEventListener('click', () => {
-              countAddALtClick = indexDel + 1;
+              countAddALtClick = indexDel;
               countAddALtClick == 6
                 ? (btnAddAltEl.disabled = true)
                 : (btnAddAltEl.disabled = false);
@@ -607,27 +713,37 @@ function tableRender(dataValue) {
     editElement.fullName = inpNewValues[1].value;
     editElement.abbr = inpNewValues[2].value;
     editElement.year = inpNewValues[3].value;
-    editElement.alt1 = inpNewValues[4].value;
     if (inpNewValues.length > 5) {
-      editElement.alt2 = inpNewValues[5].value;
+      editElement.fullName1 = inpNewValues[4].value;
+      editElement.alt1 = inpNewValues[5].value;
       editElement.year1 = inpNewValues[6].value;
     }
-    if (inpNewValues.length > 7) {
-      editElement.alt3 = inpNewValues[7].value;
-      editElement.year2 = inpNewValues[8].value;
-    }
-    if (inpNewValues.length > 9) {
-      editElement.alt4 = inpNewValues[9].value;
-      editElement.year3 = inpNewValues[10].value;
-    }
     if (inpNewValues.length > 11) {
-      editElement.alt5 = inpNewValues[11].value;
-      editElement.year4 = inpNewValues[12].value;
+      editElement.fullname2 = inpNewValues[7].value;
+      editElement.alt2 = inpNewValues[8].value;
+      editElement.year2 = inpNewValues[9].value;
     }
-    if (inpNewValues.length > 13) {
-      editElement.alt6 = inpNewValues[13].value;
-      editElement.year5 = inpNewValues[14].value;
+    if (inpNewValues.length > 14) {
+      editElement.fullName3 = inpNewValues[10].value;
+      editElement.alt3 = inpNewValues[11].value;
+      editElement.year3 = inpNewValues[12].value;
     }
+    if (inpNewValues.length > 17) {
+      editElement.fullName4 = inpNewValues[13].value;
+      editElement.alt4 = inpNewValues[14].value;
+      editElement.year4 = inpNewValues[15].value;
+    }
+    if (inpNewValues.length > 19) {
+      editElement.fullName5 = inpNewValues[16].value;
+      editElement.alt5 = inpNewValues[17].value;
+      editElement.year5 = inpNewValues[18].value;
+    }
+    if (inpNewValues.length > 20) {
+      editElement.fullName6 = inpNewValues[19].value;
+      editElement.alt6 = inpNewValues[20].value;
+      editElement.year5 = inpNewValues[21].value;
+    }
+
     if (n == 1 || i == 1 || j == 1) {
       dataFilters.splice(idTrTable - 201, 1, editElement);
       tableRender(dataFilters);
@@ -692,23 +808,24 @@ btnAddAltEl.addEventListener('click', (e) => {
   countAddALtClick++;
   newALtNameFormHTML = ` 
     <div class="popup-edit-content-wrapper" data-edit-form-id="${countAddALtClick}">
-      <div
-        class="input__wrapper"
-        style="flex-direction: column; align-items: flex-start">
-        <div class="popup-value__title">
-          <h3>Альтернативное название №${countAddALtClick}</h3>
-          <div
-            class="table-icon del-alt-name js-edit-btn-altDel"
-            data-value="Удалить"
-            data-edit-altDel="${countAddALtClick}">
-            <span class="icon control-edit delete"></span>
+        <div
+          class="input__wrapper"
+          style="flex-direction: column; align-items: flex-start">
+          <div class="popup-value__title">
+            <h3>Альтернативное название №${countAddALtClick}</h3>
+            <div
+              class="table-icon del-alt-name js-edit-btn-altDel"
+              data-value="Удалить"
+              data-edit-altDel="${countAddALtClick}">
+              <span class="icon control-edit delete"></span>
+            </div>
+          </div>
+                <label class="edit-label" data-edit-value="alt${countAddALtClick}">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-value="fullName${countAddALtClick}" /></label>
+          <div class="row-inputs">
+            <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" data-edit-value="alt${countAddALtClick}" /></label>
+            <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${countAddALtClick} maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
           </div>
         </div>
-          <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" data-edit-value="alt${countAddALtClick}" /></label>
-          <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${
-    countAddALtClick - 1
-  } maxlength="4" min="1800" max="2400"  placeholder="Введите год" /></label>
-      </div>
     </div>`;
   newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
   let inpNewValues = document.querySelectorAll('.edit-inp');
@@ -729,7 +846,7 @@ btnAddAltEl.addEventListener('click', (e) => {
   delNewAlt.forEach((del, indexDel) => {
     dataFormEl.forEach((formEl, indexForm) => {
       del.addEventListener('click', () => {
-        countAddALtClick = indexDel + 1;
+        countAddALtClick = indexDel;
         countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
         indexDel + 1 == indexForm ? formEl.remove() : false;
       });
@@ -777,7 +894,7 @@ btnApply.addEventListener('click', () => {
     true;
   } else {
     let regTypeSchool = new RegExp(arrFiltersType.join('').replaceAll(', ', '|'), 'gi');
-    i == 1
+    i == 1 || n == 1
       ? (dataPrev = dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
       : (dataPrev = dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
 
@@ -795,14 +912,29 @@ selectResetArr.forEach((reset) => {
   reset.addEventListener('click', () => {
     i = 0;
     j = 0;
+    n = 0;
+    btnSearchResetArr.forEach((btn) => (btn.style.display = 'none'));
     selectResetArr.forEach((reset) => (reset.style.display = 'none'));
+    document.querySelectorAll('input').forEach((inp) => (inp.value = ''));
     selectElArr.forEach((select) => {
       select.value = '';
     });
     tableRender(dataSlice);
   });
 });
-
+btnApply.onmousedown = function (e) {
+  if (document.activeElement === selectElArr[0]) {
+    e.preventDefault();
+  }
+};
+document.querySelectorAll('.js-type-school-value').forEach(
+  (el) =>
+    (el.onmousedown = function (e) {
+      if (document.activeElement === selectElArr[0]) {
+        e.preventDefault();
+      }
+    })
+);
 // Select settings
 selectElArr.forEach((select, indexSelect) => {
   selectResetArr.forEach((reset, indexReset) => {
@@ -820,11 +952,11 @@ selectElArr.forEach((select, indexSelect) => {
           select.dataset.active = 'close';
           arrow.dataset.active = 'close';
           promptEl.dataset.active = 'close';
+          checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
         });
         arrow.addEventListener('click', () => {
           countArrowClick++;
           if (countArrowClick % 2) {
-            select.focus();
             select.dataset.active = 'open';
             arrow.dataset.active = 'open';
             promptEl.dataset.active = 'open';
@@ -832,21 +964,19 @@ selectElArr.forEach((select, indexSelect) => {
             select.dataset.active = 'close';
             arrow.dataset.active = 'close';
             promptEl.dataset.active = 'close';
-            select.blur();
+            checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
           }
         });
         select.addEventListener('click', () => {
           select.dataset.active = 'open';
-
           arrow.dataset.active = 'open';
           promptEl.dataset.active = 'open';
         });
-        select.addEventListener('blur', () => {
+        select.addEventListener('blur', (e) => {
           select.dataset.active = 'close';
           arrow.dataset.active = 'close';
-          setTimeout(() => {
-            promptEl.dataset.active = 'close';
-          }, 100);
+          promptEl.dataset.active = 'close';
+          checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
         });
       }
     });
@@ -869,7 +999,7 @@ searchInput.forEach((inp, indexInp) => {
 document.querySelector('.js-btn-deselect').addEventListener('click', () => {
   inputArr.forEach((inp) => {
     inp.value = '';
-    inp.checked = false;
+    checkboxTypeSchoolArr.forEach((checkbox) => (checkbox.checked = false));
     dataFilters = [];
     dataPrev = [];
     dataSlice = data.slice(0);
@@ -945,6 +1075,7 @@ checkboxTypeSchoolArr[0].addEventListener('click', () => {
 });
 checkboxTypeSchoolArr.forEach((el) => {
   el.addEventListener('click', () => {
+    inpTypeSchool.focus();
     promptArr[0].dataset.active = 'open';
   });
 });
@@ -996,6 +1127,7 @@ inpRegion.addEventListener('input', () => {
         <label>Павлово</label>
       </div>`;
     const btnRegionArr = document.querySelectorAll('.filter-region');
+    checkboxTypeSchoolArr.forEach((checkbox) => (checkbox.checked = false));
     btnRegionArr.forEach((btn) => {
       btn.addEventListener('click', () => {
         i = 1;
@@ -1017,7 +1149,7 @@ inpRegion.addEventListener('input', () => {
       inpRegion.value = btn.innerText;
       regionValueInput = inpRegion.value;
       selectResetArr[1].style.display = 'block';
-      j == 1
+      j == 1 || n == 1
         ? (dataPrev = dataFilters.filter((school) => school.address.match(regionValueInput)))
         : dataPrev.filter((school) => school.address.match(regionValueInput));
 
@@ -1102,6 +1234,12 @@ searchInput.forEach((inp, indexInp) => {
         }, 100);
       }
     });
+    inp.addEventListener('click', () => {
+      if (indexInp == promptIndex) {
+        promptEl.style.display = 'block';
+      }
+    });
+
     inp.addEventListener('input', () => {
       if (indexInp == promptIndex) {
         promptEl.style.display = 'block';
@@ -1211,13 +1349,6 @@ searchInput.forEach((inp, indexInp) => {
 exportBtnEl.addEventListener('click', () => {
   popupExport.style.display = '';
   const closeBtn = document.querySelectorAll('.popup-close');
-  closeBtn.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      popupExport.style.display = 'none';
-    });
-  });
-});
-linkDownloadEl.addEventListener('click', () => {
   let date = new Date();
   let month = date.getMonth();
   function monthFixed(month) {
@@ -1227,9 +1358,31 @@ linkDownloadEl.addEventListener('click', () => {
   let time = String(date).slice(15, 24).replaceAll(':', '_');
   let str = `Альтернативные названия учебных заведений ${date.getDate()}.${monthFixed(
     month
-  )}.${yearDate} ${time}`;
+  )}.${yearDate} ${time}.xlsx`;
+  inpExportEl.value = str;
+  let idInterval = setInterval(() => {
+    let date = new Date();
+    let month = date.getMonth();
+    function monthFixed(month) {
+      return String(month).length == 1 ? '0' + (month + 1) : month + 1;
+    }
+    let yearDate = date.getFullYear();
+    let time = String(date).slice(15, 24).replaceAll(':', '_');
+    let str = `Альтернативные названия учебных заведений ${date.getDate()}.${monthFixed(
+      month
+    )}.${yearDate} ${time}.xlsx`;
+    inpExportEl.value = str;
+  }, 5000);
+  closeBtn.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      popupExport.style.display = 'none';
+      clearInterval(idInterval);
+    });
+  });
+});
+
+linkDownloadEl.addEventListener('click', () => {
   let nameFile = inpExportEl.value;
-  inpExportEl.value == '' ? (nameFile = str) : undefined;
   linkDownloadEl.setAttribute('download', nameFile);
   inpExportEl.value = '';
 });
