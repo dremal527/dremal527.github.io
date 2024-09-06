@@ -381,6 +381,7 @@ class Navbar extends HTMLElement {
     this.querySelectorAll('.second-panel__tab').forEach((el) => {
       this.querySelectorAll('.third-panel__tab').forEach((el) => {
         el.offsetWidth > 150 ? el.classList.add('panel__tab_long') : undefined;
+
         el.classList.remove('third-panel__tab_active');
         if (el.innerHTML.includes('Альтернативные')) {
           el.classList.add('third-panel__tab_active');
