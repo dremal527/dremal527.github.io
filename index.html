@@ -43,18 +43,19 @@
             <span class="icon control-panel__segment-icon"></span>
             IMPORT
           </button>
-          <button class="btn__menu js-btn-deselect" data-value="Удалить юридическую форму">
+          <button class="btn__menu js-btn-deselect" data-value="Очистить поля">
             <span class="icon control-panel__segment-icon"></span>
             DESELECT
           </button>
         </section>
         <section class="section-select">
-          <div class="select-column">
-            <label class="main__label" for="1">Тип учебного заведения</label>
+          <div class="select-column type-school">
+            <label class="main__label">Тип учебного заведения</label>
             <div class="main__select-wrapper">
               <input
                 autocomplete="off"
                 data-active="close"
+                data-old_value=""
                 class="main__select js-select-type-school"
                 type="text"
                 name="type-
@@ -68,7 +69,7 @@
               <button class="btn-select" data-active="close">
                 <span class="icon arrow reversed"></span>
               </button>
-              <div class="prompt-filter" data-active="close">
+              <div class="prompt-filter promp-filter__type-school" data-active="close">
                 <div class="filter-wrapper js-filter-school-type">
                   <div class="filter-value js-type-school-value">
                     <label>
@@ -78,12 +79,12 @@
                         data-type-filter=""
                         type="checkbox"
                         name=""
-                        id=""
+                        id="all-school"
                     /></label>
                   </div>
                   <div class="filter-value js-type-school-value">
-                    <label
-                      >Школы, гимназии
+                    <label>
+                      Школы, гимназии
                       <input
                         class="js-checkbox-school-type"
                         data-type-filter="школа, гимназия, лицей-интернат"
@@ -94,8 +95,8 @@
                     /></label>
                   </div>
                   <div class="filter-value js-type-school-value">
-                    <label
-                      >Средние-специальные учебные заведения<input
+                    <label>
+                      Средние-специальные учебные заведения<input
                         class="js-checkbox-school-type"
                         type="checkbox"
                         name=""
@@ -121,15 +122,14 @@
               </div>
             </div>
           </div>
-          <div class="select-column">
-            <label class="main__label" for="2">Регион учебных заведений</label>
+          <div class="select-column region">
+            <label class="main__label">Регион учебных заведений</label>
             <div class="main__select-wrapper">
               <input
                 autocomplete="off"
                 data-active="close"
                 class="main__select js-select-region"
-                name="region-
-            institution"
+                name="region-institution"
                 type="text"
                 id="2"
                 placeholder="Выберите регион"
@@ -140,7 +140,7 @@
               <button class="btn-select" data-active="close">
                 <span class="icon arrow reversed"></span>
               </button>
-              <div class="prompt-filter" data-active="close">
+              <div class="prompt-filter promp-filter__region" data-active="close">
                 <p class="prompt">Выберите регион или продолжите ввод</p>
                 <div class="filter-wrapper js-region-filters__wrapper">
                   <div class="filter-value filter-region">
@@ -332,7 +332,7 @@
           <button class="btn-close-popup popup-close"><span class="icon cross"></span></button>
         </div>
         <div class="popup__title">
-          <h2>Импорт вакансий</h2>
+          <h2>Импорт альтернативных названий учебных заведений из xlsx</h2>
         </div>
         <div class="input__wrapper">
           <label>Выберите путь к файлу</label>
@@ -344,7 +344,7 @@
           </label>
         </div>
         <div class="popup-buttons">
-          <button class="btn-download btn__main popup-close">Выгрузить</button>
+          <button class="btn-download btn__main popup-close">Загрузить</button>
           <button class="btn-cancel btn__main popup-close">Отменить</button>
         </div>
       </div>
@@ -357,7 +357,7 @@
           <button class="btn-close-popup popup-close"><span class="icon cross"></span></button>
         </div>
         <div class="popup__title">
-          <h2>Экспорт вакансий</h2>
+          <h2>Экспорт альтернативных названий учебных заведений в xlsx</h2>
         </div>
         <div class="input__wrapper">
           <label>Выберите путь к файлу</label>
@@ -367,15 +367,7 @@
           </label>
         </div>
         <div class="popup-buttons">
-          <button class="btn-download-export btn__main">
-            <a
-              href="xlsx/data.xlsx"
-              class="link-download"
-              filename="xlsx, xls"
-              download="Альтернативные названия учебных заведений"
-              >Выгрузить</a
-            >
-          </button>
+          <button class="btn-download-export btn__main">Выгрузить</button>
           <button class="btn-cancel btn__main popup-close">Отменить</button>
         </div>
       </div>

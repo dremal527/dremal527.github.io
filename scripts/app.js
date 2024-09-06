@@ -1,5 +1,22 @@
 import { data } from '../data/data.js';
 import { regions } from '../data/regions.js';
+import Dadata from './utils/dadata.js';
+
+// Fill data full name from dadata.ru
+// document.addEventListener('DOMContentLoaded', () => {
+//   data.map(elem => {
+//     if (elem.inn) {
+//       Dadata.getFullNameByInn(elem.inn)
+//         .then(fullName => {
+//           elem.fullName = fullName;
+//         })
+//         .catch(error => { /**/ });
+
+//         console.log(elem.inn);
+//         return false;
+//     }
+//   })
+// });
 
 // variables
 const inpRegion = document.querySelector('.js-select-region');
@@ -34,7 +51,8 @@ const checkboxTypeSchoolArr = document.querySelectorAll('.js-checkbox-school-typ
 const inputArr = document.querySelectorAll('input');
 const main = document.querySelector('.main');
 const inpExportEl = document.querySelector('.input-export');
-const linkDownloadEl = document.querySelector('.link-download');
+const exportButton = document.querySelector('.btn-download-export');
+
 let inpFullName = document.querySelector('.edit-fullname');
 let inpInn = document.querySelector('.edit-inn');
 
@@ -62,6 +80,7 @@ let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
 let countAllCheckbox = 0;
 let renderTableHTML = '';
+let idInterval;
 
 function checkUndef(prop) {
   if (prop === undefined) {
@@ -76,6 +95,97 @@ window.addEventListener('scroll', () => {
 window.onload = () => {
   window.scrollTo({ top: scroll });
 };
+
+// Экспорт данных из таблицы 
+async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
+  let table = document.querySelector(tableSelector),
+      rows = table.querySelectorAll("tr");
+
+  // Стартовая структура XML
+  let excelFile = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+          xmlns:x="urn:schemas-microsoft-com:office:excel" 
+          xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+        <meta charset="UTF-8">
+        <!--[if gte mso 9]><xml>
+        <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+                <x:ExcelWorksheet>
+                    <x:Name>Sheet1</x:Name>
+                    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+                </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+        </x:ExcelWorkbook>
+        </xml><![endif]-->
+    </head>
+    <body><table border="1">
+  `;
+
+  for (let i = 0; i < rows.length; i++) {
+    let cols = rows[i].querySelectorAll("td, th");
+
+    excelFile += "<tr>";
+
+    for (let j = 0; j < cols.length; j++) {
+        excelFile += "<td>" + cols[j].innerText + "</td>";
+    }
+
+    excelFile += "</tr>";
+  }
+
+  excelFile += "</table></body></html>";
+
+  // Используем `showSaveFilePicker` для выбора места сохранения файла
+  try {
+    const handle = await window.showSaveFilePicker({
+        suggestedName: fileName,
+        types: [
+            {
+                description: 'Excel File',
+                accept: { 'application/vnd.ms-excel': ['.xls', '.xlsx'] }
+            },
+        ],
+    });
+
+    const writable = await handle.createWritable();
+    await writable.write(excelFile);
+    await writable.close();
+  } catch (err) {
+    console.error('Ошибка при сохранении файла:', err);
+  }
+
+  closeExportPopUp();
+}
+
+function closeExportPopUp () {
+  popupExport.style.display = 'none';
+  inpExportEl.value = '';
+  clearInterval(idInterval);
+}
+
+function setTypeSchoolValue () {
+  arrFiltersType = [];
+
+  checkboxTypeSchoolArr.forEach((checkbox) => {
+    if (checkbox.checked) {
+      arrFiltersType.push(checkbox.dataset.typeFilter);
+      arrSchoolTypeSelect = checkbox.dataset.typeSelect
+    }
+  });
+
+  arrFiltersType.length == 4 ? arrFiltersType.shift() : false;
+
+  if (arrFiltersType.length == 0) {
+    inpTypeSchool.value = '';
+  } else if (arrFiltersType.length == 1) {
+    selectResetArr[0].style.display = 'block';
+    inpTypeSchool.value = `${arrSchoolTypeSelect}`;
+  } else {
+    selectResetArr[0].style.display = 'block';
+    inpTypeSchool.value = `Тип учебного заведения (выбрано ${arrFiltersType.length})`;
+  }
+}
 
 //Render table
 function tableRender(dataValue) {
@@ -128,7 +238,7 @@ function tableRender(dataValue) {
       <div class="td-info-wrapper">
       <p>${checkUndef(school.inn)}</p>
       <p class="fullname fullname-abbr">${school.fullName}</p>
-      <p class="table__abbr">${checkUndef(school.abbr)}</p>
+      ${checkUndef(school.abbr) == '' ? '' : `<p class="table__abbr">${school.abbr}</p>`}
       <p class="table__year-name">${checkUndef(school.year)}</p>
       </div>
       </td>
@@ -873,27 +983,15 @@ delBtnArr.forEach((del) => {
 //Apply select
 btnApply.addEventListener('click', () => {
   j = 1;
-  arrFiltersType = [];
   arrSchoolTypeSelect = '';
-  checkboxTypeSchoolArr.forEach((checkbox) => {
-    checkbox.checked ? arrFiltersType.push(checkbox.dataset.typeFilter) : false;
-    checkbox.checked ? (arrSchoolTypeSelect = checkbox.dataset.typeSelect) : false;
-  });
 
-  arrFiltersType.length == 4 ? arrFiltersType.shift() : false;
-  if (arrFiltersType.length == 0) {
-    inpTypeSchool.value = '';
-  } else if (arrFiltersType.length == 1) {
-    selectResetArr[0].style.display = 'block';
-    inpTypeSchool.value = `${arrSchoolTypeSelect}`;
-  } else {
-    selectResetArr[0].style.display = 'block';
-    inpTypeSchool.value = `Тип учебного заведения (выбрано ${arrFiltersType.length})`;
-  }
+  setTypeSchoolValue();
+
   if (arrFiltersType.length >= 3) {
     true;
   } else {
     let regTypeSchool = new RegExp(arrFiltersType.join('').replaceAll(', ', '|'), 'gi');
+
     i == 1 || n == 1
       ? (dataPrev = dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
       : (dataPrev = dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
@@ -907,36 +1005,76 @@ btnApply.addEventListener('click', () => {
   }
 });
 
+
+let applySelect = false;
+
 //Select Reset
-selectResetArr.forEach((reset) => {
-  reset.addEventListener('click', () => {
-    i = 0;
-    j = 0;
-    n = 0;
-    btnSearchResetArr.forEach((btn) => (btn.style.display = 'none'));
-    selectResetArr.forEach((reset) => (reset.style.display = 'none'));
-    document.querySelectorAll('input').forEach((inp) => (inp.value = ''));
-    selectElArr.forEach((select) => {
-      select.value = '';
-    });
+selectResetArr.forEach((reset, index) => {
+  reset.addEventListener('click', (e) => {
+    i = j = n = 0;
+    applySelect = false;
+    reset.style.display = 'none'
+
+    if (index == 0)
+      checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+
+    selectElArr[index].value = '';
+
     tableRender(dataSlice);
   });
 });
+
 btnApply.onmousedown = function (e) {
   if (document.activeElement === selectElArr[0]) {
     e.preventDefault();
+    applySelect = true;
   }
 };
-document.querySelectorAll('.js-type-school-value').forEach(
-  (el) =>
-    (el.onmousedown = function (e) {
-      if (document.activeElement === selectElArr[0]) {
-        e.preventDefault();
-      }
-    })
-);
+
+const setEventsForOptionsAtSelects = (arSelect = {0: '.js-type-school-value', 1: '.filter-region'}) => {
+  if (arSelect.length <= 0)
+    return false;
+
+  for (const key in arSelect) {
+    let elem = arSelect[key];
+
+    document.querySelectorAll(elem).forEach(
+      (el) => 
+        (el.onmousedown = function (e) {
+          if (document.activeElement === selectElArr[key]) {
+            e.preventDefault();
+          }
+        })
+    );
+  }
+}
+setEventsForOptionsAtSelects();
+
 // Select settings
 selectElArr.forEach((select, indexSelect) => {
+  const closeSelect = (select, indexSelect, arrow, promptEl, deselectCheckBox = true) => {
+    select.dataset.active = 'close';
+    arrow.dataset.active = 'close';
+    promptEl.dataset.active = 'close';
+
+    if (deselectCheckBox && indexSelect == 0)
+      checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+
+    if (indexSelect == 0)
+      setTypeSchoolValue();
+
+    selectResetArr.forEach((reset, indexReset) => {
+      if (indexReset == indexSelect && select.value == '') {
+        reset.style.display = 'none';
+      }
+    });
+  }
+  const openSelect = (select, arrow, promptEl) => {
+    select.dataset.active = 'open';
+    arrow.dataset.active = 'open';
+    promptEl.dataset.active = 'open';
+  }
+
   selectResetArr.forEach((reset, indexReset) => {
     if (indexReset == indexSelect) {
       select.addEventListener('input', () => {
@@ -944,40 +1082,45 @@ selectElArr.forEach((select, indexSelect) => {
       });
     }
   });
-  let countArrowClick = 0;
+
   promptArr.forEach((promptEl, indexPrompt) => {
     selectArrowArr.forEach((arrow, indexArrow) => {
       if (indexArrow == indexSelect && indexSelect == indexPrompt) {
         btnApply.addEventListener('click', () => {
-          select.dataset.active = 'close';
-          arrow.dataset.active = 'close';
-          promptEl.dataset.active = 'close';
-          checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+          closeSelect(select, indexSelect, arrow, promptEl, false)
+        }); 
+
+        [arrow, select].forEach(elem => {
+          elem.addEventListener('click', (e) => {
+            if (elem.dataset.active == 'open') {
+              closeSelect(select, indexSelect, arrow, promptEl);
+            } else {
+              openSelect(select, arrow, promptEl);
+            }
         });
-        arrow.addEventListener('click', () => {
-          countArrowClick++;
-          if (countArrowClick % 2) {
-            select.dataset.active = 'open';
-            arrow.dataset.active = 'open';
-            promptEl.dataset.active = 'open';
-          } else {
-            select.dataset.active = 'close';
-            arrow.dataset.active = 'close';
-            promptEl.dataset.active = 'close';
-            checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
-          }
         });
         select.addEventListener('click', () => {
           select.dataset.active = 'open';
           arrow.dataset.active = 'open';
           promptEl.dataset.active = 'open';
+          });
+        select.addEventListener('click', () => {
+          select.dataset.active = 'open';
+          arrow.dataset.active = 'open';
+          promptEl.dataset.active = 'open';
         });
-        select.addEventListener('blur', (e) => {
-          select.dataset.active = 'close';
-          arrow.dataset.active = 'close';
-          promptEl.dataset.active = 'close';
-          checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+
+        select.addEventListener('blur', function () {
+          if (!applySelect || indexSelect == 1) {
+            closeSelect(select, indexSelect, arrow, promptEl);
+          }
         });
+
+        if (indexSelect == 1) {
+          promptEl.addEventListener('click', function () {
+            closeSelect(select, indexSelect, arrow, promptEl);
+          });
+        }
       }
     });
   });
@@ -1022,7 +1165,7 @@ function bySortRev(sortPar) {
 document.querySelectorAll('.sort-table').forEach((sort) => {
   sort.addEventListener('click', () => {
     let sortValues = sort.dataset.sortValue;
-    let sortData;
+    let sortData;    
     count++;
     if (count % 2) {
       i == 1 || j == 1 || n == 1
@@ -1075,25 +1218,65 @@ checkboxTypeSchoolArr[0].addEventListener('click', () => {
 });
 checkboxTypeSchoolArr.forEach((el) => {
   el.addEventListener('click', () => {
+    setTypeSchoolValue();
+
     inpTypeSchool.focus();
     promptArr[0].dataset.active = 'open';
   });
 });
 
-//Filter Region
-inpRegion.addEventListener('input', () => {
-  regionValueInput = inpRegion.value;
-  let myReg = new RegExp('^' + regionValueInput, 'gi');
-  let filtersValuesHTML = '';
-  let regionsFind = regions.filter((el) => el.match(myReg));
-  regionsFind.slice(0, 10).forEach((region) => {
-    filtersValuesHTML += `
-    <div class="filter-value filter-region">
-      <label>${region}</label>
-    </div>`;
+const setEventToFilterRegion = (btn) => {
+  btn.addEventListener('click', (e) => {
+    i = 1;
+    inpRegion.value = regionValueInput = btn.innerText;
+    selectResetArr[1].style.display = 'block';
+
+    j == 1 || n == 1
+      ? tableRender(dataFilters.filter((school) => school.address.match(regionValueInput)))
+      : tableRender(dataSlice.filter((school) => school.address.match(regionValueInput)));
+    j != 1 || n != 1
+      ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
+      : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
   });
+}
+
+//Filter Region
+inpRegion.addEventListener('input', (event) => {
+  regionValueInput = inpRegion.value;
+  let myReg = new RegExp('^' + regionValueInput, 'gi'),
+      regionsFind = regions.filter((el) => el.match(myReg)),
+      filtersValuesHTML = '';
+
+  if (regionsFind.length > 0) {
+    regionsFind.slice(0, 10).forEach((region) => {
+      let textHighlight = String(region).match(myReg).join(''),
+          replaceText = String(region);
+
+      if (String(region).match(myReg) && regionValueInput != '') {
+        replaceText = replaceText
+                          .toLowerCase()
+                          .replace(
+                            textHighlight.toLowerCase(),
+                            `<span class="highlight">${String(region).match(myReg)}</span>`
+                          )
+                          .replaceAll(',', '');
+        replaceText.charAt(0).toUpperCase() + replaceText.slice(1);
+      }
+
+      filtersValuesHTML += `
+        <div class="filter-value filter-region">
+          <label>${replaceText}</label>
+        </div>
+      `;
+    });
+    
+    promptArr[1].dataset.active = 'open';
+  } else {
+    promptArr[1].dataset.active = 'close';
+  }
+
   filtersWrapper.innerHTML = filtersValuesHTML;
-  const btnRegionArr = document.querySelectorAll('.filter-region');
+
   selectResetArr[1].addEventListener('click', () => {
     filtersWrapper.innerHTML = `
       <div class="filter-value filter-region">
@@ -1126,55 +1309,22 @@ inpRegion.addEventListener('input', () => {
       <div class="filter-value filter-region">
         <label>Павлово</label>
       </div>`;
-    const btnRegionArr = document.querySelectorAll('.filter-region');
-    checkboxTypeSchoolArr.forEach((checkbox) => (checkbox.checked = false));
-    btnRegionArr.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        i = 1;
-        inpRegion.value = btn.innerText;
-        regionValueInput = inpRegion.value;
-        selectResetArr[1].style.display = 'block';
-        j == 1 || n == 1
-          ? tableRender(dataFilters.filter((school) => school.address.match(regionValueInput)))
-          : tableRender(dataSlice.filter((school) => school.address.match(regionValueInput)));
-        j !== 1 || n !== 1
-          ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
-          : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
-      });
+
+    setEventsForOptionsAtSelects({1: '.filter-region'});
+
+    document.querySelectorAll('.filter-region').forEach((btn) => {
+      setEventToFilterRegion(btn);
     });
   });
-  btnRegionArr.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      i = 1;
-      inpRegion.value = btn.innerText;
-      regionValueInput = inpRegion.value;
-      selectResetArr[1].style.display = 'block';
-      j == 1 || n == 1
-        ? (dataPrev = dataFilters.filter((school) => school.address.match(regionValueInput)))
-        : dataPrev.filter((school) => school.address.match(regionValueInput));
 
-      j == 1 || n == 1
-        ? tableRender(dataFilters.filter((school) => school.address.match(regionValueInput)))
-        : tableRender(dataSlice.filter((school) => school.address.match(regionValueInput)));
-      j !== 1 || n !== 1
-        ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
-        : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
-    });
+  setEventsForOptionsAtSelects({1: '.filter-region'});
+
+  document.querySelectorAll('.filter-region').forEach((btn) => {
+    setEventToFilterRegion(btn);
   });
 });
 btnRegionArr.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    i = 1;
-    inpRegion.value = btn.innerText;
-    regionValueInput = inpRegion.value;
-    selectResetArr[1].style.display = 'block';
-    j == 1 || n == 1
-      ? tableRender(dataFilters.filter((school) => school.address.match(regionValueInput)))
-      : tableRender(dataSlice.filter((school) => school.address.match(regionValueInput)));
-    j !== 1 || n !== 1
-      ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
-      : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
-  });
+  setEventToFilterRegion(btn)
 });
 
 //Search
@@ -1271,10 +1421,14 @@ searchInput.forEach((inp, indexInp) => {
             } else tableRender(dataSlice);
           } else {
             let currentData = dataFilters;
-            currentData
+            let filteredData = currentData
               .filter((el) => String(el[searchId]).match(regSearch))
-              .slice(0, 6)
-              .forEach((el) => {
+              .slice(0, 6);
+             
+            if (filteredData.length <= 0) {
+              promptEl.style.display = 'none';
+            } else {
+              filteredData.forEach((el) => {
                 textHighlight = String(el[searchId]).match(regHighlight).join('');
                 textOriginal = String(el[searchId]).toLowerCase();
                 replaceText = textOriginal
@@ -1286,28 +1440,22 @@ searchInput.forEach((inp, indexInp) => {
                 valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
                 promptEl.innerHTML = valuesSearchHTML;
               });
-            document.querySelectorAll('.search-value').forEach((el) => {
-              el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
-              el.addEventListener('click', () => {
-                n = 1;
-                inp.value = el.textContent;
-                valueInput = el.textContent;
-                regSearch = new RegExp('^' + valueInput, 'gi');
-                inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
-                promptEl.style.display = 'none';
-                tableRender(dataFilters.filter((el) => String(el[searchId]).match(regSearch)));
-              });
-            });
+            }
+
             valueInput == '' ? tableRender(dataFilters) : false;
           }
         } else {
           let textHighlight = '';
           let textOriginal = '';
           let replaceText = '';
-          dataSlice
+          let filteredData = dataSlice
             .filter((el) => String(el[searchId]).match(regSearch))
-            .slice(0, 6)
-            .forEach((el) => {
+            .slice(0, 6);
+
+          if (filteredData.length <= 0) {
+            promptEl.style.display = 'none';
+          } else {
+            filteredData.forEach((el) => {
               textHighlight = String(el[searchId]).match(regHighlight).join('');
               textOriginal = String(el[searchId]).toLowerCase();
               replaceText = textOriginal
@@ -1319,26 +1467,33 @@ searchInput.forEach((inp, indexInp) => {
               valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
               promptEl.innerHTML = valuesSearchHTML;
             });
+          } 
+          
           if (valueInput == '') {
             promptEl.style.display = 'none';
             tableRender(dataSlice);
           }
-          document.querySelectorAll('.search-value').forEach((el) => {
-            el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
-            el.addEventListener('click', () => {
-              n = 1;
-              inp.value = el.textContent;
-              valueInput = el.textContent;
-              inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
-              regSearch = new RegExp('^' + valueInput, 'gi');
-              promptEl.style.display = 'none';
-              dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
-              tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
-            });
-          });
+
           tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
           valueInput == '' ? tableRender(dataSlice) : false;
         }
+
+        // document.querySelectorAll('.search-value').forEach((el) => {
+        //   el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
+        //   // el.addEventListener('click', (e) => {
+        //   //   // e.preventDefault();
+            
+        //   //   console.log(el)
+
+        //   //   n = 1;
+        //   //   inp.value = valueInput = el.textContent;
+        //   //   // inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
+        //   //   regSearch = new RegExp('^' + valueInput, 'gi');
+        //   //   //promptEl.style.display = 'none';
+        //   //   dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
+        //   //   tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+        //   // });
+        // });
       }
     });
   });
@@ -1360,7 +1515,7 @@ exportBtnEl.addEventListener('click', () => {
     month
   )}.${yearDate} ${time}.xlsx`;
   inpExportEl.value = str;
-  let idInterval = setInterval(() => {
+  idInterval = setInterval(() => {
     let date = new Date();
     let month = date.getMonth();
     function monthFixed(month) {
@@ -1375,16 +1530,9 @@ exportBtnEl.addEventListener('click', () => {
   }, 5000);
   closeBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
-      popupExport.style.display = 'none';
-      clearInterval(idInterval);
+      closeExportPopUp();
     });
   });
-});
-
-linkDownloadEl.addEventListener('click', () => {
-  let nameFile = inpExportEl.value;
-  linkDownloadEl.setAttribute('download', nameFile);
-  inpExportEl.value = '';
 });
 
 // import
@@ -1400,4 +1548,8 @@ importBtnEl.addEventListener('click', () => {
       popupImport.style.display = 'none';
     });
   });
+});
+
+exportButton.addEventListener('click', () => {
+  exportTableToExcel(inpExportEl.value);
 });

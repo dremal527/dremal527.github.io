@@ -70,6 +70,10 @@
   }
 }
 @media (max-width: 1280px) {
+  .section-select {
+    grid-template-columns: repeat(2, calc(50% - 20px));
+    justify-content: space-between;
+  }
   .btn__menu {
     width: 33.333%;
   }
@@ -271,6 +275,7 @@
   }
 }
 @media (width <= 880px) {
+
   tbody {
     display: flex;
     flex-direction: column;
@@ -480,7 +485,7 @@
     grid-template-columns: none !important;
   }
   .section-select {
-    grid-template-columns: auto;
+    grid-template-columns: 100%;
     margin-bottom: 0;
   }
   .section__table__content.bottom {
