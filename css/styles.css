@@ -1118,7 +1118,8 @@ tr:hover {
   font-weight: 700;
   line-height: 137.02%;
 }
-.overlay {
+.overlay,
+.select_overlay {
   position: fixed;
   height: 100lvh;
   width: 100%;
@@ -1128,6 +1129,9 @@ tr:hover {
   z-index: 20000;
   inset: 0;
   overflow: hidden;
+}
+.select_overlay {
+  display: none;
 }
 .popup {
   background-color: #fff;
@@ -1582,7 +1586,7 @@ td:nth-child(9) {
   z-index: 2000;
   top: 100%;
   width: 100%;
-  left: 0;
+  left: -1px;
   border: 1px solid var(--blue);
   display: none;
 }

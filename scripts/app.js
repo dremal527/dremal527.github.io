@@ -21,6 +21,7 @@ import Dadata from './utils/dadata.js';
 // variables
 const inpRegion = document.querySelector('.js-select-region');
 const inpTypeSchool = document.querySelector('.js-select-type-school');
+const arParentSelectEl = document.querySelectorAll('.main__select-wrapper');
 const selectElArr = document.querySelectorAll('.main__select');
 const selectArrowArr = document.querySelectorAll('.btn-select');
 const selectResetArr = document.querySelectorAll('.btn-select-reset');
@@ -52,6 +53,7 @@ const inputArr = document.querySelectorAll('input');
 const main = document.querySelector('.main');
 const inpExportEl = document.querySelector('.input-export');
 const exportButton = document.querySelector('.btn-download-export');
+const selectOverlay      = document.querySelector('.select_overlay');
 
 let inpFullName = document.querySelector('.edit-fullname');
 let inpInn = document.querySelector('.edit-inn');
@@ -158,13 +160,13 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
   closeExportPopUp();
 }
 
-function closeExportPopUp () {
+const closeExportPopUp = () => {
   popupExport.style.display = 'none';
   inpExportEl.value = '';
   clearInterval(idInterval);
 }
 
-function setTypeSchoolValue () {
+const setTypeSchoolValue = () => {
   arrFiltersType = [];
 
   checkboxTypeSchoolArr.forEach((checkbox) => {
@@ -185,6 +187,20 @@ function setTypeSchoolValue () {
     selectResetArr[0].style.display = 'block';
     inpTypeSchool.value = `Тип учебного заведения (выбрано ${arrFiltersType.length})`;
   }
+}
+
+const checkOutOfBounds = (element) => {
+  try {
+    let rect = element.getBoundingClientRect(),
+        isOutOfBounds = (
+          rect.top < 0 || 
+          rect.left < 0 || 
+          rect.bottom > window.innerHeight || 
+          rect.right > window.innerWidth
+        );
+    
+    return isOutOfBounds;
+  } catch (e) {}
 }
 
 //Render table
@@ -1056,6 +1072,8 @@ selectElArr.forEach((select, indexSelect) => {
     select.dataset.active = 'close';
     arrow.dataset.active = 'close';
     promptEl.dataset.active = 'close';
+    selectOverlay.style.display = 'none';
+    arParentSelectEl[indexSelect].style.zIndex = 'unset';
 
     if (deselectCheckBox && indexSelect == 0)
       checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
@@ -1069,10 +1087,19 @@ selectElArr.forEach((select, indexSelect) => {
       }
     });
   }
+
   const openSelect = (select, arrow, promptEl) => {
     select.dataset.active = 'open';
     arrow.dataset.active = 'open';
     promptEl.dataset.active = 'open';
+    selectOverlay.style.display = 'block';
+    arParentSelectEl[indexSelect].style.zIndex = 20001;
+
+    setTimeout(() => {
+      if (checkOutOfBounds(promptEl)) {
+        select.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 200);
   }
 
   selectResetArr.forEach((reset, indexReset) => {
@@ -1097,17 +1124,7 @@ selectElArr.forEach((select, indexSelect) => {
             } else {
               openSelect(select, arrow, promptEl);
             }
-        });
-        });
-        select.addEventListener('click', () => {
-          select.dataset.active = 'open';
-          arrow.dataset.active = 'open';
-          promptEl.dataset.active = 'open';
           });
-        select.addEventListener('click', () => {
-          select.dataset.active = 'open';
-          arrow.dataset.active = 'open';
-          promptEl.dataset.active = 'open';
         });
 
         select.addEventListener('blur', function () {
@@ -1228,7 +1245,8 @@ checkboxTypeSchoolArr.forEach((el) => {
 const setEventToFilterRegion = (btn) => {
   btn.addEventListener('click', (e) => {
     i = 1;
-    inpRegion.value = regionValueInput = btn.innerText;
+    inpRegion.value = regionValueInput = btn.innerText.replaceAll('\n', '');
+    
     selectResetArr[1].style.display = 'block';
 
     j == 1 || n == 1
@@ -1250,13 +1268,12 @@ inpRegion.addEventListener('input', (event) => {
   if (regionsFind.length > 0) {
     regionsFind.slice(0, 10).forEach((region) => {
       let textHighlight = String(region).match(myReg).join(''),
-          replaceText = String(region);
+          replaceText = `<span>${region}</span>`;
 
       if (String(region).match(myReg) && regionValueInput != '') {
         replaceText = replaceText
-                          .toLowerCase()
                           .replace(
-                            textHighlight.toLowerCase(),
+                            textHighlight,
                             `<span class="highlight">${String(region).match(myReg)}</span>`
                           )
                           .replaceAll(',', '');
@@ -1356,6 +1373,25 @@ promptSearchArr.forEach((promptEl) => {
   });
 });
 searchInput.forEach((inp, indexInp) => {
+  const showHint = (inp, promptEl, resetBtn) => {
+    selectOverlay.style.display = 'block';
+    inp.style.backgroundColor = 'white';
+    inp.style.zIndex = 20001;
+    promptEl.style.zIndex = 20001;
+    resetBtn.style.zIndex = 20001;
+
+    if (window.screen.width <= 880) {
+      inp.style.position = 'relative';
+    }
+  }
+  const hideHint = (inp, promptEl, resetBtn) => {
+    selectOverlay.style.display = 'none';
+    inp.style.backgroundColor = 'transparent';
+    inp.style.zIndex = 'unset';
+    promptEl.style.zIndex = 'unset';
+    resetBtn.style.zIndex = 'unset';
+  }
+
   loopIconsArr.forEach((icon, iconIndex) => {
     inp.addEventListener('blur', () => {
       if (iconIndex == indexInp && inp.value == '') {
@@ -1376,22 +1412,32 @@ searchInput.forEach((inp, indexInp) => {
       }
     });
   });
+
   promptSearchArr.forEach((promptEl, promptIndex) => {
     inp.addEventListener('blur', () => {
       if (indexInp == promptIndex) {
         setTimeout(() => {
           promptEl.style.display = 'none';
+          hideHint(inp, promptEl, btnSearchResetArr[promptIndex]);
         }, 100);
       }
     });
     inp.addEventListener('click', () => {
       if (indexInp == promptIndex) {
         promptEl.style.display = 'block';
+
+        if (checkOutOfBounds(promptEl)) {
+          inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        showHint(inp, promptEl, btnSearchResetArr[promptIndex]);
       }
     });
 
     inp.addEventListener('input', () => {
       if (indexInp == promptIndex) {
+        showHint(inp, promptEl, btnSearchResetArr[promptIndex]);
+
         promptEl.style.display = 'block';
         inp.value == '' ? inp.blur() : false;
         let searchId = inp.dataset.searchValue;
@@ -1478,22 +1524,31 @@ searchInput.forEach((inp, indexInp) => {
           valueInput == '' ? tableRender(dataSlice) : false;
         }
 
-        // document.querySelectorAll('.search-value').forEach((el) => {
-        //   el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
-        //   // el.addEventListener('click', (e) => {
-        //   //   // e.preventDefault();
-            
-        //   //   console.log(el)
+        if (checkOutOfBounds(promptEl)) {
+          inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
-        //   //   n = 1;
-        //   //   inp.value = valueInput = el.textContent;
-        //   //   // inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
-        //   //   regSearch = new RegExp('^' + valueInput, 'gi');
-        //   //   //promptEl.style.display = 'none';
-        //   //   dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
-        //   //   tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
-        //   // });
-        // });
+        document.querySelectorAll('.search-value').forEach(
+          (el) => 
+            (el.onmousedown = function (e) {
+                e.preventDefault();
+            })
+        );
+
+        document.querySelectorAll('.search-value').forEach((el) => {
+          el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
+          el.addEventListener('click', (e) => {
+            n = 1;
+            inp.value = valueInput = el.textContent;
+            inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
+            regSearch = new RegExp('^' + valueInput, 'gi');
+            dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
+            promptEl.style.display = 'none';
+
+            hideHint(inp, promptEl, btnSearchResetArr[promptIndex]);
+            tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+          });
+        });
       }
     });
   });
