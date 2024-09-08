@@ -1,22 +1,5 @@
 import { data } from '../data/data.js';
 import { regions } from '../data/regions.js';
-import Dadata from './utils/dadata.js';
-
-// Fill data full name from dadata.ru
-// document.addEventListener('DOMContentLoaded', () => {
-//   data.map(elem => {
-//     if (elem.inn) {
-//       Dadata.getFullNameByInn(elem.inn)
-//         .then(fullName => {
-//           elem.fullName = fullName;
-//         })
-//         .catch(error => { /**/ });
-
-//         console.log(elem.inn);
-//         return false;
-//     }
-//   })
-// });
 
 // variables
 const inpRegion = document.querySelector('.js-select-region');
@@ -124,13 +107,47 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
     <body><table border="1">
   `;
 
-  for (let i = 0; i < rows.length; i++) {
+  const header = [
+    'ИНН',
+    'Dadata',
+    'Название 1',
+    'Год получения этого названии',
+    'Название 2',
+    'Год получения этого названии',
+    'Название 3',
+    'Год получения этого названии',
+    'Название 4',
+    'Год получения этого названии',
+    'Название 5',
+    'Год получения этого названии',
+    'Название 6',
+    'Год получения этого названии',
+    'Название 7',
+    'Год получения этого названии',
+  ];
+
+  excelFile += "<tr>";
+
+  header.map(elem => {
+    excelFile += `<td>${elem}</td>`;
+  });
+
+  excelFile += "</tr>";
+
+
+  for (let i = 2; i < rows.length; i++) {
+    if (![4, 5].includes(i))
+      continue;
+
     let cols = rows[i].querySelectorAll("td, th");
+
+    console.log({cols})
+    return false;
 
     excelFile += "<tr>";
 
     for (let j = 0; j < cols.length; j++) {
-        excelFile += "<td>" + cols[j].innerText + "</td>";
+      excelFile += "<td>" + cols[j].innerText + "</td>";
     }
 
     excelFile += "</tr>";
@@ -931,7 +948,7 @@ tableRender(dataSlice);
 //Add new inputs in edit popup
 btnAddAltEl.addEventListener('click', (e) => {
   e.preventDefault();
-  countAddALtClick++;
+
   newALtNameFormHTML = ` 
     <div class="popup-edit-content-wrapper" data-edit-form-id="${countAddALtClick}">
         <div
@@ -942,18 +959,21 @@ btnAddAltEl.addEventListener('click', (e) => {
             <div
               class="table-icon del-alt-name js-edit-btn-altDel"
               data-value="Удалить"
-              data-edit-altDel="${countAddALtClick}">
+              data-edit-altDel="${countAddALtClick + 1}">
               <span class="icon control-edit delete"></span>
             </div>
           </div>
-                <label class="edit-label" data-edit-value="alt${countAddALtClick}">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-value="fullName${countAddALtClick}" /></label>
+                <label class="edit-label" data-edit-value="alt${countAddALtClick + 1}">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-value="fullName${countAddALtClick}" /></label>
           <div class="row-inputs">
-            <label class="edit-label" data-edit-value="alt${countAddALtClick}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" data-edit-value="alt${countAddALtClick}" /></label>
-            <label class="edit-label" data-edit-value="year${countAddALtClick}">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${countAddALtClick} maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
+            <label class="edit-label" data-edit-value="alt${countAddALtClick + 1}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" data-edit-value="alt${countAddALtClick}" /></label>
+            <label class="edit-label" data-edit-value="year${countAddALtClick + 1}">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${countAddALtClick} maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
           </div>
         </div>
     </div>`;
   newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
+  
+  countAddALtClick++;
+
   let inpNewValues = document.querySelectorAll('.edit-inp');
   inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
     ? (btnSaveEdit.disabled = true)
