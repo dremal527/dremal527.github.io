@@ -110,18 +110,25 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
   const header = [
     'ИНН',
     'Dadata',
+    'Аббр. 1',
     'Название 1',
     'Год получения этого названии',
+    'Аббр. 2',
     'Название 2',
     'Год получения этого названии',
+    'Аббр. 3',
     'Название 3',
     'Год получения этого названии',
+    'Аббр. 4',
     'Название 4',
     'Год получения этого названии',
+    'Аббр. 5',
     'Название 5',
     'Год получения этого названии',
+    'Аббр. 6',
     'Название 6',
     'Год получения этого названии',
+    'Аббр. 7',
     'Название 7',
     'Год получения этого названии',
   ];
@@ -136,18 +143,47 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
 
 
   for (let i = 2; i < rows.length; i++) {
-    if (![4, 5].includes(i))
-      continue;
-
     let cols = rows[i].querySelectorAll("td, th");
-
-    console.log({cols})
-    return false;
 
     excelFile += "<tr>";
 
     for (let j = 0; j < cols.length; j++) {
-      excelFile += "<td>" + cols[j].innerText + "</td>";
+      if (![4, 7, 8, 9, 10, 11, 12].includes(j))
+        continue;
+
+      if (j == 4) {
+        const data = Array.from(cols[j].querySelectorAll('.td-info-wrapper')).map(wrapper => {
+          const inn = wrapper.querySelector('p:nth-of-type(1)')?.textContent.trim();
+          const dadata = wrapper.querySelector('p:nth-of-type(2)')?.textContent.trim();
+          const fullName = wrapper.querySelector('p:nth-of-type(3)')?.textContent.trim();
+          const abbr = wrapper.querySelector('p:nth-of-type(4)')?.textContent.trim();
+          const year = wrapper.querySelector('p:nth-of-type(5)')?.textContent.trim();
+          
+          return { inn, dadata, abbr, fullName, year };
+        });
+
+        for (const key in data[0]) {
+          if (data[0][key] == undefined)
+            data[0][key] = '';
+
+          excelFile += "<td>" + data[0][key] ?? '' + "</td>";
+        }
+      } else {
+        const data = Array.from(cols[j].querySelectorAll('.alt-name')).map(wrapper => {
+          const abbr = wrapper.querySelector('p:nth-of-type(1)')?.textContent.trim();
+          const fullName = wrapper.querySelector('p:nth-of-type(2)').textContent.trim();
+          const year = wrapper.querySelector('p:nth-of-type(3)')?.textContent.trim();
+          
+          return { abbr, fullName, year };
+        });
+
+        for (const key in data[0]) {
+          if (data[0][key] == undefined)
+            data[0][key] = '';
+
+          excelFile += "<td>" + data[0][key] ?? '' + "</td>";
+        }
+      }
     }
 
     excelFile += "</tr>";
@@ -270,6 +306,7 @@ function tableRender(dataValue) {
       <div class="td-name">ИНН\nАббревиатура\nГод</div>
       <div class="td-info-wrapper">
       <p>${checkUndef(school.inn)}</p>
+      <p class="fullname fullname-abbr" hidden>${school.dadata}</p>
       <p class="fullname fullname-abbr">${school.fullName}</p>
       ${checkUndef(school.abbr) == '' ? '' : `<p class="table__abbr">${school.abbr}</p>`}
       <p class="table__year-name">${checkUndef(school.year)}</p>
@@ -300,14 +337,22 @@ function tableRender(dataValue) {
       let altNameValues = document.createElement('div');
       altName1.append(altNameValues);
       altNameValues.classList.add('alt-name');
-      let pNameAlt = document.createElement('p');
-      let pYearAlt = document.createElement('p');
+
+      let pFullNameAlt = document.createElement('p'),
+          pNameAlt = document.createElement('p'),
+          pYearAlt = document.createElement('p');
+
       pYearAlt.dataset.prevValue = checkUndef(school.year);
       pYearAlt.classList.add('table__year');
+
+      pFullNameAlt.innerText = `${checkUndef(school.fullName1)}`;
       pNameAlt.innerText = `${checkUndef(school.alt1)}`;
       pYearAlt.innerText = `${checkUndef(school.year1)}`;
+
       altNameValues.append(pNameAlt);
+      altNameValues.append(pFullNameAlt);
       altNameValues.append(pYearAlt);
+
       trEl.append(altName1);
       let altName2 = document.createElement('td');
       altName2.classList.add('td-alt');
@@ -318,14 +363,22 @@ function tableRender(dataValue) {
       let altNameValues2 = document.createElement('div');
       altName2.append(altNameValues2);
       altNameValues2.classList.add('alt-name');
-      let pNameAlt2 = document.createElement('p');
-      let pYearAlt2 = document.createElement('p');
+
+      let pFullNameAlt2 = document.createElement('p'),
+          pNameAlt2 = document.createElement('p'),
+          pYearAlt2 = document.createElement('p');
+
       pYearAlt2.classList.add('table__year');
+
+      pFullNameAlt2.innerText = `${checkUndef(school.fullName2)}`;
       pNameAlt2.innerText = `${checkUndef(school.alt2)}`;
       pYearAlt2.innerText = `${checkUndef(school.year2)}`;
       pYearAlt2.dataset.prevValue = checkUndef(school.year1);
+
       altNameValues2.append(pNameAlt2);
+      altNameValues2.append(pFullNameAlt2);
       altNameValues2.append(pYearAlt2);
+
       trEl.append(altName2);
     }, 0);
     setTimeout(() => {
@@ -338,15 +391,24 @@ function tableRender(dataValue) {
       let altNameValues3 = document.createElement('div');
       altName3.append(altNameValues3);
       altNameValues3.classList.add('alt-name');
-      let pNameAlt3 = document.createElement('p');
-      let pYearAlt3 = document.createElement('p');
+
+      let pFullNameAlt3 = document.createElement('p'),
+          pNameAlt3 = document.createElement('p'),
+          pYearAlt3 = document.createElement('p');
+
       pYearAlt3.dataset.prevValue = checkUndef(school.year2);
       pYearAlt3.classList.add('table__year');
+
+      pFullNameAlt3.innerText = `${checkUndef(school.fullName3)}`;
       pNameAlt3.innerText = `${checkUndef(school.alt3)}`;
       pYearAlt3.innerText = `${checkUndef(school.year3)}`;
+
       altNameValues3.append(pNameAlt3);
+      altNameValues3.append(pFullNameAlt3);
       altNameValues3.append(pYearAlt3);
+
       trEl.append(altName3);
+
       let altName4 = document.createElement('td');
       altName4.classList.add('td-alt');
       let tdTitleMobile4 = document.createElement('div');
@@ -356,14 +418,22 @@ function tableRender(dataValue) {
       let altNameValues4 = document.createElement('div');
       altName4.append(altNameValues4);
       altNameValues4.classList.add('alt-name');
-      let pNameAlt4 = document.createElement('p');
-      let pYearAlt4 = document.createElement('p');
+
+      let pFullNameAlt4 = document.createElement('p'),
+          pNameAlt4 = document.createElement('p'),
+          pYearAlt4 = document.createElement('p');
+
       pYearAlt4.classList.add('table__year');
+
+      pFullNameAlt4.innerText = `${checkUndef(school.fullName4)}`;
       pNameAlt4.innerText = `${checkUndef(school.alt4)}`;
       pYearAlt4.innerText = `${checkUndef(school.year4)}`;
       pYearAlt4.dataset.prevValue = checkUndef(school.year3);
+      
       altNameValues4.append(pNameAlt4);
+      altNameValues4.append(pFullNameAlt4);
       altNameValues4.append(pYearAlt4);
+
       trEl.append(altName4);
     }, 4);
     setTimeout(() => {
@@ -376,15 +446,24 @@ function tableRender(dataValue) {
       let altNameValues5 = document.createElement('div');
       altName5.append(altNameValues5);
       altNameValues5.classList.add('alt-name');
-      let pNameAlt5 = document.createElement('p');
-      let pYearAlt5 = document.createElement('p');
+
+      let pFullNameAlt5 = document.createElement('p'),
+          pNameAlt5 = document.createElement('p'),
+          pYearAlt5 = document.createElement('p');
+
       pYearAlt5.classList.add('table__year');
+
+      pFullNameAlt5.innerText = `${checkUndef(school.fullName5)}`;
       pNameAlt5.innerText = `${checkUndef(school.alt5)}`;
       pYearAlt5.innerText = `${checkUndef(school.year5)}`;
       pYearAlt5.dataset.prevValue = checkUndef(school.year4);
+
       altNameValues5.append(pNameAlt5);
+      altNameValues5.append(pFullNameAlt5);
       altNameValues5.append(pYearAlt5);
+
       trEl.append(altName5);
+      
       let altName6 = document.createElement('td');
       altName6.classList.add('td-alt');
       let tdTitleMobile6 = document.createElement('div');
@@ -394,14 +473,22 @@ function tableRender(dataValue) {
       let altNameValues6 = document.createElement('div');
       altName6.append(altNameValues6);
       altNameValues6.classList.add('alt-name');
-      let pNameAlt6 = document.createElement('p');
-      let pYearAlt6 = document.createElement('p');
+
+      let pFullNameAlt6 = document.createElement('p'),
+          pNameAlt6 = document.createElement('p'),
+          pYearAlt6 = document.createElement('p');
+
       pYearAlt6.classList.add('table__year');
+
+      pFullNameAlt6.innerText = `${checkUndef(school.fullName6)}`;
       pNameAlt6.innerText = `${checkUndef(school.alt6)}`;
       pYearAlt6.innerText = `${checkUndef(school.year6)}`;
       pYearAlt6.dataset.prevValue = checkUndef(school.year5);
+
       altNameValues6.append(pNameAlt6);
+      altNameValues6.append(pFullNameAlt6);
       altNameValues6.append(pYearAlt6);
+
       trEl.append(altName6);
     }, 7);
     setTimeout(() => {
@@ -453,9 +540,16 @@ function tableRender(dataValue) {
          <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
            
        </div>
+       </label>
+       <label class="edit-label" data-edit-value="dadata">Название с сайта dadata.ru
+         <input type="text" class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata" value="${trValue.dadata}"/>
+        <div class="prompt-edit">
+          <span class="icon" style="color: #D11521"></span>
+          <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+        </div>
+      </label>
      </label>
-       <label class="edit-label " data-edit-value="fullName"
-         >Полное название
+       <label class="edit-label " data-edit-value="fullName">Полное название
          <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName" value="${
            trValue.fullName
          }"
@@ -730,44 +824,44 @@ function tableRender(dataValue) {
       let inpNewValues = document.querySelectorAll('.edit-inp');
       matchingTr.forEach((el) => {
         if (inpNewValues.length > 5) {
-          inpNewValues[4].value = el.fullName1;
-          inpNewValues[5].value = el.alt1;
+          inpNewValues[5].value = el.fullName1;
+          inpNewValues[6].value = el.alt1;
           el.year1 === undefined
-            ? (inpNewValues[6].value = el.year)
-            : (inpNewValues[6].value = el.year1);
+            ? (inpNewValues[7].value = el.year)
+            : (inpNewValues[7].value = el.year1);
         }
         if (inpNewValues.length > 11) {
-          inpNewValues[7].value = el.fullname2;
-          inpNewValues[8].value = el.alt2;
+          inpNewValues[8].value = el.fullName2 ?? '';
+          inpNewValues[9].value = el.alt2;
           el.year2 === undefined
-            ? (inpNewValues[9].value = el.year1)
-            : (inpNewValues[9].value = el.year2);
+            ? (inpNewValues[10].value = el.year1)
+            : (inpNewValues[10].value = el.year2);
         }
         if (inpNewValues.length > 14) {
-          inpNewValues[10].value = el.fullName3;
-          inpNewValues[11].value = el.alt3;
+          inpNewValues[11].value = el.fullName3;
+          inpNewValues[12].value = el.alt3;
           el.year3 === undefined
-            ? (inpNewValues[12].value = el.year1)
-            : (inpNewValues[12].value = el.year2);
+            ? (inpNewValues[13].value = el.year1)
+            : (inpNewValues[13].value = el.year2);
         }
         if (inpNewValues.length > 17) {
-          inpNewValues[13].value = el.fullName4;
-          inpNewValues[14].value = el.alt4;
+          inpNewValues[14].value = el.fullName4;
+          inpNewValues[15].value = el.alt4;
           el.year4 === undefined
-            ? (inpNewValues[15].value = el.year3)
-            : (inpNewValues[15].value = el.year4);
+            ? (inpNewValues[16].value = el.year3)
+            : (inpNewValues[16].value = el.year4);
         }
         if (inpNewValues.length > 19) {
-          inpNewValues[16].value = el.fullName5;
-          inpNewValues[17].value = el.alt5;
+          inpNewValues[17].value = el.fullName5;
+          inpNewValues[18].value = el.alt5;
           el.year5 === undefined
-            ? (inpNewValues[18].value = el.year4)
-            : (inpNewValues[18].value = el.year5);
+            ? (inpNewValues[19].value = el.year4)
+            : (inpNewValues[19].value = el.year5);
         }
         if (inpNewValues.length > 21) {
-          inpNewValues[19].value = el.fullName6;
-          inpNewValues[20].value = el.alt6;
-          inpNewValues[21].value = el.year5;
+          inpNewValues[20].value = el.fullName6;
+          inpNewValues[21].value = el.alt6;
+          inpNewValues[22].value = el.year5;
         }
       });
 
