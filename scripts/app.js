@@ -24,6 +24,7 @@ const promptSearchArr = document.querySelectorAll('.prompt-search');
 const btnTotalEl = document.querySelector('.js-btn-total');
 const fieldInTotalEl = document.querySelector('.js-total-value');
 const loopIconsArr = document.querySelectorAll('.search-table');
+const tableSearchBtnReset = document.querySelectorAll('.table_desktop .btn-reset-search');
 const btnAddAltEl = document.querySelector('.btn-add-alt');
 const newAltWrapper = document.querySelector('.wrap-forms-edit');
 const btnSaveEdit = document.querySelector('.btn-save');
@@ -43,6 +44,7 @@ let inpInn = document.querySelector('.edit-inn');
 
 const pFileName = document.querySelector('.filename');
 const inpImportEl = document.querySelector('.input-import');
+let oldValueSchoolSelect = [];
 let dataPrev = [];
 let inputEditsHTML = '';
 let inputEditsWrapper = [];
@@ -219,6 +221,16 @@ const closeExportPopUp = () => {
   clearInterval(idInterval);
 }
 
+const setOldValueSchoolSelect = () => {
+  checkboxTypeSchoolArr.forEach((el) => {
+    if (oldValueSchoolSelect.includes(el.dataset.typeFilter)) {
+      el.checked = true;
+    } else {
+      el.checked = false;
+    }
+  });
+}
+
 const setTypeSchoolValue = () => {
   arrFiltersType = [];
 
@@ -346,6 +358,11 @@ function tableRender(dataValue) {
       pYearAlt.classList.add('table__year');
 
       pFullNameAlt.innerText = `${checkUndef(school.fullName1)}`;
+
+      // if (checkUndef(school.year)) {
+      //   pFullNameAlt.style.marginBottom = '70px';
+      // }
+
       pNameAlt.innerText = `${checkUndef(school.alt1)}`;
       pYearAlt.innerText = `${checkUndef(school.year1)}`;
 
@@ -371,6 +388,11 @@ function tableRender(dataValue) {
       pYearAlt2.classList.add('table__year');
 
       pFullNameAlt2.innerText = `${checkUndef(school.fullName2)}`;
+
+      // if (checkUndef(school.year)) {
+      //   pFullNameAlt2.style.marginBottom = '70px';
+      // }
+
       pNameAlt2.innerText = `${checkUndef(school.alt2)}`;
       pYearAlt2.innerText = `${checkUndef(school.year2)}`;
       pYearAlt2.dataset.prevValue = checkUndef(school.year1);
@@ -400,6 +422,11 @@ function tableRender(dataValue) {
       pYearAlt3.classList.add('table__year');
 
       pFullNameAlt3.innerText = `${checkUndef(school.fullName3)}`;
+
+      // if (checkUndef(school.year)) {
+      //   pFullNameAlt3.style.marginBottom = '70px';
+      // }
+
       pNameAlt3.innerText = `${checkUndef(school.alt3)}`;
       pYearAlt3.innerText = `${checkUndef(school.year3)}`;
 
@@ -426,6 +453,11 @@ function tableRender(dataValue) {
       pYearAlt4.classList.add('table__year');
 
       pFullNameAlt4.innerText = `${checkUndef(school.fullName4)}`;
+
+      // if (checkUndef(school.year)) {
+      //   pFullNameAlt4.style.marginBottom = '70px';
+      // }
+
       pNameAlt4.innerText = `${checkUndef(school.alt4)}`;
       pYearAlt4.innerText = `${checkUndef(school.year4)}`;
       pYearAlt4.dataset.prevValue = checkUndef(school.year3);
@@ -454,6 +486,11 @@ function tableRender(dataValue) {
       pYearAlt5.classList.add('table__year');
 
       pFullNameAlt5.innerText = `${checkUndef(school.fullName5)}`;
+
+      // if (checkUndef(school.year)) {
+      //   pFullNameAlt5.style.marginBottom = '70px';
+      // }
+
       pNameAlt5.innerText = `${checkUndef(school.alt5)}`;
       pYearAlt5.innerText = `${checkUndef(school.year5)}`;
       pYearAlt5.dataset.prevValue = checkUndef(school.year4);
@@ -481,6 +518,11 @@ function tableRender(dataValue) {
       pYearAlt6.classList.add('table__year');
 
       pFullNameAlt6.innerText = `${checkUndef(school.fullName6)}`;
+
+      // if (checkUndef(school.year)) {
+      //   pFullNameAlt6.style.marginBottom = '70px';
+      // }
+
       pNameAlt6.innerText = `${checkUndef(school.alt6)}`;
       pYearAlt6.innerText = `${checkUndef(school.year6)}`;
       pYearAlt6.dataset.prevValue = checkUndef(school.year5);
@@ -944,7 +986,10 @@ function tableRender(dataValue) {
   const btnSaveEdit = document.querySelector('.btn-save');
   btnSaveEdit.addEventListener('click', (e) => {
     e.preventDefault();
-    let editElement = dataSlice.find((el) => el.id == idTrTable);
+  
+    const index = dataSlice.findIndex((el) => el.id == idTrTable);
+    let editElement = dataSlice[index];
+
     inpNewValues = document.querySelectorAll('.edit-inp');
     editElement.inn = inpNewValues[0].value;
     editElement.fullName = inpNewValues[1].value;
@@ -956,7 +1001,7 @@ function tableRender(dataValue) {
       editElement.year1 = inpNewValues[6].value;
     }
     if (inpNewValues.length > 11) {
-      editElement.fullname2 = inpNewValues[7].value;
+      editElement.fullName2 = inpNewValues[7].value;
       editElement.alt2 = inpNewValues[8].value;
       editElement.year2 = inpNewValues[9].value;
     }
@@ -981,13 +1026,14 @@ function tableRender(dataValue) {
       editElement.year5 = inpNewValues[21].value;
     }
 
+    dataSlice[index] = editElement;
+
     if (n == 1 || i == 1 || j == 1) {
-      dataFilters.splice(idTrTable - 201, 1, editElement);
       tableRender(dataFilters);
     } else {
-      dataSlice.splice(idTrTable - 201, 1, editElement);
       tableRender(dataSlice);
     }
+
     popupEdit.style.display = 'none';
     const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
     dataFormEl.forEach((formEl, index) => {
@@ -1150,6 +1196,15 @@ selectResetArr.forEach((reset, index) => {
 
     selectElArr[index].value = '';
 
+    selectElArr[index].dataset.active = 'close';
+    promptArr[index].dataset.active = 'close';
+    selectArrowArr[index].dataset.active = 'close';
+    selectResetArr[index].style.display = 'none';
+    selectOverlay.style.display = 'none';
+    arParentSelectEl[index].style.zIndex = 'unset';
+
+    oldValueSchoolSelect = [];
+    
     tableRender(dataSlice);
   });
 });
@@ -1161,7 +1216,7 @@ btnApply.onmousedown = function (e) {
   }
 };
 
-const setEventsForOptionsAtSelects = (arSelect = {0: '.js-type-school-value', 1: '.filter-region'}) => {
+const setEventsForOptionsAtSelects = (arSelect = {0: '.js-type-school-value label', 1: '.filter-region'}) => {
   if (arSelect.length <= 0)
     return false;
 
@@ -1169,28 +1224,50 @@ const setEventsForOptionsAtSelects = (arSelect = {0: '.js-type-school-value', 1:
     let elem = arSelect[key];
 
     document.querySelectorAll(elem).forEach(
-      (el) => 
+      (el) => {
         (el.onmousedown = function (e) {
           if (document.activeElement === selectElArr[key]) {
             e.preventDefault();
+            e.stopPropagation();
           }
         })
+      }
     );
   }
 }
 setEventsForOptionsAtSelects();
 
+selectOverlay.addEventListener('click', () => {
+  selectElArr.forEach((select, indexSelect) => {
+    if (select.dataset.active == 'open') {
+      select.dataset.active = 'close';
+      promptArr[indexSelect].dataset.active = 'close';
+      selectArrowArr[indexSelect].dataset.active = 'close';
+      selectResetArr[indexSelect].style.display = 'none';
+      selectOverlay.style.display = 'none';
+      arParentSelectEl[indexSelect].style.zIndex = 'unset';
+
+      if (indexSelect == 0) {
+        setOldValueSchoolSelect();
+        setTypeSchoolValue();
+      }
+    }
+  });
+
+  // tableRender(dataSlice);
+});
+
 // Select settings
 selectElArr.forEach((select, indexSelect) => {
-  const closeSelect = (select, indexSelect, arrow, promptEl, deselectCheckBox = true) => {
+  const closeSelect = (select, indexSelect, arrow, promptEl) => {
     select.dataset.active = 'close';
     arrow.dataset.active = 'close';
     promptEl.dataset.active = 'close';
     selectOverlay.style.display = 'none';
     arParentSelectEl[indexSelect].style.zIndex = 'unset';
 
-    if (deselectCheckBox && indexSelect == 0)
-      checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+    if (indexSelect == 0)
+      setOldValueSchoolSelect();
 
     if (indexSelect == 0)
       setTypeSchoolValue();
@@ -1228,7 +1305,15 @@ selectElArr.forEach((select, indexSelect) => {
     selectArrowArr.forEach((arrow, indexArrow) => {
       if (indexArrow == indexSelect && indexSelect == indexPrompt) {
         btnApply.addEventListener('click', () => {
-          closeSelect(select, indexSelect, arrow, promptEl, false)
+          oldValueSchoolSelect = [];
+
+          checkboxTypeSchoolArr.forEach((checkbox) => {
+            if (checkbox.checked) {
+              oldValueSchoolSelect.push(checkbox.dataset.typeFilter);
+            }
+          });
+
+          closeSelect(select, indexSelect, arrow, promptEl)
         }); 
 
         [arrow, select].forEach(elem => {
@@ -1239,12 +1324,6 @@ selectElArr.forEach((select, indexSelect) => {
               openSelect(select, arrow, promptEl);
             }
           });
-        });
-
-        select.addEventListener('blur', function () {
-          if (!applySelect || indexSelect == 1) {
-            closeSelect(select, indexSelect, arrow, promptEl);
-          }
         });
 
         if (indexSelect == 1) {
@@ -1274,6 +1353,7 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
   inputArr.forEach((inp) => {
     inp.value = '';
     checkboxTypeSchoolArr.forEach((checkbox) => (checkbox.checked = false));
+    oldValueSchoolSelect = [];
     dataFilters = [];
     dataPrev = [];
     dataSlice = data.slice(0);
@@ -1340,19 +1420,28 @@ document.querySelectorAll('.third-panel__tab').forEach((tab) => {
   });
 });
 
+let allCheckedCount = 0;
+
 //Filter Types school
 checkboxTypeSchoolArr[0].addEventListener('click', () => {
-  countAllCheckbox++;
-  countAllCheckbox % 2
+  allCheckedCount++;
+  allCheckedCount % 2
     ? checkboxTypeSchoolArr.forEach((el) => (el.checked = true))
     : checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
 });
-checkboxTypeSchoolArr.forEach((el) => {
-  el.addEventListener('click', () => {
-    setTypeSchoolValue();
 
-    inpTypeSchool.focus();
-    promptArr[0].dataset.active = 'open';
+checkboxTypeSchoolArr.forEach((el) => {
+  el.addEventListener('click', (e) => {
+    if (checkboxTypeSchoolArr[0].checked == true) {
+      if (document.querySelectorAll('.js-checkbox-school-type:checked').length - 1 < 3) {
+        allCheckedCount++;
+        checkboxTypeSchoolArr[0].checked = false;
+      }
+    }
+
+    e.stopPropagation();
+
+    setTypeSchoolValue();
   });
 });
 
@@ -1459,33 +1548,18 @@ btnRegionArr.forEach((btn) => {
 });
 
 //Search
-btnSearchResetArr.forEach((reset) => {
+tableSearchBtnReset.forEach((reset) => {
   reset.addEventListener('click', () => {
+    let input = reset.parentElement.querySelector('.input-search');
+
+    reset.style.display = 'none';
+    input.value = '';
+    input.style.padding = '0px 43px 0px 40px';
+
     tableRender(dataSlice);
   });
 });
 
-searchInput.forEach((inp, indexInp) => {
-  btnSearchResetArr.forEach((reset, indexReset) => {
-    reset.addEventListener('click', () => {
-      dataFilters = dataSlice;
-      n = 0;
-      selectResetArr.forEach((el) => (el.style.display = 'none'));
-      btnSearchResetArr.forEach((el) => (el.style.display = 'none'));
-      loopIconsArr.forEach((icon) => (icon.style.display = 'block'));
-      document.querySelectorAll('input').forEach((inp) => (inp.value = ''));
-      inp.style.padding = '0px 43px 0px 40px';
-    });
-    indexReset == indexInp && inp.value == '' ? (reset.style.display = 'none') : false;
-  });
-});
-promptSearchArr.forEach((promptEl) => {
-  btnSearchResetArr.forEach((reset) => {
-    reset.addEventListener('click', () => {
-      promptEl.style.display = 'none';
-    });
-  });
-});
 searchInput.forEach((inp, indexInp) => {
   const showHint = (inp, promptEl, resetBtn) => {
     selectOverlay.style.display = 'block';
@@ -1506,164 +1580,159 @@ searchInput.forEach((inp, indexInp) => {
     resetBtn.style.zIndex = 'unset';
   }
 
-  loopIconsArr.forEach((icon, iconIndex) => {
-    inp.addEventListener('blur', () => {
-      if (iconIndex == indexInp && inp.value == '') {
-        icon.style.display = 'block';
+  inp.addEventListener('blur', () => {
+    setTimeout(() => {
+      promptSearchArr[indexInp].style.display = 'none';
+      hideHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+
+      if (inp.value == '') {
+        loopIconsArr[indexInp].style.display = 'block';
       }
-    });
-    inp.addEventListener('click', () => {
-      if (iconIndex == indexInp) {
-        icon.style.display = 'none';
-        inp.style.padding = '0px 43px 0px 11px';
-      }
-    });
-    inp.addEventListener('input', () => {
-      inp.value == '' ? (inp.style.padding = '0px 43px 0px 40px') : false;
-      if (iconIndex == indexInp && inp.value != '') {
-        icon.style.display = 'none';
-        inp.style.padding = '0px 43px 0px 11px';
-      }
-    });
+    }, 100);
+  });
+  inp.addEventListener('click', () => {
+    loopIconsArr[indexInp].style.display = 'none';
+    inp.style.padding = '0px 43px 0px 11px';
+
+    promptSearchArr[indexInp].style.display = 'block';
+
+    if (checkOutOfBounds(promptSearchArr[indexInp])) {
+      inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
   });
 
-  promptSearchArr.forEach((promptEl, promptIndex) => {
-    inp.addEventListener('blur', () => {
-      if (indexInp == promptIndex) {
-        setTimeout(() => {
-          promptEl.style.display = 'none';
-          hideHint(inp, promptEl, btnSearchResetArr[promptIndex]);
-        }, 100);
-      }
-    });
-    inp.addEventListener('click', () => {
-      if (indexInp == promptIndex) {
-        promptEl.style.display = 'block';
+  inp.addEventListener('input', () => {
+    inp.value == '' ? (inp.style.padding = '0px 43px 0px 40px') : false;
+    if (inp.value != '') {
+      loopIconsArr[indexInp].style.display = 'none';
+      inp.style.padding = '0px 43px 0px 11px';
+    }
 
-        if (checkOutOfBounds(promptEl)) {
-          inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
 
-        showHint(inp, promptEl, btnSearchResetArr[promptIndex]);
-      }
-    });
+    promptSearchArr[indexInp].style.display = 'block';
+    inp.value == '' ? inp.blur() : false;
+    let searchId = inp.dataset.searchValue;
+    let valueInput = '';
+    inp.value !== ''
+      ? (valueInput =
+          inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
+      : (valueInput = '');
+    valueInput == '*' ? (valueInput = undefined) : false;
+    let valuesSearchHTML = '';
+    let regSearch = new RegExp('^' + valueInput, 'gi');
+    let regHighlight = new RegExp(valueInput, 'gi');
+    searchId == 'fullName' ? (regHighlight = new RegExp(valueInput, 'g')) : false;
+    if (i == 1 || j == 1 || n == 1) {
+      let textHighlight = '';
+      let textOriginal = '';
+      let replaceText = '';
+      if (valueInput == '' || inp.value === undefined) {
+        searchInput[indexInp].value = '';
+        btnSearchResetArr[indexInp].style.display = 'none';
+        loopIconsArr[indexInp].style.display = 'block';
+        promptSearchArr[indexInp].style.display = 'none';
 
-    inp.addEventListener('input', () => {
-      if (indexInp == promptIndex) {
-        showHint(inp, promptEl, btnSearchResetArr[promptIndex]);
-
-        promptEl.style.display = 'block';
-        inp.value == '' ? inp.blur() : false;
-        let searchId = inp.dataset.searchValue;
-        let valueInput = '';
-        inp.value !== ''
-          ? (valueInput =
-              inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
-          : (valueInput = '');
-        valueInput == '*' ? (valueInput = undefined) : false;
-        let valuesSearchHTML = '';
-        let regSearch = new RegExp('^' + valueInput, 'gi');
-        let regHighlight = new RegExp(valueInput, 'gi');
-        searchId == 'fullName' ? (regHighlight = new RegExp(valueInput, 'g')) : false;
-        if (i == 1 || j == 1 || n == 1) {
-          let textHighlight = '';
-          let textOriginal = '';
-          let replaceText = '';
-          if (valueInput == '' || inp.value === undefined) {
-            searchInput.forEach((el) => (el.value = ''));
-            btnSearchResetArr.forEach((reset) => (reset.style.display = 'none'));
-            loopIconsArr.forEach((icon) => (icon.style.display = 'block'));
-            promptEl.style.display = 'none';
-            inp.blur();
-            n = 0;
-            if (j == 1 || i == 1) {
-              tableRender(dataPrev);
-            } else tableRender(dataSlice);
-          } else {
-            let currentData = dataFilters;
-            let filteredData = currentData
-              .filter((el) => String(el[searchId]).match(regSearch))
-              .slice(0, 6);
-             
-            if (filteredData.length <= 0) {
-              promptEl.style.display = 'none';
-            } else {
-              filteredData.forEach((el) => {
-                textHighlight = String(el[searchId]).match(regHighlight).join('');
-                textOriginal = String(el[searchId]).toLowerCase();
-                replaceText = textOriginal
-                  .replace(
-                    textHighlight.toLowerCase(),
-                    `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
-                  )
-                  .replaceAll(',', '');
-                valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
-                promptEl.innerHTML = valuesSearchHTML;
-              });
-            }
-
-            valueInput == '' ? tableRender(dataFilters) : false;
-          }
-        } else {
-          let textHighlight = '';
-          let textOriginal = '';
-          let replaceText = '';
-          let filteredData = dataSlice
-            .filter((el) => String(el[searchId]).match(regSearch))
-            .slice(0, 6);
-
-          if (filteredData.length <= 0) {
-            promptEl.style.display = 'none';
-          } else {
-            filteredData.forEach((el) => {
-              textHighlight = String(el[searchId]).match(regHighlight).join('');
-              textOriginal = String(el[searchId]).toLowerCase();
-              replaceText = textOriginal
-                .replace(
-                  textHighlight.toLowerCase(),
-                  `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
-                )
-                .replaceAll(',', '');
-              valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
-              promptEl.innerHTML = valuesSearchHTML;
-            });
-          } 
+        inp.blur();
+        n = 0;
+        if (j == 1 || i == 1) {
+          tableRender(dataPrev);
+        } else tableRender(dataSlice);
+      } else {
+        let currentData = dataFilters;
+        let filteredData = currentData
+          .filter((el) => String(el[searchId]).match(regSearch))
+          .filter((value, index, self) =>
+            index === self.findIndex((el) => (
+              el[searchId] === value[searchId]
+            ))
+          )
+          .slice(0, 6);
           
-          if (valueInput == '') {
-            promptEl.style.display = 'none';
-            tableRender(dataSlice);
-          }
-
-          tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
-          valueInput == '' ? tableRender(dataSlice) : false;
-        }
-
-        if (checkOutOfBounds(promptEl)) {
-          inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        document.querySelectorAll('.search-value').forEach(
-          (el) => 
-            (el.onmousedown = function (e) {
-                e.preventDefault();
-            })
-        );
-
-        document.querySelectorAll('.search-value').forEach((el) => {
-          el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
-          el.addEventListener('click', (e) => {
-            n = 1;
-            inp.value = valueInput = el.textContent;
-            inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
-            regSearch = new RegExp('^' + valueInput, 'gi');
-            dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
-            promptEl.style.display = 'none';
-
-            hideHint(inp, promptEl, btnSearchResetArr[promptIndex]);
-            tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+        if (filteredData.length <= 0) {
+          promptSearchArr[indexInp].style.display = 'none';
+        } else {
+          filteredData.forEach((el) => {
+            textHighlight = String(el[searchId]).match(regHighlight).join('');
+            textOriginal = String(el[searchId]).toLowerCase();
+            replaceText = textOriginal
+              .replace(
+                textHighlight.toLowerCase(),
+                `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+              )
+              .replaceAll(',', '');
+            valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
+            promptSearchArr[indexInp].innerHTML = valuesSearchHTML;
           });
-        });
+        }
+
+        valueInput == '' ? tableRender(dataFilters) : false;
       }
+    } else {
+      let textHighlight = '';
+      let textOriginal = '';
+      let replaceText = '';
+      let filteredData = dataSlice
+        .filter((el) => String(el[searchId]).match(regSearch))
+        .filter((value, index, self) =>
+          index === self.findIndex((el) => (
+            el[searchId] === value[searchId]
+          ))
+        )
+        .slice(0, 6);
+
+      if (filteredData.length <= 0) {
+        promptSearchArr[indexInp].style.display = 'none';
+      } else {
+        filteredData.forEach((el) => {
+          textHighlight = String(el[searchId]).match(regHighlight).join('');
+          textOriginal = String(el[searchId]).toLowerCase();
+          replaceText = textOriginal
+            .replace(
+              textHighlight.toLowerCase(),
+              `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+            )
+            .replaceAll(',', '');
+          valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
+          promptSearchArr[indexInp].innerHTML = valuesSearchHTML;
+        });
+      } 
+      
+      if (valueInput == '') {
+        promptSearchArr[indexInp].style.display = 'none';
+        tableRender(dataSlice);
+      }
+
+      tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+      valueInput == '' ? tableRender(dataSlice) : false;
+    }
+
+    if (checkOutOfBounds(promptSearchArr[indexInp])) {
+      inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.querySelectorAll('.search-value').forEach(
+      (el) => 
+        (el.onmousedown = function (e) {
+            e.preventDefault();
+        })
+    );
+
+    document.querySelectorAll('.search-value').forEach((el) => {
+      el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
+      el.addEventListener('click', (e) => {
+        n = 1;
+        inp.value = valueInput = el.textContent;
+        inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
+        regSearch = new RegExp('^' + valueInput, 'gi');
+        dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
+        promptSearchArr[indexInp].style.display = 'none';
+
+        hideHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+        tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+      });
     });
   });
 });
