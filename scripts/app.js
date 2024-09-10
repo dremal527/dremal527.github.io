@@ -215,6 +215,34 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
   closeExportPopUp();
 }
 
+const filterDataByAllCondition = () => {
+  let dataFiltersTMP = dataSlice;
+
+  // Фильтруем по типу школы 
+  if (arrFiltersType.length <= 3) {
+    let regTypeSchool = new RegExp(arrFiltersType.join('').replaceAll(', ', '|'), 'gi');
+    dataFiltersTMP = dataFiltersTMP.filter((school) => school.fullName.match(regTypeSchool));
+  }
+
+  // Фильтруем по региону
+  if (regionValueInput != '')
+    dataFiltersTMP = dataFiltersTMP.filter((school) => school.address.match(regionValueInput))
+
+  // Филтруем по всем полям быстрого поиска
+  if (searchInput.length) {
+    searchInput.forEach(inp => {
+      let searchId = inp.dataset.searchValue,
+          regSearch = new RegExp('^' + inp.value, 'gi'),
+          regHighlight = new RegExp(inp.value, 'gi');
+
+      searchId == 'fullName' ? (regHighlight = new RegExp(inp.value, 'g')) : false;
+      dataFiltersTMP = dataFiltersTMP.filter((el) => String(el[searchId]).match(regSearch));
+    })
+  }
+
+  tableRender(dataFiltersTMP);
+}
+
 const closeExportPopUp = () => {
   popupExport.style.display = 'none';
   inpExportEl.value = '';
@@ -254,18 +282,23 @@ const setTypeSchoolValue = () => {
   }
 }
 
-const checkOutOfBounds = (element) => {
+const checkOutOfBounds = (element, inaccuracy = 0) => {
   try {
     let rect = element.getBoundingClientRect(),
-        isOutOfBounds = (
-          rect.top < 0 || 
-          rect.left < 0 || 
-          rect.bottom > window.innerHeight || 
-          rect.right > window.innerWidth
-        );
-    
+        rectBottom = rect.bottom + inaccuracy,
+        isOutOfBounds;
+
+    isOutOfBounds = (
+      rect.top < 0 || 
+      rect.left < 0 ||
+      rectBottom > window.innerHeight || 
+      rect.right > window.innerWidth
+    );
+
     return isOutOfBounds;
-  } catch (e) {}
+  } catch (e) {
+    console.error('Error:', e);
+  }
 }
 
 //Render table
@@ -346,9 +379,13 @@ function tableRender(dataValue) {
       tdTitleMobile.classList.add('td-name');
       tdTitleMobile.innerText = `Альтернативное\nназвание`;
       altName1.append(tdTitleMobile);
+
       let altNameValues = document.createElement('div');
       altName1.append(altNameValues);
       altNameValues.classList.add('alt-name');
+
+      let altNameChild = document.createElement('div');
+          altNameChild.classList.add('alt-name__child');
 
       let pFullNameAlt = document.createElement('p'),
           pNameAlt = document.createElement('p'),
@@ -366,9 +403,8 @@ function tableRender(dataValue) {
       pNameAlt.innerText = `${checkUndef(school.alt1)}`;
       pYearAlt.innerText = `${checkUndef(school.year1)}`;
 
-      altNameValues.append(pNameAlt);
-      altNameValues.append(pFullNameAlt);
-      altNameValues.append(pYearAlt);
+      altNameChild.append(pNameAlt, pFullNameAlt);
+      altNameValues.append(altNameChild, pYearAlt);
 
       trEl.append(altName1);
       let altName2 = document.createElement('td');
@@ -380,6 +416,9 @@ function tableRender(dataValue) {
       let altNameValues2 = document.createElement('div');
       altName2.append(altNameValues2);
       altNameValues2.classList.add('alt-name');
+
+      let altNameChild2 = document.createElement('div');
+          altNameChild2.classList.add('alt-name__child');
 
       let pFullNameAlt2 = document.createElement('p'),
           pNameAlt2 = document.createElement('p'),
@@ -397,9 +436,8 @@ function tableRender(dataValue) {
       pYearAlt2.innerText = `${checkUndef(school.year2)}`;
       pYearAlt2.dataset.prevValue = checkUndef(school.year1);
 
-      altNameValues2.append(pNameAlt2);
-      altNameValues2.append(pFullNameAlt2);
-      altNameValues2.append(pYearAlt2);
+      altNameChild2.append(pNameAlt2, pFullNameAlt2)
+      altNameValues2.append(altNameChild2, pYearAlt2);
 
       trEl.append(altName2);
     }, 0);
@@ -413,6 +451,9 @@ function tableRender(dataValue) {
       let altNameValues3 = document.createElement('div');
       altName3.append(altNameValues3);
       altNameValues3.classList.add('alt-name');
+
+      let altNameChild3 = document.createElement('div');
+          altNameChild3.classList.add('alt-name__child');
 
       let pFullNameAlt3 = document.createElement('p'),
           pNameAlt3 = document.createElement('p'),
@@ -430,9 +471,8 @@ function tableRender(dataValue) {
       pNameAlt3.innerText = `${checkUndef(school.alt3)}`;
       pYearAlt3.innerText = `${checkUndef(school.year3)}`;
 
-      altNameValues3.append(pNameAlt3);
-      altNameValues3.append(pFullNameAlt3);
-      altNameValues3.append(pYearAlt3);
+      altNameChild3.append(pNameAlt3, pFullNameAlt3);
+      altNameValues3.append(altNameChild3, pYearAlt3);
 
       trEl.append(altName3);
 
@@ -445,6 +485,9 @@ function tableRender(dataValue) {
       let altNameValues4 = document.createElement('div');
       altName4.append(altNameValues4);
       altNameValues4.classList.add('alt-name');
+
+      let altNameChild4 = document.createElement('div');
+          altNameChild4.classList.add('alt-name__child');
 
       let pFullNameAlt4 = document.createElement('p'),
           pNameAlt4 = document.createElement('p'),
@@ -461,10 +504,9 @@ function tableRender(dataValue) {
       pNameAlt4.innerText = `${checkUndef(school.alt4)}`;
       pYearAlt4.innerText = `${checkUndef(school.year4)}`;
       pYearAlt4.dataset.prevValue = checkUndef(school.year3);
-      
-      altNameValues4.append(pNameAlt4);
-      altNameValues4.append(pFullNameAlt4);
-      altNameValues4.append(pYearAlt4);
+
+      altNameChild4.append(pNameAlt4, pFullNameAlt4);
+      altNameValues4.append(altNameChild4, pYearAlt4);
 
       trEl.append(altName4);
     }, 4);
@@ -478,6 +520,9 @@ function tableRender(dataValue) {
       let altNameValues5 = document.createElement('div');
       altName5.append(altNameValues5);
       altNameValues5.classList.add('alt-name');
+
+      let altNameChild5 = document.createElement('div');
+          altNameChild5.classList.add('alt-name__child');
 
       let pFullNameAlt5 = document.createElement('p'),
           pNameAlt5 = document.createElement('p'),
@@ -495,9 +540,8 @@ function tableRender(dataValue) {
       pYearAlt5.innerText = `${checkUndef(school.year5)}`;
       pYearAlt5.dataset.prevValue = checkUndef(school.year4);
 
-      altNameValues5.append(pNameAlt5);
-      altNameValues5.append(pFullNameAlt5);
-      altNameValues5.append(pYearAlt5);
+      altNameChild5.append(pNameAlt5, pFullNameAlt5);
+      altNameValues5.append(altNameChild5, pYearAlt5);
 
       trEl.append(altName5);
       
@@ -510,6 +554,9 @@ function tableRender(dataValue) {
       let altNameValues6 = document.createElement('div');
       altName6.append(altNameValues6);
       altNameValues6.classList.add('alt-name');
+
+      let altNameChild6 = document.createElement('div');
+          altNameChild6.classList.add('alt-name__child');
 
       let pFullNameAlt6 = document.createElement('p'),
           pNameAlt6 = document.createElement('p'),
@@ -527,9 +574,8 @@ function tableRender(dataValue) {
       pYearAlt6.innerText = `${checkUndef(school.year6)}`;
       pYearAlt6.dataset.prevValue = checkUndef(school.year5);
 
-      altNameValues6.append(pNameAlt6);
-      altNameValues6.append(pFullNameAlt6);
-      altNameValues6.append(pYearAlt6);
+      altNameChild6.append(pNameAlt6, pFullNameAlt6);
+      altNameValues6.append(altNameChild6, pYearAlt6);
 
       trEl.append(altName6);
     }, 7);
@@ -554,29 +600,42 @@ function tableRender(dataValue) {
       btnAddAltEl.disabled = false;
       idTrTable = edit.dataset.valueId;
       matchingTr = dataSlice.filter((el) => el.id == idTrTable);
-      let valuesCount = +matchingTr.map((el) => Object.keys(el).length).join('');
+      
+      console.log({matchingTr})
+
+      let valuesCount = +matchingTr.map((el) => Object.keys(el).filter(key => key.indexOf('fullName') !== -1).length).join('');
+          valuesCount--; // Убираем главный fullName
+
       inputEditsWrapper = document.querySelector('.popup-edit-content-wrapper');
       matchingTr.forEach((trValue) => {
-        if (valuesCount == 23) {
-          countAddALtClick = 6;
-        } else if (valuesCount == 8) {
-          countAddALtClick == 1;
-        } else if (valuesCount == 11) {
-          countAddALtClick == 2;
-        } else if (valuesCount == 14) {
-          countAddALtClick == 3;
-        } else if (valuesCount == 17) {
-          countAddALtClick == 4;
-        } else if (valuesCount == 20) {
-          countAddALtClick == 5;
-        }
+        countAddALtClick = valuesCount + 1;
+        // switch (valuesCount)
+        // {
+        //   case 1:
+        //     countAddALtClick = 1;
+        //     break;
+        //   case 2:
+        //     countAddALtClick = 2;
+        //     break;
+        //   case 3:
+        //     countAddALtClick = 3;
+        //     break;
+        //   case 4:
+        //     countAddALtClick = 4;
+        //     break;
+        //   case 5:
+        //     countAddALtClick = 5;
+        //     break;
+        //   case 6:
+        //     countAddALtClick = 6;
+        //     break;
+        // }
+
         inputEditsHTML = `
         <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
        <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}"
          >ИНН
-         <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn" value="${
-           trValue.inn
-         }"
+         <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn" value="${checkUndef(trValue.inn)}"
        /> <div class="prompt-edit">
          <span class="icon" style="color: #D11521"></span>
          <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -584,7 +643,7 @@ function tableRender(dataValue) {
        </div>
        </label>
        <label class="edit-label" data-edit-value="dadata">Название с сайта dadata.ru
-         <input type="text" class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata" value="${trValue.dadata}"/>
+         <input type="text" class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata" value="${checkUndef(trValue.dadata)}"/>
         <div class="prompt-edit">
           <span class="icon" style="color: #D11521"></span>
           <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -592,26 +651,19 @@ function tableRender(dataValue) {
       </label>
      </label>
        <label class="edit-label " data-edit-value="fullName">Полное название
-         <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName" value="${
-           trValue.fullName
-         }"
+         <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName" value="${checkUndef(trValue.fullName)}"
        />
        <div class="prompt-edit">
          <span class="icon" style="color: #D11521"></span>
          <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
        </div>
       </label>
-      <div class="row-inputs">
-     
-          <label class="edit-label" data-edit-value="abbr"
-            >Аббревиатура
-            <input type="text" class="edit-inp" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${checkUndef(
-              trValue.abbr
-            )}"
-          /></label>
-          <label class="edit-label" data-edit-value="year"
 
-            > <span>Год</span>
+      <label class="edit-label " data-edit-value="fullName">Аббревиатура
+         <div class="last_edit_abbr">
+          <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="fullName" value="${checkUndef(trValue.abbr)}"/>
+          <label class="edit-label" data-edit-value="year">
+          <span>Год</span>
             <input
               type="number"
               class="edit-inp year-inp"
@@ -621,13 +673,19 @@ function tableRender(dataValue) {
               placeholder="Введите год"
               pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(trValue.year)}"
           /></label>
-      </div>
+         </div>
+       <div class="prompt-edit">
+         <span class="icon" style="color: #D11521"></span>
+         <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+       </div>
+      </label>
      </div>
         `;
         matchingId = trValue.id;
       });
       inputEditsWrapper.innerHTML = inputEditsHTML;
-      if (valuesCount == 23) {
+
+      if (valuesCount == 6) {
         for (let k = 0; k < 6; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
@@ -665,7 +723,7 @@ function tableRender(dataValue) {
               </div>`
           );
         }
-      } else if (valuesCount == 11) {
+      } else if (valuesCount == 2) {
         for (let k = 0; k < 2; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
@@ -704,7 +762,7 @@ function tableRender(dataValue) {
                     </div>`
           );
         }
-      } else if (valuesCount == 14) {
+      } else if (valuesCount == 3) {
         for (let k = 0; k < 3; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
@@ -743,7 +801,7 @@ function tableRender(dataValue) {
                   </div>`
           );
         }
-      } else if (valuesCount == 17) {
+      } else if (valuesCount == 4) {
         for (let k = 0; k < 4; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
@@ -782,7 +840,7 @@ function tableRender(dataValue) {
                   </div>`
           );
         }
-      } else if (valuesCount == 20) {
+      } else if (valuesCount == 5) {
         for (let k = 0; k < 5; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
@@ -821,7 +879,7 @@ function tableRender(dataValue) {
                   </div>`
           );
         }
-      } else if (valuesCount == 8) {
+      } else if (valuesCount == 1) {
         for (let k = 0; k < 1; k++) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
@@ -861,49 +919,44 @@ function tableRender(dataValue) {
           );
         }
       }
-      countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
+      countAddALtClick >= 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
 
       let inpNewValues = document.querySelectorAll('.edit-inp');
+
       matchingTr.forEach((el) => {
         if (inpNewValues.length > 5) {
-          inpNewValues[5].value = el.fullName1;
-          inpNewValues[6].value = el.alt1;
+          inpNewValues[5].value = checkUndef(el.fullName1);
+          inpNewValues[6].value = checkUndef(el.alt1);
           el.year1 === undefined
             ? (inpNewValues[7].value = el.year)
             : (inpNewValues[7].value = el.year1);
         }
-        if (inpNewValues.length > 11) {
-          inpNewValues[8].value = el.fullName2 ?? '';
-          inpNewValues[9].value = el.alt2;
+        if (inpNewValues.length >= 11) {
+          inpNewValues[8].value = checkUndef(el.fullName2);
+          inpNewValues[9].value = checkUndef(el.alt2);
           el.year2 === undefined
             ? (inpNewValues[10].value = el.year1)
             : (inpNewValues[10].value = el.year2);
         }
-        if (inpNewValues.length > 14) {
-          inpNewValues[11].value = el.fullName3;
-          inpNewValues[12].value = el.alt3;
-          el.year3 === undefined
-            ? (inpNewValues[13].value = el.year1)
-            : (inpNewValues[13].value = el.year2);
+        if (inpNewValues.length >= 14) {
+          inpNewValues[11].value = checkUndef(el.fullName3);
+          inpNewValues[12].value = checkUndef(el.alt3);
+          el.year3 === undefined ? (inpNewValues[13].value = el.year1) : (inpNewValues[13].value = el.year2);
         }
-        if (inpNewValues.length > 17) {
-          inpNewValues[14].value = el.fullName4;
-          inpNewValues[15].value = el.alt4;
-          el.year4 === undefined
-            ? (inpNewValues[16].value = el.year3)
-            : (inpNewValues[16].value = el.year4);
+        if (inpNewValues.length >= 17) {
+          inpNewValues[14].value = checkUndef(el.fullName4);
+          inpNewValues[15].value = checkUndef(el.alt4);
+          el.year4 === undefined ? (inpNewValues[16].value = el.year3) : (inpNewValues[16].value = el.year4);
         }
-        if (inpNewValues.length > 19) {
-          inpNewValues[17].value = el.fullName5;
-          inpNewValues[18].value = el.alt5;
-          el.year5 === undefined
-            ? (inpNewValues[19].value = el.year4)
-            : (inpNewValues[19].value = el.year5);
+        if (inpNewValues.length >= 19) {
+          inpNewValues[17].value = checkUndef(el.fullName5);
+          inpNewValues[18].value = checkUndef(el.alt5);
+          el.year5 === undefined ? (inpNewValues[19].value = el.year4) : (inpNewValues[19].value = el.year5);
         }
-        if (inpNewValues.length > 21) {
-          inpNewValues[20].value = el.fullName6;
-          inpNewValues[21].value = el.alt6;
-          inpNewValues[22].value = el.year5;
+        if (inpNewValues.length >= 21) {
+          inpNewValues[20].value = checkUndef(el.fullName6);
+          inpNewValues[21].value = checkUndef(el.alt6);
+          inpNewValues[22].value = checkUndef(el.year5);
         }
       });
 
@@ -972,18 +1025,19 @@ function tableRender(dataValue) {
           dataFormEl.forEach((formEl, indexForm) => {
             del.addEventListener('click', () => {
               countAddALtClick = indexDel;
-              countAddALtClick == 6
+              countAddALtClick >= 6
                 ? (btnAddAltEl.disabled = true)
                 : (btnAddAltEl.disabled = false);
               indexDel + 1 == indexForm ? formEl.remove() : false;
             });
           });
         });
+
+        setPositionForButtonsEdit();
       });
     });
   });
   //Save edit change
-  const btnSaveEdit = document.querySelector('.btn-save');
   btnSaveEdit.addEventListener('click', (e) => {
     e.preventDefault();
   
@@ -992,38 +1046,38 @@ function tableRender(dataValue) {
 
     inpNewValues = document.querySelectorAll('.edit-inp');
     editElement.inn = inpNewValues[0].value;
-    editElement.fullName = inpNewValues[1].value;
-    editElement.abbr = inpNewValues[2].value;
-    editElement.year = inpNewValues[3].value;
+    editElement.fullName = inpNewValues[2].value;
+    editElement.abbr = inpNewValues[3].value;
+    editElement.year = inpNewValues[4].value;
     if (inpNewValues.length > 5) {
-      editElement.fullName1 = inpNewValues[4].value;
-      editElement.alt1 = inpNewValues[5].value;
-      editElement.year1 = inpNewValues[6].value;
+      editElement.fullName1 = inpNewValues[5].value;
+      editElement.alt1 = inpNewValues[6].value;
+      editElement.year1 = inpNewValues[7].value;
     }
-    if (inpNewValues.length > 11) {
-      editElement.fullName2 = inpNewValues[7].value;
-      editElement.alt2 = inpNewValues[8].value;
-      editElement.year2 = inpNewValues[9].value;
+    if (inpNewValues.length >= 11) {
+      editElement.fullName2 = inpNewValues[8].value;
+      editElement.alt2 = inpNewValues[9].value;
+      editElement.year2 = inpNewValues[10].value;
     }
-    if (inpNewValues.length > 14) {
-      editElement.fullName3 = inpNewValues[10].value;
-      editElement.alt3 = inpNewValues[11].value;
-      editElement.year3 = inpNewValues[12].value;
+    if (inpNewValues.length >= 14) {
+      editElement.fullName3 = inpNewValues[11].value;
+      editElement.alt3 = inpNewValues[12].value;
+      editElement.year3 = inpNewValues[13].value;
     }
-    if (inpNewValues.length > 17) {
-      editElement.fullName4 = inpNewValues[13].value;
-      editElement.alt4 = inpNewValues[14].value;
-      editElement.year4 = inpNewValues[15].value;
+    if (inpNewValues.length >= 17) {
+      editElement.fullName4 = inpNewValues[14].value;
+      editElement.alt4 = inpNewValues[15].value;
+      editElement.year4 = inpNewValues[16].value;
     }
-    if (inpNewValues.length > 19) {
-      editElement.fullName5 = inpNewValues[16].value;
-      editElement.alt5 = inpNewValues[17].value;
-      editElement.year5 = inpNewValues[18].value;
+    if (inpNewValues.length >= 19) {
+      editElement.fullName5 = inpNewValues[17].value;
+      editElement.alt5 = inpNewValues[18].value;
+      editElement.year5 = inpNewValues[19].value;
     }
-    if (inpNewValues.length > 20) {
-      editElement.fullName6 = inpNewValues[19].value;
-      editElement.alt6 = inpNewValues[20].value;
-      editElement.year5 = inpNewValues[21].value;
+    if (inpNewValues.length >= 20) {
+      editElement.fullName6 = inpNewValues[20].value;
+      editElement.alt6 = inpNewValues[21].value;
+      editElement.year5 = inpNewValues[22].value;
     }
 
     dataSlice[index] = editElement;
@@ -1085,6 +1139,14 @@ function tableRender(dataValue) {
 }
 tableRender(dataSlice);
 
+const setPositionForButtonsEdit = () => {
+  if (checkOutOfBounds(btnAddAltEl, 200)) {
+    document.querySelector('.popup-edit-wrapper .popup-buttons').style.position = 'relative';
+  }else{
+    document.querySelector('.popup-edit-wrapper .popup-buttons').style.position = 'absolute';
+  }
+}
+
 //Add new inputs in edit popup
 btnAddAltEl.addEventListener('click', (e) => {
   e.preventDefault();
@@ -1104,22 +1166,38 @@ btnAddAltEl.addEventListener('click', (e) => {
             </div>
           </div>
                 <label class="edit-label" data-edit-value="alt${countAddALtClick + 1}">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-value="fullName${countAddALtClick}" /></label>
-          <div class="row-inputs">
-            <label class="edit-label" data-edit-value="alt${countAddALtClick + 1}">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${countAddALtClick}" data-edit-value="alt${countAddALtClick}" /></label>
-            <label class="edit-label" data-edit-value="year${countAddALtClick + 1}">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${countAddALtClick} maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-          </div>
+          <label class="edit-label " data-edit-value="fullName">Аббревиатура
+            <div class="last_edit_abbr">
+              <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="fullName" value=""/>
+              <label class="edit-label" data-edit-value="year">
+              <span>Год</span>
+                <input
+                  type="number"
+                  class="edit-inp year-inp"
+                  maxlength="4"
+                  min="1800"
+                  max="2024"
+                  placeholder="Введите год"
+                  pattern="[0-9]{4}" data-edit-value="year" value=""
+              /></label>
+            </div>
+            <div class="prompt-edit">
+              <span class="icon" style="color: #D11521"></span>
+              <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+            </div>
+          </label>
         </div>
     </div>`;
   newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
-  
-  countAddALtClick++;
+
+  setPositionForButtonsEdit();
 
   let inpNewValues = document.querySelectorAll('.edit-inp');
   inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
     ? (btnSaveEdit.disabled = true)
     : (btnSaveEdit.disabled = false);
   const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
-  countAddALtClick == 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
+  countAddALtClick >= 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
 
   inpNewValues.forEach((inp) => {
     inp.addEventListener('input', () => {
@@ -1138,6 +1216,8 @@ btnAddAltEl.addEventListener('click', (e) => {
       });
     });
   });
+
+  countAddALtClick++;
 });
 
 //Btn delete
@@ -1162,37 +1242,22 @@ btnApply.addEventListener('click', () => {
   arrSchoolTypeSelect = '';
 
   setTypeSchoolValue();
-
-  if (arrFiltersType.length >= 3) {
-    true;
-  } else {
-    let regTypeSchool = new RegExp(arrFiltersType.join('').replaceAll(', ', '|'), 'gi');
-
-    i == 1 || n == 1
-      ? (dataPrev = dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
-      : (dataPrev = dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
-
-    i == 1 || n == 1
-      ? tableRender(dataFilters.filter((school) => school.fullName.match(regTypeSchool)))
-      : tableRender(dataSlice.filter((school) => school.fullName.match(regTypeSchool)));
-    i !== 1 || n !== 1
-      ? (dataFilters = dataSlice.filter((school) => school.fullName.match(regTypeSchool)))
-      : (dataFilters = dataFilters.filter((school) => school.fullName.match(regTypeSchool)));
-  }
+  filterDataByAllCondition();
 });
-
-
-let applySelect = false;
 
 //Select Reset
 selectResetArr.forEach((reset, index) => {
   reset.addEventListener('click', (e) => {
     i = j = n = 0;
-    applySelect = false;
     reset.style.display = 'none'
 
-    if (index == 0)
+    if (index == 0) {
       checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+      arrFiltersType = [];
+    }
+
+    if (index == 1)
+      regionValueInput = '';
 
     selectElArr[index].value = '';
 
@@ -1205,16 +1270,9 @@ selectResetArr.forEach((reset, index) => {
 
     oldValueSchoolSelect = [];
     
-    tableRender(dataSlice);
+    filterDataByAllCondition();
   });
 });
-
-btnApply.onmousedown = function (e) {
-  if (document.activeElement === selectElArr[0]) {
-    e.preventDefault();
-    applySelect = true;
-  }
-};
 
 const setEventsForOptionsAtSelects = (arSelect = {0: '.js-type-school-value label', 1: '.filter-region'}) => {
   if (arSelect.length <= 0)
@@ -1363,7 +1421,7 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
     selectResetArr.forEach((reset) => (reset.style.display = 'none'));
     btnSearchResetArr.forEach((reset) => (reset.style.display = 'none'));
   });
-  tableRender(dataSlice);
+  filterDataByAllCondition();
 });
 
 //Sort
@@ -1452,12 +1510,7 @@ const setEventToFilterRegion = (btn) => {
     
     selectResetArr[1].style.display = 'block';
 
-    j == 1 || n == 1
-      ? tableRender(dataFilters.filter((school) => school.address.match(regionValueInput)))
-      : tableRender(dataSlice.filter((school) => school.address.match(regionValueInput)));
-    j != 1 || n != 1
-      ? (dataFilters = dataSlice.filter((school) => school.address.match(regionValueInput)))
-      : (dataFilters = dataFilters.filter((school) => school.address.match(regionValueInput)));
+    filterDataByAllCondition();
   });
 }
 
@@ -1548,38 +1601,51 @@ btnRegionArr.forEach((btn) => {
 });
 
 //Search
-tableSearchBtnReset.forEach((reset) => {
-  reset.addEventListener('click', () => {
-    let input = reset.parentElement.querySelector('.input-search');
+// tableSearchBtnReset.forEach((reset, index) => {
+//   reset.addEventListener('click', () => {
+//     let input = reset.parentElement.querySelector('.input-search');
 
-    reset.style.display = 'none';
-    input.value = '';
-    input.style.padding = '0px 43px 0px 40px';
+//     reset.style.display = 'none';
+//     input.value = '';
+//     input.style.padding = '0px 43px 0px 40px';
 
-    tableRender(dataSlice);
+//     filterDataByAllCondition();
+//   });
+// });
+
+const showHint = (inp, promptEl, resetBtn) => {
+  selectOverlay.style.display = 'block';
+  inp.style.backgroundColor = 'white';
+  inp.style.zIndex = 20001;
+  promptEl.style.zIndex = 20001;
+  resetBtn.style.zIndex = 20001;
+
+  if (window.screen.width <= 880) {
+    inp.style.position = 'relative';
+  }
+}
+const hideHint = (inp, promptEl, resetBtn) => {
+  selectOverlay.style.display = 'none';
+  inp.style.backgroundColor = 'transparent';
+  inp.style.zIndex = 'unset';
+  promptEl.style.zIndex = 'unset';
+  resetBtn.style.zIndex = 'unset';
+}
+
+document.querySelectorAll('.input-search.table').forEach((inp, indexInp) => {
+  tableSearchBtnReset[indexInp].addEventListener('click', (e) => {
+    let resetBtn = e.target.parentElement;
+
+    inp.value = '';
+    resetBtn.style.display = 'none';
+    resetBtn.parentElement.querySelector('.search-table').style.display = 'block';
+
+    hideHint(inp, promptSearchArr[indexInp], resetBtn);
+    filterDataByAllCondition();
   });
 });
 
 searchInput.forEach((inp, indexInp) => {
-  const showHint = (inp, promptEl, resetBtn) => {
-    selectOverlay.style.display = 'block';
-    inp.style.backgroundColor = 'white';
-    inp.style.zIndex = 20001;
-    promptEl.style.zIndex = 20001;
-    resetBtn.style.zIndex = 20001;
-
-    if (window.screen.width <= 880) {
-      inp.style.position = 'relative';
-    }
-  }
-  const hideHint = (inp, promptEl, resetBtn) => {
-    selectOverlay.style.display = 'none';
-    inp.style.backgroundColor = 'transparent';
-    inp.style.zIndex = 'unset';
-    promptEl.style.zIndex = 'unset';
-    resetBtn.style.zIndex = 'unset';
-  }
-
   inp.addEventListener('blur', () => {
     setTimeout(() => {
       promptSearchArr[indexInp].style.display = 'none';
@@ -1637,9 +1703,10 @@ searchInput.forEach((inp, indexInp) => {
 
         inp.blur();
         n = 0;
-        if (j == 1 || i == 1) {
-          tableRender(dataPrev);
-        } else tableRender(dataSlice);
+        filterDataByAllCondition();
+        // if (j == 1 || i == 1) {
+        //   tableRender(dataPrev);
+        // } else tableRender(dataSlice);
       } else {
         let currentData = dataFilters;
         let filteredData = currentData
@@ -1668,7 +1735,7 @@ searchInput.forEach((inp, indexInp) => {
           });
         }
 
-        valueInput == '' ? tableRender(dataFilters) : false;
+        valueInput == '' ? filterDataByAllCondition() : false;
       }
     } else {
       let textHighlight = '';
@@ -1702,11 +1769,12 @@ searchInput.forEach((inp, indexInp) => {
       
       if (valueInput == '') {
         promptSearchArr[indexInp].style.display = 'none';
-        tableRender(dataSlice);
+        filterDataByAllCondition();
       }
 
-      tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
-      valueInput == '' ? tableRender(dataSlice) : false;
+      // tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+      // valueInput == '' ? tableRender(dataSlice) : false;
+      filterDataByAllCondition();
     }
 
     if (checkOutOfBounds(promptSearchArr[indexInp])) {
@@ -1731,7 +1799,8 @@ searchInput.forEach((inp, indexInp) => {
         promptSearchArr[indexInp].style.display = 'none';
 
         hideHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
-        tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+        // tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+        filterDataByAllCondition();
       });
     });
   });
