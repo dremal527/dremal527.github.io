@@ -609,27 +609,6 @@ function tableRender(dataValue) {
       inputEditsWrapper = document.querySelector('.popup-edit-content-wrapper');
       matchingTr.forEach((trValue) => {
         countAddALtClick = valuesCount + 1;
-        // switch (valuesCount)
-        // {
-        //   case 1:
-        //     countAddALtClick = 1;
-        //     break;
-        //   case 2:
-        //     countAddALtClick = 2;
-        //     break;
-        //   case 3:
-        //     countAddALtClick = 3;
-        //     break;
-        //   case 4:
-        //     countAddALtClick = 4;
-        //     break;
-        //   case 5:
-        //     countAddALtClick = 5;
-        //     break;
-        //   case 6:
-        //     countAddALtClick = 6;
-        //     break;
-        // }
 
         inputEditsHTML = `
         <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
@@ -685,240 +664,39 @@ function tableRender(dataValue) {
       });
       inputEditsWrapper.innerHTML = inputEditsHTML;
 
-      if (valuesCount == 6) {
-        for (let k = 0; k < 6; k++) {
-          newAltWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
-                  <div
-                    class="input__wrapper"
-                    style="flex-direction: column; align-items: flex-start">
-                    <div class="popup-value__title">
-                      <h3>Альтернативное название №${k + 1}</h3>
-                      <div
-                        class="table-icon del-alt-name js-edit-btn-altDel"
-                        data-value="Удалить"
-                        data-edit-altDel="${k}">
-                        <span class="icon control-edit delete"></span>
-                      </div>
-                    </div>
-                         <label class="edit-label" data-edit-value="alt${
-                           k + 1
-                         }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
-              k + 1
-            }" data-edit-value="fullName${k + 1}" /></label>
-                    <div class="row-inputs">
-                      <label class="edit-label" data-edit-value="alt${
-                        k + 1
-                      }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
-              k + 1
-            }" data-edit-value="alt${k + 1}" /></label>
-                      <label class="edit-label" data-edit-value="year${
-                        k + 1
-                      }">Год <input type="number" class="edit-inp year-inp" data-edit-value="alt${
-              k + 1
-            } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-                    </div>
-                  </div>
-              </div>`
-          );
-        }
-      } else if (valuesCount == 2) {
-        for (let k = 0; k < 2; k++) {
-          newAltWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
-                  <div
-                    class="input__wrapper"
-                    style="flex-direction: column; align-items: flex-start">
-                    <div class="popup-value__title">
-                      <h3>Альтернативное название №${k + 1}</h3>
-                      <div
-                        class="table-icon del-alt-name js-edit-btn-altDel"
-                        data-value="Удалить"
-                        data-edit-altDel="${k + 1}">
-                        <span class="icon control-edit delete"></span>
-                      </div>
-                    </div>
-                         <label class="edit-label" data-edit-value="alt${
-                           k + 1
-                         }">Полное наименование <input class="edit-inp" type="text" placeholder="Введите полное наименование №${
-              k + 1
-            }" data-edit-value="fullName${k + 1}" /></label>
-                    <div class="row-inputs">
-                      <label class="edit-label" data-edit-value="alt${
-                        k + 1
-                      }">Альтернативное название <input class="edit-inp fullAlt" type="text" placeholder="Введите альтернативное название №${
-              k + 1
-            }" data-edit-value="alt${k + 1}" /></label>
-                      <label class="edit-label" data-edit-value="year${
-                        k + 1
-                      }">Год <input type="number" 
-                class="edit-inp year-inp" data-edit-value="alt${
-                  k - 1
-                } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-              </div>
-                  </div>
-                    </div>`
-          );
-        }
-      } else if (valuesCount == 3) {
-        for (let k = 0; k < 3; k++) {
-          newAltWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
+      for (let k = 0; k < valuesCount; k++) {
+        let id = k + 1;
+
+        newAltWrapper.insertAdjacentHTML(
+          'beforeend',
+          `<div class="popup-edit-content-wrapper" data-edit-form-id="${id}">
                 <div
                   class="input__wrapper"
                   style="flex-direction: column; align-items: flex-start">
                   <div class="popup-value__title">
-                    <h3>Альтернативное название №${k + 1}</h3>
+                    <h3>Альтернативное название №${id}</h3>
                     <div
                       class="table-icon del-alt-name js-edit-btn-altDel"
                       data-value="Удалить"
-                      data-edit-altDel="${k + 1}">
+                      data-edit-altDel="${k}">
                       <span class="icon control-edit delete"></span>
                     </div>
                   </div>
-                       <label class="edit-label" data-edit-value="alt${
-                         k + 1
-                       }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
-              k + 1
-            }" data-edit-value="fullName${k + 1}" /></label>
-                  <div class="row-inputs">
-                    <label class="edit-label" data-edit-value="alt${
-                      k + 1
-                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
-              k + 1
-            }" data-edit-value="alt${k + 1}" /></label>
-                    <label class="edit-label" data-edit-value="year${
-                      k + 1
-                    }">Год <input type="number" 
-              class="edit-inp year-inp" data-edit-value="alt${
-                k - 1
-              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-              </div>
-                </div>
-                  </div>`
-          );
-        }
-      } else if (valuesCount == 4) {
-        for (let k = 0; k < 4; k++) {
-          newAltWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
-                <div
-                  class="input__wrapper"
-                  style="flex-direction: column; align-items: flex-start">
-                  <div class="popup-value__title">
-                    <h3>Альтернативное название №${k + 1}</h3>
-                    <div
-                      class="table-icon del-alt-name js-edit-btn-altDel"
-                      data-value="Удалить"
-                      data-edit-altDel="${k + 1}">
-                      <span class="icon control-edit delete"></span>
+                  <label class="edit-label" data-edit-value="alt${id}">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${id}" data-edit-value="fullName${k + 1}" /></label>
+                  <label class="edit-label " data-edit-value="fullName">Альтернативное название
+                    <div class="last_edit_abbr" data-edit-value="alt${id}">
+                      <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${id}" data-edit-value="alt${k + 1}" />
+                      <label class="edit-label" data-edit-value="year" data-edit-value="year${id}">
+                        <span>Год</span>
+                        <input type="number" class="edit-inp year-inp" data-edit-value="alt${id} maxlength="4" min="1800" max="2400"placeholder="Введите год" />
+                      </label>
                     </div>
-                  </div>
-                       <label class="edit-label" data-edit-value="alt${
-                         k + 1
-                       }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
-              k + 1
-            }" data-edit-value="fullName${k + 1}" /></label>
-                  <div class="row-inputs">
-                    <label class="edit-label" data-edit-value="alt${
-                      k + 1
-                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
-              k + 1
-            }" data-edit-value="alt${k + 1}" /></label>
-                    <label class="edit-label" data-edit-value="year${
-                      k + 1
-                    }">Год <input type="number" 
-              class="edit-inp year-inp" data-edit-value="alt${
-                k - 1
-              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-            </div>
+                  </label>
                 </div>
-                  </div>`
-          );
-        }
-      } else if (valuesCount == 5) {
-        for (let k = 0; k < 5; k++) {
-          newAltWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
-                <div
-                  class="input__wrapper"
-                  style="flex-direction: column; align-items: flex-start">
-                  <div class="popup-value__title">
-                    <h3>Альтернативное название №${k + 1}</h3>
-                    <div
-                      class="table-icon del-alt-name js-edit-btn-altDel"
-                      data-value="Удалить"
-                      data-edit-altDel="${k + 1}">
-                      <span class="icon control-edit delete"></span>
-                    </div>
-                  </div>
-                   <label class="edit-label" data-edit-value="alt${
-                     k + 1
-                   }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
-              k + 1
-            }" data-edit-value="fullName${k + 1}" /></label>
-                  <div class="row-inputs">
-                    <label class="edit-label" data-edit-value="alt${
-                      k + 1
-                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
-              k + 1
-            }" data-edit-value="alt${k + 1}" /></label>
-                    <label class="edit-label" data-edit-value="year${
-                      k + 1
-                    }">Год <input type="number" 
-              class="edit-inp year-inp" data-edit-value="alt${
-                k - 1
-              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-              </div>
-                </div>
-                  </div>`
-          );
-        }
-      } else if (valuesCount == 1) {
-        for (let k = 0; k < 1; k++) {
-          newAltWrapper.insertAdjacentHTML(
-            'beforeend',
-            `<div class="popup-edit-content-wrapper" data-edit-form-id="${k + 1}">
-                <div
-                  class="input__wrapper"
-                  style="flex-direction: column; align-items: flex-start">
-                  <div class="popup-value__title">
-                    <h3>Альтернативное название №${k + 1}</h3>
-                    <div
-                      class="table-icon del-alt-name js-edit-btn-altDel"
-                      data-value="Удалить"
-                      data-edit-altDel="${k + 1}">
-                      <span class="icon control-edit delete"></span>
-                    </div>
-                  </div>
-                   <label class="edit-label" data-edit-value="alt${
-                     k + 1
-                   }">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${
-              k + 1
-            }" data-edit-value="fullName${k + 1}" /></label>
-                  <div class="row-inputs">
-                    <label class="edit-label" data-edit-value="alt${
-                      k + 1
-                    }">Альтернативное название <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${
-              k + 1
-            }" data-edit-value="alt${k}" /></label>
-                    <label class="edit-label" data-edit-value="year${
-                      k + 1
-                    }">Год <input type="number" 
-              class="edit-inp year-inp" data-edit-value="alt${
-                k - 1
-              } maxlength="4" min="1800" max="2400"placeholder="Введите год" /></label>
-              </div>
-                </div>
-                  </div>`
-          );
-        }
+            </div>`
+        );
       }
+
       countAddALtClick >= 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
 
       let inpNewValues = document.querySelectorAll('.edit-inp');

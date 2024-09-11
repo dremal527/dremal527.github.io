@@ -1549,6 +1549,7 @@ tr.tr-school td {
 .table_desktop .alt-name {
   padding-bottom: 50px;
 }
+.table__year,
 .table__year-name {
   position: absolute;
   bottom: 20px;
@@ -1556,7 +1557,6 @@ tr.tr-school td {
 .table__abbr {
   margin-top: 10px;
 }
-.table__year,
 .table__value__id {
   position: absolute;
   bottom: 10%;

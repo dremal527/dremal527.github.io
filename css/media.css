@@ -379,6 +379,7 @@
   .table__year,
   .table__year-name {
     position: relative;
+    bottom: unset;
   }
   tr:hover {
     background-color: #fff;
