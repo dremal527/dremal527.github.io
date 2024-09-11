@@ -1450,6 +1450,11 @@ h3 {
   padding: 0px 43px 0px 40px;
   cursor: pointer;
 }
+textarea.input-search.table {
+  resize: none;
+  padding: 10px 43px 0px 11px;
+  overflow: hidden;
+}
 .input-search[data-search-value='alt2'] + .prompt-search,
 .input-search[data-search-value='alt1'] + .prompt-search {
   text-transform: uppercase;

@@ -1379,17 +1379,34 @@ btnRegionArr.forEach((btn) => {
 });
 
 //Search
-// tableSearchBtnReset.forEach((reset, index) => {
-//   reset.addEventListener('click', () => {
-//     let input = reset.parentElement.querySelector('.input-search');
+// let maxHeightSearchInput = 50;
 
-//     reset.style.display = 'none';
-//     input.value = '';
-//     input.style.padding = '0px 43px 0px 40px';
+const setMaxHeightSearchInput = () => {
+  let searchRow = document.querySelector('.table_desktop .tr_empty:nth-child(2)'),
+      searchInputs = document.querySelectorAll('.input-search.table'),
+      maxHeightSearchInput = 50,
+      counEmptyInputValue = 0;
 
-//     filterDataByAllCondition();
-//   });
-// });
+  searchRow.style.height = `auto`;
+
+  searchInputs.forEach((inp) => {
+
+    if (inp.value == '') {
+      counEmptyInputValue++;
+      return;
+    }
+
+    if (maxHeightSearchInput < inp.scrollHeight) {
+      maxHeightSearchInput = inp.scrollHeight;
+    }
+  });
+
+  if (maxHeightSearchInput > 50) {
+    maxHeightSearchInput += 10;
+  }
+
+  searchRow.style.height = `${maxHeightSearchInput}px`;
+}
 
 const showHint = (inp, promptEl, resetBtn) => {
   selectOverlay.style.display = 'block';
@@ -1419,6 +1436,7 @@ document.querySelectorAll('.input-search.table').forEach((inp, indexInp) => {
     resetBtn.parentElement.querySelector('.search-table').style.display = 'block';
 
     hideHint(inp, promptSearchArr[indexInp], resetBtn);
+    setMaxHeightSearchInput();
     filterDataByAllCondition();
   });
 });
@@ -1435,8 +1453,11 @@ searchInput.forEach((inp, indexInp) => {
     }, 100);
   });
   inp.addEventListener('click', () => {
+    if (inp.value != '') {
+      btnSearchResetArr[indexInp].style.display = 'block';
+    }
+
     loopIconsArr[indexInp].style.display = 'none';
-    inp.style.padding = '0px 43px 0px 11px';
 
     promptSearchArr[indexInp].style.display = 'block';
 
@@ -1448,10 +1469,8 @@ searchInput.forEach((inp, indexInp) => {
   });
 
   inp.addEventListener('input', () => {
-    inp.value == '' ? (inp.style.padding = '0px 43px 0px 40px') : false;
     if (inp.value != '') {
       loopIconsArr[indexInp].style.display = 'none';
-      inp.style.padding = '0px 43px 0px 11px';
     }
 
     showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
@@ -1482,9 +1501,6 @@ searchInput.forEach((inp, indexInp) => {
         inp.blur();
         n = 0;
         filterDataByAllCondition();
-        // if (j == 1 || i == 1) {
-        //   tableRender(dataPrev);
-        // } else tableRender(dataSlice);
       } else {
         let currentData = dataFilters;
         let filteredData = currentData
@@ -1547,11 +1563,8 @@ searchInput.forEach((inp, indexInp) => {
       
       if (valueInput == '') {
         promptSearchArr[indexInp].style.display = 'none';
-        filterDataByAllCondition();
       }
 
-      // tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
-      // valueInput == '' ? tableRender(dataSlice) : false;
       filterDataByAllCondition();
     }
 
@@ -1568,16 +1581,23 @@ searchInput.forEach((inp, indexInp) => {
 
     document.querySelectorAll('.search-value').forEach((el) => {
       el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
-      el.addEventListener('click', (e) => {
-        n = 1;
-        inp.value = valueInput = el.textContent;
-        inp.value == 'undefined' ? (inp.style.color = 'rgba(0, 0, 0, 0)') : false;
-        regSearch = new RegExp('^' + valueInput, 'gi');
-        dataFilters = dataSlice.filter((el) => String(el[searchId]).match(regSearch));
-        promptSearchArr[indexInp].style.display = 'none';
+      el.addEventListener('click', () => {
+        let parent = el.parentElement.parentElement,
+            input = parent.querySelector('textarea.input-search.table'),
+            promptSearch = parent.querySelector('.prompt-search'),
+            resetBtn = parent.querySelector('.btn-reset-search');
 
-        hideHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
-        // tableRender(dataSlice.filter((el) => String(el[searchId]).match(regSearch)));
+        n = 1;
+        input.value = el.textContent;
+        input.value == 'undefined' ? (input.style.color = 'rgba(0, 0, 0, 0)') : false;
+        promptSearch.style.display = 'none';
+
+        if (input.value != '') {
+          resetBtn.style.display = 'block';
+        }
+
+        hideHint(input, promptSearch, resetBtn);
+        setMaxHeightSearchInput();
         filterDataByAllCondition();
       });
     });
