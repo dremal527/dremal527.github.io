@@ -82,6 +82,11 @@ window.addEventListener('scroll', () => {
 window.onload = () => {
   window.scrollTo({ top: scroll });
 };
+window.onresize = () => {
+  if (popupEdit.style.display != 'none') {
+    setHeightDadataArae();
+  }
+}
 
 // Экспорт данных из таблицы 
 async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
@@ -299,6 +304,13 @@ const checkOutOfBounds = (element, inaccuracy = 0) => {
   } catch (e) {
     console.error('Error:', e);
   }
+}
+
+const setHeightDadataArae = () => {
+  const textarea = document.querySelector('.edit-inp.edit-dadata');
+
+  textarea.style.height = 'auto';
+  textarea.style.height = `${textarea.scrollHeight}px`; 
 }
 
 //Render table
@@ -600,8 +612,6 @@ function tableRender(dataValue) {
       btnAddAltEl.disabled = false;
       idTrTable = edit.dataset.valueId;
       matchingTr = dataSlice.filter((el) => el.id == idTrTable);
-      
-      console.log({matchingTr})
 
       let valuesCount = +matchingTr.map((el) => Object.keys(el).filter(key => key.indexOf('fullName') !== -1).length).join('');
           valuesCount--; // Убираем главный fullName
@@ -621,8 +631,8 @@ function tableRender(dataValue) {
            
        </div>
        </label>
-       <label class="edit-label" data-edit-value="dadata">Название с сайта dadata.ru
-         <input type="text" class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata" value="${checkUndef(trValue.dadata)}"/>
+       <label class="edit-label" data-edit-value="dadata"><span class="edit-label__title">Название с сайта dadata.ru</span>
+        <textarea class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata">${checkUndef(trValue.dadata)}</textarea>
         <div class="prompt-edit">
           <span class="icon" style="color: #D11521"></span>
           <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -813,6 +823,8 @@ function tableRender(dataValue) {
 
         setPositionForButtonsEdit();
       });
+
+      setHeightDadataArae();
     });
   });
   //Save edit change
@@ -1379,8 +1391,6 @@ btnRegionArr.forEach((btn) => {
 });
 
 //Search
-// let maxHeightSearchInput = 50;
-
 const setMaxHeightSearchInput = () => {
   let searchRow = document.querySelector('.table_desktop .tr_empty:nth-child(2)'),
       searchInputs = document.querySelectorAll('.input-search.table'),

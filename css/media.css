@@ -342,7 +342,8 @@
     right: 0;
     top: -35px;
   }
-  .edit-label > input {
+  .edit-label > input,
+  .edit-label > textarea {
     width: 100%;
     margin-top: 9px;
   }

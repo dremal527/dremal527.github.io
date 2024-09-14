@@ -1337,7 +1337,8 @@ h3 {
   font-weight: 600;
   line-height: 137.02%;
 }
-.edit-label > input {
+.edit-label > input, 
+.edit-label > textarea {
   border: 1px solid #c1c1c1;
   height: 54px;
   color: #383838;
@@ -1345,6 +1346,14 @@ h3 {
   padding: 13px 20px;
   width: 65%;
   text-transform: uppercase;
+}
+.edit-label > textarea {
+  overflow: hidden;
+  resize: none;
+  box-sizing: border-box;
+}
+.edit-label__title {
+  word-break: auto-phrase;
 }
 .edit-label[data-edit-value='fullName'] > input {
   text-transform: none !important;
