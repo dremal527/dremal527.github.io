@@ -26,7 +26,6 @@ const fieldInTotalEl = document.querySelector('.js-total-value');
 const loopIconsArr = document.querySelectorAll('.search-table');
 const tableSearchBtnReset = document.querySelectorAll('.table_desktop .btn-reset-search');
 const btnAddAltEl = document.querySelector('.btn-add-alt');
-const newAltWrapper = document.querySelector('.wrap-forms-edit');
 const btnSaveEdit = document.querySelector('.btn-save');
 const importBtnEl = document.querySelector('.js-popup-import');
 const popupImport = document.querySelector('.import');
@@ -37,7 +36,8 @@ const inputArr = document.querySelectorAll('input');
 const main = document.querySelector('.main');
 const inpExportEl = document.querySelector('.input-export');
 const exportButton = document.querySelector('.btn-download-export');
-const selectOverlay      = document.querySelector('.select_overlay');
+const selectOverlay = document.querySelector('.select_overlay');
+const newAltWrapper = document.querySelector('.wrap-forms-edit');
 
 let inpFullName = document.querySelector('.edit-fullname');
 let inpInn = document.querySelector('.edit-inn');
@@ -46,15 +46,12 @@ const pFileName = document.querySelector('.filename');
 const inpImportEl = document.querySelector('.input-import');
 let oldValueSchoolSelect = [];
 let dataPrev = [];
-let inputEditsHTML = '';
-let inputEditsWrapper = [];
-let regionValueInput;
+let regionValueInput = '';
 let scrollPosition;
 let dataSlice = data.slice(0);
 let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
 let count = 0;
-let matchingTr = [];
 let n = 0;
 let countAddALtClick = 1;
 let newALtNameFormHTML = '';
@@ -65,8 +62,6 @@ let i = 0;
 let j = 0;
 let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
-let countAllCheckbox = 0;
-let renderTableHTML = '';
 let idInterval;
 
 function checkUndef(prop) {
@@ -85,13 +80,14 @@ window.onload = () => {
 window.onresize = () => {
   if (popupEdit.style.display != 'none') {
     setHeightDadataArae();
+    setPositionForButtonsEdit();
   }
 }
 
 // Экспорт данных из таблицы 
 async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
   let table = document.querySelector(tableSelector),
-      rows = table.querySelectorAll("tr");
+    rows = table.querySelectorAll("tr");
 
   // Стартовая структура XML
   let excelFile = `
@@ -165,7 +161,7 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
           const fullName = wrapper.querySelector('p:nth-of-type(3)')?.textContent.trim();
           const abbr = wrapper.querySelector('p:nth-of-type(4)')?.textContent.trim();
           const year = wrapper.querySelector('p:nth-of-type(5)')?.textContent.trim();
-          
+
           return { inn, dadata, abbr, fullName, year };
         });
 
@@ -180,7 +176,7 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
           const abbr = wrapper.querySelector('p:nth-of-type(1)')?.textContent.trim();
           const fullName = wrapper.querySelector('p:nth-of-type(2)').textContent.trim();
           const year = wrapper.querySelector('p:nth-of-type(3)')?.textContent.trim();
-          
+
           return { abbr, fullName, year };
         });
 
@@ -201,13 +197,13 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
   // Используем `showSaveFilePicker` для выбора места сохранения файла
   try {
     const handle = await window.showSaveFilePicker({
-        suggestedName: fileName,
-        types: [
-            {
-                description: 'Excel File',
-                accept: { 'application/vnd.ms-excel': ['.xls', '.xlsx'] }
-            },
-        ],
+      suggestedName: fileName,
+      types: [
+        {
+          description: 'Excel File',
+          accept: { 'application/vnd.ms-excel': ['.xls', '.xlsx'] }
+        },
+      ],
     });
 
     const writable = await handle.createWritable();
@@ -237,8 +233,8 @@ const filterDataByAllCondition = () => {
   if (searchInput.length) {
     searchInput.forEach(inp => {
       let searchId = inp.dataset.searchValue,
-          regSearch = new RegExp('^' + inp.value, 'gi'),
-          regHighlight = new RegExp(inp.value, 'gi');
+        regSearch = new RegExp('^' + inp.value, 'gi'),
+        regHighlight = new RegExp(inp.value, 'gi');
 
       searchId == 'fullName' ? (regHighlight = new RegExp(inp.value, 'g')) : false;
       dataFiltersTMP = dataFiltersTMP.filter((el) => String(el[searchId]).match(regSearch));
@@ -290,13 +286,13 @@ const setTypeSchoolValue = () => {
 const checkOutOfBounds = (element, inaccuracy = 0) => {
   try {
     let rect = element.getBoundingClientRect(),
-        rectBottom = rect.bottom + inaccuracy,
-        isOutOfBounds;
+      rectBottom = rect.bottom + inaccuracy,
+      isOutOfBounds;
 
     isOutOfBounds = (
-      rect.top < 0 || 
+      rect.top < 0 ||
       rect.left < 0 ||
-      rectBottom > window.innerHeight || 
+      rectBottom > window.innerHeight ||
       rect.right > window.innerWidth
     );
 
@@ -310,18 +306,97 @@ const setHeightDadataArae = () => {
   const textarea = document.querySelector('.edit-inp.edit-dadata');
 
   textarea.style.height = 'auto';
-  textarea.style.height = `${textarea.scrollHeight}px`; 
+  textarea.style.height = `${textarea.scrollHeight}px`;
 }
+
+const extendAltSchool = (school) => {
+  // Приведение altSchool к объекту, если это массив
+  if (Array.isArray(school.altSchool)) {
+    // Преобразование массива в объект с индексами
+    school.altSchool = school.altSchool.reduce((acc, item, index) => {
+      acc[index + 1] = item;
+      return acc;
+    }, {});
+  } else if (typeof school.altSchool !== 'object' || school.altSchool === null) {
+    school.altSchool = {};
+  }
+
+  // Получаем текущие ключи и количество элементов в altSchool
+  const keys = Object.keys(school.altSchool);
+  const currentLength = keys.length;
+
+  // Если количество элементов меньше 6, добавляем недостающие
+  if (currentLength < 6) {
+    const itemsToAdd = 6 - currentLength;
+    const startIndex = keys.length > 0 ? Math.max(...keys.map(Number)) + 1 : 1;
+
+    for (let i = 0; i < itemsToAdd; i++) {
+      school.altSchool[startIndex + i] = {
+        fullName: "",
+        abbr: "",
+        year: ""
+      };
+    }
+  }
+
+  return school;
+}
+
+const sortAltSchoolByYear = (school) => {
+  // Проверяем, есть ли поле altSchool и является ли оно объектом
+  if (!school.altSchool || typeof school.altSchool !== 'object') {
+    throw new Error('Invalid altSchool school');
+  }
+
+  // Преобразуем объект в массив
+  const altSchoolArray = Object.entries(school.altSchool).map(([key, value]) => ({
+    key,
+    ...value
+  }));
+
+  // Сортируем массив по полю year в порядке убывания
+  altSchoolArray.sort((a, b) => {
+    const yearA = parseInt(a.year, 10) || 0;
+    const yearB = parseInt(b.year, 10) || 0;
+    return yearB - yearA;
+  });
+
+  // Преобразуем отсортированный массив обратно в объект
+  let newKey = 1;
+  const sortedAltSchool = altSchoolArray.reduce((acc, item) => {
+    acc[newKey] = {
+      year: item.year,
+      fullName: item.fullName,
+      abbr: item.abbr
+    };
+
+    newKey++;
+    
+    return acc;
+  }, {});
+
+  // Обновляем поле altSchool в исходном объекте
+  school.altSchool = sortedAltSchool;
+
+  return school;
+}
+
+function prepareData() {
+  dataSlice.forEach((school, index) => {
+    dataSlice[index] = sortAltSchoolByYear(extendAltSchool(school));
+  });
+}
+prepareData();
 
 //Render table
 function tableRender(dataValue) {
   const tbodyWrapperEl = document.querySelector('.tr-wrapper');
   tbodyWrapperEl.innerHTML = '';
-  renderTableHTML = '';
 
   dataValue.forEach((school, index) => {
     let trEl = document.createElement('tr');
     trEl.classList.add('tr-school');
+
     let htmlThead = `
         <td class="table_mobile-thead">
         <div class="thead-container"> 
@@ -352,9 +427,7 @@ function tableRender(dataValue) {
       </div>
       </td>
       <td class="td-wrapper-icon" >
-      <div class="table-icon del-btn" data-value="Удалить" data-value-id="${
-        school.id
-      }" data-full-name="${school.fullName}">
+      <div class="table-icon del-btn" data-value="Удалить" data-value-id="${school.id}" data-full-name="${school.fullName}">
         <span class="icon control-edit delete"></span>
       </div>
       </td>`;
@@ -385,223 +458,62 @@ function tableRender(dataValue) {
     </td>`;
 
     setTimeout(() => {
-      let altName1 = document.createElement('td');
-      altName1.classList.add('td-alt');
-      let tdTitleMobile = document.createElement('div');
-      tdTitleMobile.classList.add('td-name');
-      tdTitleMobile.innerText = `Альтернативное\nназвание`;
-      altName1.append(tdTitleMobile);
+      const altSchool = school.altSchool;
 
-      let altNameValues = document.createElement('div');
-      altName1.append(altNameValues);
-      altNameValues.classList.add('alt-name');
+      if (Object.keys(altSchool).length > 0) {
+        for (const key in altSchool) {
+          const elem = altSchool[key];
 
-      let altNameChild = document.createElement('div');
+          // Создание и настройка элементов
+          const altName1 = document.createElement('td');
+          altName1.classList.add('td-alt');
+
+          const tdTitleMobile = document.createElement('div');
+          tdTitleMobile.classList.add('td-name');
+          tdTitleMobile.innerText = 'Альтернативное\nназвание';
+          altName1.append(tdTitleMobile);
+
+          const altNameValues = document.createElement('div');
+          altNameValues.classList.add('alt-name');
+
+          const altNameChild = document.createElement('div');
           altNameChild.classList.add('alt-name__child');
 
-      let pFullNameAlt = document.createElement('p'),
-          pNameAlt = document.createElement('p'),
-          pYearAlt = document.createElement('p');
+          const pFullNameAlt = document.createElement('p');
+          const pNameAlt = document.createElement('p');
 
-      pYearAlt.dataset.prevValue = checkUndef(school.year);
-      pYearAlt.classList.add('table__year');
+          const fullName = checkUndef(elem.fullName);
+          const abbr = checkUndef(elem.abbr);
+          const year = checkUndef(elem.year);
 
-      pFullNameAlt.innerText = `${checkUndef(school.fullName1)}`;
+          pFullNameAlt.innerText = fullName;
+          pNameAlt.innerText = abbr;
 
-      // if (checkUndef(school.year)) {
-      //   pFullNameAlt.style.marginBottom = '70px';
-      // }
+          altNameChild.append(pNameAlt, pFullNameAlt);
+          altNameValues.append(altNameChild);
 
-      pNameAlt.innerText = `${checkUndef(school.alt1)}`;
-      pYearAlt.innerText = `${checkUndef(school.year1)}`;
+          if (year) {
+            const pYearAlt = document.createElement('p');
+            pYearAlt.dataset.prevValue = year;
+            pYearAlt.classList.add('table__year');
+            pYearAlt.innerText = year;
 
-      altNameChild.append(pNameAlt, pFullNameAlt);
-      altNameValues.append(altNameChild, pYearAlt);
+            altNameValues.append(pYearAlt);
+          }
 
-      trEl.append(altName1);
-      let altName2 = document.createElement('td');
-      altName2.classList.add('td-alt');
-      let tdTitleMobile2 = document.createElement('div');
-      tdTitleMobile2.classList.add('td-name');
-      tdTitleMobile2.innerText = `Альтернативное\nназвание`;
-      altName2.append(tdTitleMobile2);
-      let altNameValues2 = document.createElement('div');
-      altName2.append(altNameValues2);
-      altNameValues2.classList.add('alt-name');
-
-      let altNameChild2 = document.createElement('div');
-          altNameChild2.classList.add('alt-name__child');
-
-      let pFullNameAlt2 = document.createElement('p'),
-          pNameAlt2 = document.createElement('p'),
-          pYearAlt2 = document.createElement('p');
-
-      pYearAlt2.classList.add('table__year');
-
-      pFullNameAlt2.innerText = `${checkUndef(school.fullName2)}`;
-
-      // if (checkUndef(school.year)) {
-      //   pFullNameAlt2.style.marginBottom = '70px';
-      // }
-
-      pNameAlt2.innerText = `${checkUndef(school.alt2)}`;
-      pYearAlt2.innerText = `${checkUndef(school.year2)}`;
-      pYearAlt2.dataset.prevValue = checkUndef(school.year1);
-
-      altNameChild2.append(pNameAlt2, pFullNameAlt2)
-      altNameValues2.append(altNameChild2, pYearAlt2);
-
-      trEl.append(altName2);
+          altName1.append(altNameValues);
+          trEl.append(altName1);
+        }
+      }
     }, 0);
-    setTimeout(() => {
-      let altName3 = document.createElement('td');
-      altName3.classList.add('td-alt');
-      let tdTitleMobile3 = document.createElement('div');
-      tdTitleMobile3.classList.add('td-name');
-      tdTitleMobile3.innerText = `Альтернативное\nназвание`;
-      altName3.append(tdTitleMobile3);
-      let altNameValues3 = document.createElement('div');
-      altName3.append(altNameValues3);
-      altNameValues3.classList.add('alt-name');
 
-      let altNameChild3 = document.createElement('div');
-          altNameChild3.classList.add('alt-name__child');
-
-      let pFullNameAlt3 = document.createElement('p'),
-          pNameAlt3 = document.createElement('p'),
-          pYearAlt3 = document.createElement('p');
-
-      pYearAlt3.dataset.prevValue = checkUndef(school.year2);
-      pYearAlt3.classList.add('table__year');
-
-      pFullNameAlt3.innerText = `${checkUndef(school.fullName3)}`;
-
-      // if (checkUndef(school.year)) {
-      //   pFullNameAlt3.style.marginBottom = '70px';
-      // }
-
-      pNameAlt3.innerText = `${checkUndef(school.alt3)}`;
-      pYearAlt3.innerText = `${checkUndef(school.year3)}`;
-
-      altNameChild3.append(pNameAlt3, pFullNameAlt3);
-      altNameValues3.append(altNameChild3, pYearAlt3);
-
-      trEl.append(altName3);
-
-      let altName4 = document.createElement('td');
-      altName4.classList.add('td-alt');
-      let tdTitleMobile4 = document.createElement('div');
-      tdTitleMobile4.classList.add('td-name');
-      tdTitleMobile4.innerText = `Альтернативное\nназвание`;
-      altName4.append(tdTitleMobile4);
-      let altNameValues4 = document.createElement('div');
-      altName4.append(altNameValues4);
-      altNameValues4.classList.add('alt-name');
-
-      let altNameChild4 = document.createElement('div');
-          altNameChild4.classList.add('alt-name__child');
-
-      let pFullNameAlt4 = document.createElement('p'),
-          pNameAlt4 = document.createElement('p'),
-          pYearAlt4 = document.createElement('p');
-
-      pYearAlt4.classList.add('table__year');
-
-      pFullNameAlt4.innerText = `${checkUndef(school.fullName4)}`;
-
-      // if (checkUndef(school.year)) {
-      //   pFullNameAlt4.style.marginBottom = '70px';
-      // }
-
-      pNameAlt4.innerText = `${checkUndef(school.alt4)}`;
-      pYearAlt4.innerText = `${checkUndef(school.year4)}`;
-      pYearAlt4.dataset.prevValue = checkUndef(school.year3);
-
-      altNameChild4.append(pNameAlt4, pFullNameAlt4);
-      altNameValues4.append(altNameChild4, pYearAlt4);
-
-      trEl.append(altName4);
-    }, 4);
-    setTimeout(() => {
-      let altName5 = document.createElement('td');
-      altName5.classList.add('td-alt');
-      let tdTitleMobile5 = document.createElement('div');
-      tdTitleMobile5.classList.add('td-name');
-      tdTitleMobile5.innerText = `Альтернативное\nназвание`;
-      altName5.append(tdTitleMobile5);
-      let altNameValues5 = document.createElement('div');
-      altName5.append(altNameValues5);
-      altNameValues5.classList.add('alt-name');
-
-      let altNameChild5 = document.createElement('div');
-          altNameChild5.classList.add('alt-name__child');
-
-      let pFullNameAlt5 = document.createElement('p'),
-          pNameAlt5 = document.createElement('p'),
-          pYearAlt5 = document.createElement('p');
-
-      pYearAlt5.classList.add('table__year');
-
-      pFullNameAlt5.innerText = `${checkUndef(school.fullName5)}`;
-
-      // if (checkUndef(school.year)) {
-      //   pFullNameAlt5.style.marginBottom = '70px';
-      // }
-
-      pNameAlt5.innerText = `${checkUndef(school.alt5)}`;
-      pYearAlt5.innerText = `${checkUndef(school.year5)}`;
-      pYearAlt5.dataset.prevValue = checkUndef(school.year4);
-
-      altNameChild5.append(pNameAlt5, pFullNameAlt5);
-      altNameValues5.append(altNameChild5, pYearAlt5);
-
-      trEl.append(altName5);
-      
-      let altName6 = document.createElement('td');
-      altName6.classList.add('td-alt');
-      let tdTitleMobile6 = document.createElement('div');
-      tdTitleMobile6.classList.add('td-name');
-      tdTitleMobile6.innerText = `Альтернативное\nназвание`;
-      altName6.append(tdTitleMobile6);
-      let altNameValues6 = document.createElement('div');
-      altName6.append(altNameValues6);
-      altNameValues6.classList.add('alt-name');
-
-      let altNameChild6 = document.createElement('div');
-          altNameChild6.classList.add('alt-name__child');
-
-      let pFullNameAlt6 = document.createElement('p'),
-          pNameAlt6 = document.createElement('p'),
-          pYearAlt6 = document.createElement('p');
-
-      pYearAlt6.classList.add('table__year');
-
-      pFullNameAlt6.innerText = `${checkUndef(school.fullName6)}`;
-
-      // if (checkUndef(school.year)) {
-      //   pFullNameAlt6.style.marginBottom = '70px';
-      // }
-
-      pNameAlt6.innerText = `${checkUndef(school.alt6)}`;
-      pYearAlt6.innerText = `${checkUndef(school.year6)}`;
-      pYearAlt6.dataset.prevValue = checkUndef(school.year5);
-
-      altNameChild6.append(pNameAlt6, pFullNameAlt6);
-      altNameValues6.append(altNameChild6, pYearAlt6);
-
-      trEl.append(altName6);
-    }, 7);
-    setTimeout(() => {
-      document.querySelectorAll('.alt-name').forEach((el) => {
-        el.innerText == '' ? el.parentNode.classList.add('empty') : false;
-      });
-    }, 8);
 
     trEl.setAttribute('data-value-id', school.id);
     trEl.insertAdjacentHTML('beforeend', htmlThead);
     trEl.insertAdjacentHTML('beforeend', htmlTdNum);
     trEl.insertAdjacentHTML('beforeend', htmlTdInfoAndFullNames);
     trEl.insertAdjacentHTML('beforeend', htmlTfoot);
+
     tbodyWrapperEl.append(trEl);
   });
 
@@ -611,142 +523,104 @@ function tableRender(dataValue) {
     edit.addEventListener('click', () => {
       btnAddAltEl.disabled = false;
       idTrTable = edit.dataset.valueId;
-      matchingTr = dataSlice.filter((el) => el.id == idTrTable);
 
-      let valuesCount = +matchingTr.map((el) => Object.keys(el).filter(key => key.indexOf('fullName') !== -1).length).join('');
-          valuesCount--; // Убираем главный fullName
+      let matchingTr = dataSlice.filter((el) => el.id == idTrTable).shift(),
+          valuesCount = Object.entries(matchingTr.altSchool).filter(([key, { fullName, abbr }]) => fullName && abbr).length;
+      countAddALtClick = valuesCount + 1;
 
-      inputEditsWrapper = document.querySelector('.popup-edit-content-wrapper');
-      matchingTr.forEach((trValue) => {
-        countAddALtClick = valuesCount + 1;
-
-        inputEditsHTML = `
+      // Заполняем информацию по главному названию
+      document.querySelector('.popup-edit-content-wrapper').innerHTML = `
         <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
-       <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}"
-         >ИНН
-         <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn" value="${checkUndef(trValue.inn)}"
-       /> <div class="prompt-edit">
-         <span class="icon" style="color: #D11521"></span>
-         <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
-           
-       </div>
-       </label>
-       <label class="edit-label" data-edit-value="dadata"><span class="edit-label__title">Название с сайта dadata.ru</span>
-        <textarea class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata">${checkUndef(trValue.dadata)}</textarea>
-        <div class="prompt-edit">
-          <span class="icon" style="color: #D11521"></span>
-          <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+          <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}"
+            >ИНН
+            <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn" value="${checkUndef(matchingTr.inn)}"/> <div class="prompt-edit">
+            <span class="icon" style="color: #D11521"></span>
+            <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass> 
+          </div>
+          </label>
+          <label class="edit-label" data-edit-value="dadata"><span class="edit-label__title">Название с сайта dadata.ru</span>
+              <textarea class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata">${checkUndef(matchingTr.dadata)}</textarea>
+              <div class="prompt-edit">
+                <span class="icon" style="color: #D11521"></span>
+                <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+              </div>
+            </label>
+          </label>
+          <label class="edit-label " data-edit-value="fullName">Полное название
+            <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName" value="${checkUndef(matchingTr.fullName)}"/>
+          <div class="prompt-edit">
+            <span class="icon" style="color: #D11521"></span>
+            <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+          </div>
+          </label>
+          <label class="edit-label " data-edit-value="fullName">Аббревиатура
+            <div class="last_edit_abbr">
+              <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${checkUndef(matchingTr.abbr)}"/>
+              <label class="edit-label" data-edit-value="year">
+              <span>Год</span>
+                <input
+                  type="number"
+                  class="edit-inp year-inp"
+                  maxlength="4"
+                  min="1800"
+                  max="2024"
+                  placeholder="Введите год"
+                  pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(matchingTr.year)}"
+              /></label>
+            </div>
+          <div class="prompt-edit">
+            <span class="icon" style="color: #D11521"></span>
+            <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+          </div>
+          </label>
         </div>
-      </label>
-     </label>
-       <label class="edit-label " data-edit-value="fullName">Полное название
-         <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName" value="${checkUndef(trValue.fullName)}"
-       />
-       <div class="prompt-edit">
-         <span class="icon" style="color: #D11521"></span>
-         <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
-       </div>
-      </label>
+      `;
 
-      <label class="edit-label " data-edit-value="fullName">Аббревиатура
-         <div class="last_edit_abbr">
-          <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="fullName" value="${checkUndef(trValue.abbr)}"/>
-          <label class="edit-label" data-edit-value="year">
-          <span>Год</span>
-            <input
-              type="number"
-              class="edit-inp year-inp"
-              maxlength="4"
-              min="1800"
-              max="2024"
-              placeholder="Введите год"
-              pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(trValue.year)}"
-          /></label>
-         </div>
-       <div class="prompt-edit">
-         <span class="icon" style="color: #D11521"></span>
-         <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
-       </div>
-      </label>
-     </div>
-        `;
-        matchingId = trValue.id;
-      });
-      inputEditsWrapper.innerHTML = inputEditsHTML;
-
-      for (let k = 0; k < valuesCount; k++) {
-        let id = k + 1;
-
-        newAltWrapper.insertAdjacentHTML(
-          'beforeend',
-          `<div class="popup-edit-content-wrapper" data-edit-form-id="${id}">
-                <div
-                  class="input__wrapper"
-                  style="flex-direction: column; align-items: flex-start">
-                  <div class="popup-value__title">
-                    <h3>Альтернативное название №${id}</h3>
-                    <div
-                      class="table-icon del-alt-name js-edit-btn-altDel"
-                      data-value="Удалить"
-                      data-edit-altDel="${k}">
-                      <span class="icon control-edit delete"></span>
-                    </div>
-                  </div>
-                  <label class="edit-label" data-edit-value="alt${id}">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${id}" data-edit-value="fullName${k + 1}" /></label>
-                  <label class="edit-label " data-edit-value="fullName">Альтернативное название
-                    <div class="last_edit_abbr" data-edit-value="alt${id}">
-                      <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${id}" data-edit-value="alt${k + 1}" />
-                      <label class="edit-label" data-edit-value="year" data-edit-value="year${id}">
-                        <span>Год</span>
-                        <input type="number" class="edit-inp year-inp" data-edit-value="alt${id} maxlength="4" min="1800" max="2400"placeholder="Введите год" />
-                      </label>
-                    </div>
-                  </label>
-                </div>
-            </div>`
+      // Заполняем информацию по вльтернативным названиям
+      if (valuesCount > 0) {
+        let notEmptyAltSchool = Object.fromEntries(
+            Object.entries(matchingTr.altSchool)
+                .filter(([key, { fullName, abbr }]) => fullName && abbr)
         );
+        
+        for (const key in notEmptyAltSchool) {  
+          newAltWrapper.insertAdjacentHTML(
+            'beforeend',
+            `<div class="popup-edit-content-wrapper" data-edit-form-id="${key}">
+                  <div
+                    class="input__wrapper"
+                    style="flex-direction: column; align-items: flex-start">
+                    <div class="popup-value__title">
+                      <h3>Альтернативное название №${key}</h3>
+                      <div
+                        class="table-icon del-alt-name js-edit-btn-altDel"
+                        data-value="Удалить"
+                        data-edit-altDel="${key}">
+                        <span class="icon control-edit delete"></span>
+                      </div>
+                    </div>
+                    <label class="edit-label">
+                      Полное наименование 
+                      <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${key}" data-edit-alt-value="fullName" value="${matchingTr.altSchool[key].fullName}" />
+                    </label>
+                    <label class="edit-label">Альтернативное название
+                      <div class="last_edit_abbr">
+                        <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${key}" data-edit-alt-value="abbr" value="${matchingTr.altSchool[key].abbr}" />
+                        <label class="edit-label">
+                          <span>Год</span>
+                          <input type="number" class="edit-inp year-inp" data-edit-alt-value="year" maxlength="4" min="1800" max="2400"placeholder="Введите год" value="${matchingTr.altSchool[key].year}" />
+                        </label>
+                      </div>
+                    </label>
+                  </div>
+              </div>`
+          );
+        }
       }
 
       countAddALtClick >= 6 ? (btnAddAltEl.disabled = true) : (btnAddAltEl.disabled = false);
 
       let inpNewValues = document.querySelectorAll('.edit-inp');
-
-      matchingTr.forEach((el) => {
-        if (inpNewValues.length > 5) {
-          inpNewValues[5].value = checkUndef(el.fullName1);
-          inpNewValues[6].value = checkUndef(el.alt1);
-          el.year1 === undefined
-            ? (inpNewValues[7].value = el.year)
-            : (inpNewValues[7].value = el.year1);
-        }
-        if (inpNewValues.length >= 11) {
-          inpNewValues[8].value = checkUndef(el.fullName2);
-          inpNewValues[9].value = checkUndef(el.alt2);
-          el.year2 === undefined
-            ? (inpNewValues[10].value = el.year1)
-            : (inpNewValues[10].value = el.year2);
-        }
-        if (inpNewValues.length >= 14) {
-          inpNewValues[11].value = checkUndef(el.fullName3);
-          inpNewValues[12].value = checkUndef(el.alt3);
-          el.year3 === undefined ? (inpNewValues[13].value = el.year1) : (inpNewValues[13].value = el.year2);
-        }
-        if (inpNewValues.length >= 17) {
-          inpNewValues[14].value = checkUndef(el.fullName4);
-          inpNewValues[15].value = checkUndef(el.alt4);
-          el.year4 === undefined ? (inpNewValues[16].value = el.year3) : (inpNewValues[16].value = el.year4);
-        }
-        if (inpNewValues.length >= 19) {
-          inpNewValues[17].value = checkUndef(el.fullName5);
-          inpNewValues[18].value = checkUndef(el.alt5);
-          el.year5 === undefined ? (inpNewValues[19].value = el.year4) : (inpNewValues[19].value = el.year5);
-        }
-        if (inpNewValues.length >= 21) {
-          inpNewValues[20].value = checkUndef(el.fullName6);
-          inpNewValues[21].value = checkUndef(el.alt6);
-          inpNewValues[22].value = checkUndef(el.year5);
-        }
-      });
 
       popupEdit.style.display = '';
       const closeBtn = document.querySelectorAll('.popup-close');
@@ -817,6 +691,7 @@ function tableRender(dataValue) {
                 ? (btnAddAltEl.disabled = true)
                 : (btnAddAltEl.disabled = false);
               indexDel + 1 == indexForm ? formEl.remove() : false;
+              setPositionForButtonsEdit();
             });
           });
         });
@@ -830,53 +705,45 @@ function tableRender(dataValue) {
   //Save edit change
   btnSaveEdit.addEventListener('click', (e) => {
     e.preventDefault();
-  
-    const index = dataSlice.findIndex((el) => el.id == idTrTable);
-    let editElement = dataSlice[index];
 
-    inpNewValues = document.querySelectorAll('.edit-inp');
-    editElement.inn = inpNewValues[0].value;
-    editElement.fullName = inpNewValues[2].value;
-    editElement.abbr = inpNewValues[3].value;
-    editElement.year = inpNewValues[4].value;
-    if (inpNewValues.length > 5) {
-      editElement.fullName1 = inpNewValues[5].value;
-      editElement.alt1 = inpNewValues[6].value;
-      editElement.year1 = inpNewValues[7].value;
-    }
-    if (inpNewValues.length >= 11) {
-      editElement.fullName2 = inpNewValues[8].value;
-      editElement.alt2 = inpNewValues[9].value;
-      editElement.year2 = inpNewValues[10].value;
-    }
-    if (inpNewValues.length >= 14) {
-      editElement.fullName3 = inpNewValues[11].value;
-      editElement.alt3 = inpNewValues[12].value;
-      editElement.year3 = inpNewValues[13].value;
-    }
-    if (inpNewValues.length >= 17) {
-      editElement.fullName4 = inpNewValues[14].value;
-      editElement.alt4 = inpNewValues[15].value;
-      editElement.year4 = inpNewValues[16].value;
-    }
-    if (inpNewValues.length >= 19) {
-      editElement.fullName5 = inpNewValues[17].value;
-      editElement.alt5 = inpNewValues[18].value;
-      editElement.year5 = inpNewValues[19].value;
-    }
-    if (inpNewValues.length >= 20) {
-      editElement.fullName6 = inpNewValues[20].value;
-      editElement.alt6 = inpNewValues[21].value;
-      editElement.year5 = inpNewValues[22].value;
+    const index = dataSlice.findIndex((el) => el.id == idTrTable);
+    let editElement  = {},
+        newAltSchool = {};
+
+    // Заполняем основные данные
+    editElement.inn      = document.querySelector('input.edit-inp[data-edit-value="inn"]').value;
+    editElement.dadata   = document.querySelector('textarea.edit-inp[data-edit-value="dadata"]').value;
+    editElement.fullName = document.querySelector('input.edit-inp[data-edit-value="fullName"]').value;
+    editElement.abbr     = document.querySelector('input.edit-inp[data-edit-value="abbr"]').value;
+    editElement.year     = document.querySelector('input.edit-inp[data-edit-value="year"]').value;
+    editElement.id       = dataSlice[index].id;
+    editElement.address  = dataSlice[index].address;
+
+    // Заполняем данные по альтернативным названиям
+    ['fullName', 'abbr', 'year'].map(field => {
+      let arInputs = document.querySelectorAll(`input.edit-inp[data-edit-alt-value="${field}"]`);
+
+      if (arInputs.length) {
+        arInputs.forEach((elem, keyInput) => {
+          let index = keyInput + 1;
+
+          if (!newAltSchool[index]) {
+            newAltSchool[index] = {};
+          }
+
+          newAltSchool[index][field] = elem.value;
+        });
+      }
+    });
+
+    if (Object.keys(newAltSchool).length > 0) {
+      editElement.altSchool = newAltSchool;
+      editElement = sortAltSchoolByYear(extendAltSchool(editElement));
     }
 
     dataSlice[index] = editElement;
 
-    if (n == 1 || i == 1 || j == 1) {
-      tableRender(dataFilters);
-    } else {
-      tableRender(dataSlice);
-    }
+    filterDataByAllCondition();
 
     popupEdit.style.display = 'none';
     const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
@@ -918,13 +785,9 @@ function tableRender(dataValue) {
       }
       popupDel.style.display = 'none';
     });
-    if (i == 1 || j == 1 || n == 1) {
-      dataFilters = dataFilters.filter((el) => el.id != matchingId);
-      tableRender(dataFilters.filter((el) => el.id != matchingId));
-    } else {
-      dataSlice = dataSlice.filter((el) => el.id != matchingId);
-      tableRender(dataSlice.filter((el) => el.id != matchingId));
-    }
+
+    dataSlice = dataSlice.filter((el) => el.id != matchingId);
+    filterDataByAllCondition();
   });
 }
 tableRender(dataSlice);
@@ -932,7 +795,7 @@ tableRender(dataSlice);
 const setPositionForButtonsEdit = () => {
   if (checkOutOfBounds(btnAddAltEl, 200)) {
     document.querySelector('.popup-edit-wrapper .popup-buttons').style.position = 'relative';
-  }else{
+  } else {
     document.querySelector('.popup-edit-wrapper .popup-buttons').style.position = 'absolute';
   }
 }
@@ -955,11 +818,11 @@ btnAddAltEl.addEventListener('click', (e) => {
               <span class="icon control-edit delete"></span>
             </div>
           </div>
-                <label class="edit-label" data-edit-value="alt${countAddALtClick + 1}">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-value="fullName${countAddALtClick}" /></label>
-          <label class="edit-label " data-edit-value="fullName">Аббревиатура
+          <label class="edit-label">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-alt-value="fullName" /></label>
+          <label class="edit-label">Аббревиатура
             <div class="last_edit_abbr">
-              <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="fullName" value=""/>
-              <label class="edit-label" data-edit-value="year">
+              <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-alt-value="abbr" value=""/>
+              <label class="edit-label">
               <span>Год</span>
                 <input
                   type="number"
@@ -968,7 +831,7 @@ btnAddAltEl.addEventListener('click', (e) => {
                   min="1800"
                   max="2024"
                   placeholder="Введите год"
-                  pattern="[0-9]{4}" data-edit-value="year" value=""
+                  pattern="[0-9]{4}" data-edit-alt-value="year" value=""
               /></label>
             </div>
             <div class="prompt-edit">
@@ -1059,12 +922,12 @@ selectResetArr.forEach((reset, index) => {
     arParentSelectEl[index].style.zIndex = 'unset';
 
     oldValueSchoolSelect = [];
-    
+
     filterDataByAllCondition();
   });
 });
 
-const setEventsForOptionsAtSelects = (arSelect = {0: '.js-type-school-value label', 1: '.filter-region'}) => {
+const setEventsForOptionsAtSelects = (arSelect = { 0: '.js-type-school-value label', 1: '.filter-region' }) => {
   if (arSelect.length <= 0)
     return false;
 
@@ -1101,8 +964,6 @@ selectOverlay.addEventListener('click', () => {
       }
     }
   });
-
-  // tableRender(dataSlice);
 });
 
 // Select settings
@@ -1162,7 +1023,7 @@ selectElArr.forEach((select, indexSelect) => {
           });
 
           closeSelect(select, indexSelect, arrow, promptEl)
-        }); 
+        });
 
         [arrow, select].forEach(elem => {
           elem.addEventListener('click', (e) => {
@@ -1224,7 +1085,7 @@ function bySortRev(sortPar) {
 document.querySelectorAll('.sort-table').forEach((sort) => {
   sort.addEventListener('click', () => {
     let sortValues = sort.dataset.sortValue;
-    let sortData;    
+    let sortData;
     count++;
     if (count % 2) {
       i == 1 || j == 1 || n == 1
@@ -1260,10 +1121,10 @@ document.querySelectorAll('.third-panel__tab').forEach((tab) => {
   tab.addEventListener('click', () => {
     tab.classList.contains('third-panel__tab_active')
       ? (titlePage.innerText = `Журнал: ${tab.textContent
-          .trim()
-          .replace(/\s+/g, ' ')
-          .slice(1)
-          .toUpperCase()}`)
+        .trim()
+        .replace(/\s+/g, ' ')
+        .slice(1)
+        .toUpperCase()}`)
       : false;
   });
 });
@@ -1297,7 +1158,7 @@ const setEventToFilterRegion = (btn) => {
   btn.addEventListener('click', (e) => {
     i = 1;
     inpRegion.value = regionValueInput = btn.innerText.replaceAll('\n', '');
-    
+
     selectResetArr[1].style.display = 'block';
 
     filterDataByAllCondition();
@@ -1308,21 +1169,21 @@ const setEventToFilterRegion = (btn) => {
 inpRegion.addEventListener('input', (event) => {
   regionValueInput = inpRegion.value;
   let myReg = new RegExp('^' + regionValueInput, 'gi'),
-      regionsFind = regions.filter((el) => el.match(myReg)),
-      filtersValuesHTML = '';
+    regionsFind = regions.filter((el) => el.match(myReg)),
+    filtersValuesHTML = '';
 
   if (regionsFind.length > 0) {
     regionsFind.slice(0, 10).forEach((region) => {
       let textHighlight = String(region).match(myReg).join(''),
-          replaceText = `<span>${region}</span>`;
+        replaceText = `<span>${region}</span>`;
 
       if (String(region).match(myReg) && regionValueInput != '') {
         replaceText = replaceText
-                          .replace(
-                            textHighlight,
-                            `<span class="highlight">${String(region).match(myReg)}</span>`
-                          )
-                          .replaceAll(',', '');
+          .replace(
+            textHighlight,
+            `<span class="highlight">${String(region).match(myReg)}</span>`
+          )
+          .replaceAll(',', '');
         replaceText.charAt(0).toUpperCase() + replaceText.slice(1);
       }
 
@@ -1332,7 +1193,7 @@ inpRegion.addEventListener('input', (event) => {
         </div>
       `;
     });
-    
+
     promptArr[1].dataset.active = 'open';
   } else {
     promptArr[1].dataset.active = 'close';
@@ -1373,14 +1234,14 @@ inpRegion.addEventListener('input', (event) => {
         <label>Павлово</label>
       </div>`;
 
-    setEventsForOptionsAtSelects({1: '.filter-region'});
+    setEventsForOptionsAtSelects({ 1: '.filter-region' });
 
     document.querySelectorAll('.filter-region').forEach((btn) => {
       setEventToFilterRegion(btn);
     });
   });
 
-  setEventsForOptionsAtSelects({1: '.filter-region'});
+  setEventsForOptionsAtSelects({ 1: '.filter-region' });
 
   document.querySelectorAll('.filter-region').forEach((btn) => {
     setEventToFilterRegion(btn);
@@ -1393,9 +1254,9 @@ btnRegionArr.forEach((btn) => {
 //Search
 const setMaxHeightSearchInput = () => {
   let searchRow = document.querySelector('.table_desktop .tr_empty:nth-child(2)'),
-      searchInputs = document.querySelectorAll('.input-search.table'),
-      maxHeightSearchInput = 50,
-      counEmptyInputValue = 0;
+    searchInputs = document.querySelectorAll('.input-search.table'),
+    maxHeightSearchInput = 50,
+    counEmptyInputValue = 0;
 
   searchRow.style.height = `auto`;
 
@@ -1491,7 +1352,7 @@ searchInput.forEach((inp, indexInp) => {
     let valueInput = '';
     inp.value !== ''
       ? (valueInput =
-          inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
+        inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
       : (valueInput = '');
     valueInput == '*' ? (valueInput = undefined) : false;
     let valuesSearchHTML = '';
@@ -1521,7 +1382,7 @@ searchInput.forEach((inp, indexInp) => {
             ))
           )
           .slice(0, 6);
-          
+
         if (filteredData.length <= 0) {
           promptSearchArr[indexInp].style.display = 'none';
         } else {
@@ -1569,8 +1430,8 @@ searchInput.forEach((inp, indexInp) => {
           valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
           promptSearchArr[indexInp].innerHTML = valuesSearchHTML;
         });
-      } 
-      
+      }
+
       if (valueInput == '') {
         promptSearchArr[indexInp].style.display = 'none';
       }
@@ -1583,19 +1444,19 @@ searchInput.forEach((inp, indexInp) => {
     }
 
     document.querySelectorAll('.search-value').forEach(
-      (el) => 
-        (el.onmousedown = function (e) {
-            e.preventDefault();
-        })
+      (el) =>
+      (el.onmousedown = function (e) {
+        e.preventDefault();
+      })
     );
 
     document.querySelectorAll('.search-value').forEach((el) => {
       el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
       el.addEventListener('click', () => {
         let parent = el.parentElement.parentElement,
-            input = parent.querySelector('textarea.input-search.table'),
-            promptSearch = parent.querySelector('.prompt-search'),
-            resetBtn = parent.querySelector('.btn-reset-search');
+          input = parent.querySelector('textarea.input-search.table'),
+          promptSearch = parent.querySelector('.prompt-search'),
+          resetBtn = parent.querySelector('.btn-reset-search');
 
         n = 1;
         input.value = el.textContent;
