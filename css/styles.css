@@ -42,7 +42,7 @@ body {
 .main-container {
   position: relative;
   margin: 0 auto;
-  padding: 0 calc(var(--index)* 1.5) 0px 25px;
+  padding: 0 20px 0px 20px;
 }
 input {
   outline: none;
@@ -143,7 +143,6 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
 }
 .green {
   color: var(--green);
@@ -1352,6 +1351,8 @@ h3 {
   overflow: hidden;
   resize: none;
   box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
 }
 .edit-label__title {
   word-break: auto-phrase;
@@ -1492,7 +1493,8 @@ td > .btn-reset-search .icon {
   font-size: 30px !important;
 }
 input[type='text']:hover:active,
-input[type='number']:hover:active {
+input[type='number']:hover:active,
+textarea:hover:active {
   color: #5c5c5c;
   border: 1px solid #848484;
 }
@@ -1771,7 +1773,7 @@ input::placeholder {
 
 #navbar > div.third-panel.journals.panels__panel{
   padding-left: 20px;
-  padding-right: 0;
+  padding-right: 20px;
 }
 
 .two-lines p {

@@ -79,7 +79,7 @@ window.onload = () => {
 };
 window.onresize = () => {
   if (popupEdit.style.display != 'none') {
-    setHeightDadataArae();
+    setHeightTextArae();
     setPositionForButtonsEdit();
   }
 }
@@ -302,11 +302,28 @@ const checkOutOfBounds = (element, inaccuracy = 0) => {
   }
 }
 
-const setHeightDadataArae = () => {
-  const textarea = document.querySelector('.edit-inp.edit-dadata');
+const setHeightTextArae = () => {
+  [
+    '.edit-inp.edit-dadata', 
+    '.edit-inp.edit-fullname', 
+    '.edit-inp.fullAlt'
+  ].map(selector => {
+    const textarea = document.querySelectorAll(selector);
 
-  textarea.style.height = 'auto';
-  textarea.style.height = `${textarea.scrollHeight}px`;
+    if (textarea !== null) {
+      textarea.forEach(elem => {
+        elem.style.height = 'auto';
+  
+        let newHeight = elem.scrollHeight;
+    
+        if (elem.value == '') {
+          newHeight = 54;
+        }
+    
+        elem.style.height = `${newHeight}px`;
+      })
+    }
+  });
 }
 
 const extendAltSchool = (school) => {
@@ -547,7 +564,7 @@ function tableRender(dataValue) {
             </label>
           </label>
           <label class="edit-label " data-edit-value="fullName">Полное название
-            <input type="text" class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName" value="${checkUndef(matchingTr.fullName)}"/>
+            <textarea class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName">${checkUndef(matchingTr.fullName)}</textarea>
           <div class="prompt-edit">
             <span class="icon" style="color: #D11521"></span>
             <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -601,7 +618,7 @@ function tableRender(dataValue) {
                     </div>
                     <label class="edit-label">
                       Полное наименование 
-                      <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${key}" data-edit-alt-value="fullName" value="${matchingTr.altSchool[key].fullName}" />
+                      <textarea class="edit-inp fullAlt" placeholder="Введите полное наименование №${key}" data-edit-alt-value="fullName">${matchingTr.altSchool[key].fullName}</textarea>
                     </label>
                     <label class="edit-label">Альтернативное название
                       <div class="last_edit_abbr">
@@ -665,6 +682,8 @@ function tableRender(dataValue) {
         : (btnSaveEdit.disabled = false);
       inpNewValues.forEach((inp) => {
         inp.addEventListener('input', () => {
+          setHeightTextArae();
+
           inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
             ? (btnSaveEdit.disabled = true)
             : (btnSaveEdit.disabled = false);
@@ -699,7 +718,7 @@ function tableRender(dataValue) {
         setPositionForButtonsEdit();
       });
 
-      setHeightDadataArae();
+      setHeightTextArae();
     });
   });
 
@@ -753,7 +772,7 @@ btnSaveEdit.addEventListener('click', (e) => {
   // Заполняем основные данные
   editElement.inn      = document.querySelector('input.edit-inp[data-edit-value="inn"]').value;
   editElement.dadata   = document.querySelector('textarea.edit-inp[data-edit-value="dadata"]').value;
-  editElement.fullName = document.querySelector('input.edit-inp[data-edit-value="fullName"]').value;
+  editElement.fullName = document.querySelector('textarea.edit-inp[data-edit-value="fullName"]').value;
   editElement.abbr     = document.querySelector('input.edit-inp[data-edit-value="abbr"]').value;
   editElement.year     = document.querySelector('input.edit-inp[data-edit-value="year"]').value;
   editElement.id       = dataSlice[index].id;
@@ -761,7 +780,7 @@ btnSaveEdit.addEventListener('click', (e) => {
 
   // Заполняем данные по альтернативным названиям
   ['fullName', 'abbr', 'year'].map(field => {
-    let arInputs = document.querySelectorAll(`input.edit-inp[data-edit-alt-value="${field}"]`);
+    let arInputs = document.querySelectorAll(`${field == 'fullName' ? 'textarea' : 'input'}.edit-inp[data-edit-alt-value="${field}"]`);
 
     if (arInputs.length) {
       arInputs.forEach((elem, keyInput) => {
@@ -818,7 +837,7 @@ btnAddAltEl.addEventListener('click', (e) => {
               <span class="icon control-edit delete"></span>
             </div>
           </div>
-          <label class="edit-label">Полное наименование <input class="edit-inp fullAlt" type="text" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-alt-value="fullName" /></label>
+          <label class="edit-label">Полное наименование <textarea class="edit-inp fullAlt" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-alt-value="fullName"></textarea></label>
           <label class="edit-label">Аббревиатура
             <div class="last_edit_abbr">
               <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-alt-value="abbr" value=""/>
@@ -854,11 +873,14 @@ btnAddAltEl.addEventListener('click', (e) => {
 
   inpNewValues.forEach((inp) => {
     inp.addEventListener('input', () => {
+      setHeightTextArae();
+
       inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
         ? (btnSaveEdit.disabled = true)
         : (btnSaveEdit.disabled = false);
     });
   });
+
   const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
   delNewAlt.forEach((del, indexDel) => {
     dataFormEl.forEach((formEl, indexForm) => {
