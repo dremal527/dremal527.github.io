@@ -848,8 +848,11 @@
 }
 
 @media (width <= 480px) {
+  .edit-inp.year-inp {
+    margin-top: unset;
+  }
   .popup.popup-edit-wrapper .last_edit_abbr .edit-label {
-    top: -29px;
+    top: -18px;
   }
   .mobile-wrapper__row {
     display: grid;
@@ -929,6 +932,7 @@
     height: 38px;
   }
   .input__wrapper > label,
+  .input__wrapper label span,
   .row-inputs > label {
     font-size: 13px;
   }

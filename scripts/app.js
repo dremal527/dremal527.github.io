@@ -365,9 +365,9 @@ const sortAltSchoolByYear = (school) => {
   let newKey = 1;
   const sortedAltSchool = altSchoolArray.reduce((acc, item) => {
     acc[newKey] = {
-      year: item.year,
-      fullName: item.fullName,
-      abbr: item.abbr
+      year: item.year ?? "",
+      fullName: item.fullName ?? "",
+      abbr: item.abbr ?? ""
     };
 
     newKey++;
@@ -702,56 +702,6 @@ function tableRender(dataValue) {
       setHeightDadataArae();
     });
   });
-  //Save edit change
-  btnSaveEdit.addEventListener('click', (e) => {
-    e.preventDefault();
-
-    const index = dataSlice.findIndex((el) => el.id == idTrTable);
-    let editElement  = {},
-        newAltSchool = {};
-
-    // Заполняем основные данные
-    editElement.inn      = document.querySelector('input.edit-inp[data-edit-value="inn"]').value;
-    editElement.dadata   = document.querySelector('textarea.edit-inp[data-edit-value="dadata"]').value;
-    editElement.fullName = document.querySelector('input.edit-inp[data-edit-value="fullName"]').value;
-    editElement.abbr     = document.querySelector('input.edit-inp[data-edit-value="abbr"]').value;
-    editElement.year     = document.querySelector('input.edit-inp[data-edit-value="year"]').value;
-    editElement.id       = dataSlice[index].id;
-    editElement.address  = dataSlice[index].address;
-
-    // Заполняем данные по альтернативным названиям
-    ['fullName', 'abbr', 'year'].map(field => {
-      let arInputs = document.querySelectorAll(`input.edit-inp[data-edit-alt-value="${field}"]`);
-
-      if (arInputs.length) {
-        arInputs.forEach((elem, keyInput) => {
-          let index = keyInput + 1;
-
-          if (!newAltSchool[index]) {
-            newAltSchool[index] = {};
-          }
-
-          newAltSchool[index][field] = elem.value;
-        });
-      }
-    });
-
-    if (Object.keys(newAltSchool).length > 0) {
-      editElement.altSchool = newAltSchool;
-      editElement = sortAltSchoolByYear(extendAltSchool(editElement));
-    }
-
-    dataSlice[index] = editElement;
-
-    filterDataByAllCondition();
-
-    popupEdit.style.display = 'none';
-    const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
-    dataFormEl.forEach((formEl, index) => {
-      countAddALtClick = 1;
-      index != 0 ? formEl.remove() : false;
-    });
-  });
 
   //In total
   btnTotalEl.dataset.value = `нашлось: ${dataValue.length}`;
@@ -791,6 +741,56 @@ function tableRender(dataValue) {
   });
 }
 tableRender(dataSlice);
+
+//Save edit change
+btnSaveEdit.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  const index = dataSlice.findIndex((el) => el.id == idTrTable);
+  let editElement  = {},
+      newAltSchool = {};
+
+  // Заполняем основные данные
+  editElement.inn      = document.querySelector('input.edit-inp[data-edit-value="inn"]').value;
+  editElement.dadata   = document.querySelector('textarea.edit-inp[data-edit-value="dadata"]').value;
+  editElement.fullName = document.querySelector('input.edit-inp[data-edit-value="fullName"]').value;
+  editElement.abbr     = document.querySelector('input.edit-inp[data-edit-value="abbr"]').value;
+  editElement.year     = document.querySelector('input.edit-inp[data-edit-value="year"]').value;
+  editElement.id       = dataSlice[index].id;
+  editElement.address  = dataSlice[index].address;
+
+  // Заполняем данные по альтернативным названиям
+  ['fullName', 'abbr', 'year'].map(field => {
+    let arInputs = document.querySelectorAll(`input.edit-inp[data-edit-alt-value="${field}"]`);
+
+    if (arInputs.length) {
+      arInputs.forEach((elem, keyInput) => {
+        let index = keyInput + 1;
+
+        if (!newAltSchool[index]) {
+          newAltSchool[index] = {};
+        }
+
+        newAltSchool[index][field] = elem.value;
+      });
+    }
+  });
+
+  editElement.altSchool = newAltSchool;
+  editElement = sortAltSchoolByYear(extendAltSchool(editElement));
+
+  dataSlice[index] = editElement;
+
+  filterDataByAllCondition();
+
+  popupEdit.style.display = 'none';
+  const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+  dataFormEl.forEach((formEl, index) => {
+    countAddALtClick = 1;
+    index != 0 ? formEl.remove() : false;
+  });
+});
+
 
 const setPositionForButtonsEdit = () => {
   if (checkOutOfBounds(btnAddAltEl, 200)) {
