@@ -42,7 +42,7 @@ body {
 .main-container {
   position: relative;
   margin: 0 auto;
-  padding: 0 20px 0px 20px;
+  padding: 0 2.2vw 0 2.2vw;
 }
 input {
   outline: none;
