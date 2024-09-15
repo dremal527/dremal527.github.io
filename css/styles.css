@@ -621,9 +621,6 @@ div.mobile-wrapper__input > div.hint {
   align-items: center;
   position: absolute;
 }
-.navbar-top-panel {
-  padding: 0 calc(var(--index) * 1.5);
-}
 .table__row-item.date {
   justify-content: start;
 }
@@ -1721,7 +1718,7 @@ input::placeholder {
   /* word-break: break-all; */
 }
 
-.third-panel.journals.panels__panel, .panels__panel.second-panel,.navbar-top-panel {
+.third-panel.journals.panels__panel, .panels__panel.second-panel {
   /* padding-right: 33px; */
   padding-inline: 0;
   padding-right: 20px;
@@ -1729,7 +1726,30 @@ input::placeholder {
 
 .navbar-top-panel{
   box-sizing: border-box;
-  padding-right: 2.2vw !important;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  justify-items: center;
+  padding: 0 20px;
+
+  background-color: #414f51;
+  color: white;
+  height: 40px;
+
+  a{
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    display:flex;
+    align-items: center;
+    font-size: 18px;
+
+    grid-column: 9;
+  }
+}
+
+navbar-elem{
+  width: 100%;
 }
 
 .navbar-top__link:hover{
@@ -1754,7 +1774,21 @@ input::placeholder {
 }
 
 .panels__panel.second-panel{
-  padding-right: 0;
+  padding: 0px 20px 0px 20px;
+}
+
+.second-panel__tab.tab:first-child,
+.second-panel__tab.tab:last-child {
+  width: calc(100% + 20px);
+}
+
+.second-panel__tab.tab:first-child {
+  padding-left: 20px;
+  margin-left: -20px;
+}
+
+.second-panel__tab.tab:last-child {
+  padding-right: 20px;
 }
 
 .brad-crumb__item__text_{

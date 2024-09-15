@@ -66,27 +66,6 @@ class Navbar extends HTMLElement {
                     display: inline-block !important;
                     transform: rotate(180deg);
                 }
-                .navbar-top-panel{
-                    background-color: #414f51;
-                    color: white;
-                    height: 40px;
-                    padding: 0 20px;
-                    display:flex;
-                    justify-content: flex-end;
-                    align-items: center;
-                    
-                    a{
-                        color: white;
-                        text-decoration: none;
-                        cursor: pointer;
-                        display:flex;
-                        align-items: center;
-                        font-size: 18px;
-                    }
-                }
-                navbar-elem{
-                    width: 100%;
-                }
                 .panels__panel {
                     box-sizing: border-box;
                     width: 100%;

@@ -370,7 +370,7 @@
   }
   .navbar-top-panel {
     a {
-      display: block !important;
+      display: flex !important;
     }
   }
   .empty {
@@ -530,7 +530,7 @@
   }
 
   .navbar-top-panel {
-    padding-right: 25px;
+    padding-right: 25px !important;
   }
   .table__row-item[tooltip]:hover::after {
     content: none;
