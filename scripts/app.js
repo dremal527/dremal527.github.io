@@ -1101,34 +1101,6 @@ document.querySelectorAll('.sort-table').forEach((sort) => {
   });
 });
 
-//Check page
-document.querySelectorAll('.mobile-control__tab-name').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    tab.innerText !== 'АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ'
-      ? (main.style.display = 'none')
-      : (main.style.display = 'block');
-  });
-});
-document.querySelectorAll('.third-panel__tab').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    tab.innerText.includes('Альтер') || tab.classList.contains('more')
-      ? (main.style.display = 'block')
-      : (main.style.display = 'none');
-  });
-});
-// Render tabName
-document.querySelectorAll('.third-panel__tab').forEach((tab) => {
-  tab.addEventListener('click', () => {
-    tab.classList.contains('third-panel__tab_active')
-      ? (titlePage.innerText = `Журнал: ${tab.textContent
-        .trim()
-        .replace(/\s+/g, ' ')
-        .slice(1)
-        .toUpperCase()}`)
-      : false;
-  });
-});
-
 let allCheckedCount = 0;
 
 //Filter Types school

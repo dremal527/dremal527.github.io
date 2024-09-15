@@ -6,15 +6,20 @@
     <title>Альтернативные учебные заведения</title>
     <script src="scripts/utils/navbar.js" defer></script>
     <script src="scripts/utils/mobile_control.js" defer></script>
-
+    <script src="scripts/utils/mobile_add.js" defer></script>
+    <script src="scripts/utils/header.js" defer></script>
+    
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/media.css" />
   </head>
   <body>
     <navbar-elem></navbar-elem>
+    <section id="nav_tooltip">
+      <span></span>
+    </section>
     <mobile-ui></mobile-ui>
 
-    <div class="container">
+    <div class="main-container">
       <div class="title-page__wrapper">Журнал: АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ</div>
       <div class="main">
         <div class="section__table__content top">
@@ -319,7 +324,7 @@
               </tr>
 
               <tbody class="tr-wrapper">
-                
+
               </tbody>
             </table>
           </section>
@@ -417,6 +422,14 @@
       </form>
     </div>
     <div class="select_overlay"></div>
+
+    <script>
+      localStorage.clear()
+      localStorage.setItem('pc_active_item', 'АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ')
+      function capitalizeFirstLetter(string) {
+          return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+      }
+    </script>
     <script src="scripts/app.js" type="module"></script>
   </body>
 </html>
