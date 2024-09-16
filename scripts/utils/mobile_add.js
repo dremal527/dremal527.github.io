@@ -34,7 +34,7 @@
                     document.querySelector('.title-page__wrapper').style = 'display: none'
                 } else {
                     document.querySelector('.title-page__wrapper').style = ''
-                    document.querySelector('.title-page__wrapper').textContent = 'Журнал: КВАЛИФИКАЦИИ СПЕЦИАЛЬНОСТИ'
+                    document.querySelector('.title-page__wrapper').textContent = 'Журнал: АЛЬТЕРНАТИВНЫЕ УЧЕБНЫЕ ЗАВЕДЕНИЯ'
                 }
             })
         })

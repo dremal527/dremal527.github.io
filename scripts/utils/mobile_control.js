@@ -10,38 +10,36 @@ class MobileControlMini extends HTMLElement {
   }
 
   THRID_PANEL_TABS = [
-    ["объявления", ""],
-    ["вакансии", ""],
-    ["вакансии объед", ""],
-    ["соискатели", ""],
-    ["отклики", ""],
-    ["фио", ""],
-    ["Адреса", ""],
-    ["Компании", ""],
-    ["Учебные заведения", ""],
-    ["Сокр.Ю.Ф.", ""],
-    ["Альтернативные", ""],
-    ["Филиалы", ""],
+    ["объявления", "", ""],
+    ["вакансии", "", ""],
+    ["вакансии объед", "", ""],
+    ["соискатели", "", ""],
+    ["отклики", "", ""],
+    ["фио", "", ""],
+    ["Адреса", "", ""],
+    ["Компании", "", ""],
+    ["Учебные заведения", "", ""],
+    ["Сокр.Ю.Ф.", "", ""],
+    ["Альтернативные", "", "Альтернативные учебные заведения"],
+    ["Филиалы", "", ""],
     // ["Квалификации", ""],
-    ["ПОИСК", ""],
-    ["Квалификации Специальности", ""],
-    ["Телефонные коды", ""],
-    ["Администраторы", ""],
-    ["email рассылка", ""],
-    ["КАК БЫЛО КАК НАДО", ""],
-    ["ПРЕФИКСЫ СЧЕТОВ", ""],
-    ["БАНКИ", ""],
-    ["РУБРИКАТОР", ""],
+    ["ПОИСК", "", ""],
+    ["Квалификации Специальности", "", ""],
+    ["Телефонные коды", "", ""],
+    ["Администраторы", "", ""],
+    ["email рассылка", "", ""],
+    ["КАК БЫЛО КАК НАДО", "", ""],
+    ["ПРЕФИКСЫ СЧЕТОВ", "", ""],
+    ["БАНКИ", "", ""],
+    ["РУБРИКАТОР", "", ""],
   ];
-  TEMPLATE_TAB = (tabName, icon, {
-    classes
-  } = {}) => {
+  TEMPLATE_TAB = (tabName, icon, fullName, { classes } = {}) => {
     return /*html*/ `
             <div class="mobile-control-wrapper__grid-nav ${classes}">
                 <div class="mobile-control-wrapper__icon-wrapper ">
                     <span class="icon too-big-icon">${icon}</span>
                 </div>
-                <div class="mobile-control__tab-name">
+                <div class="mobile-control__tab-name" data-full_name="${fullName}">
                     <p>${tabName}</p>
                 </div>
             </div>
@@ -136,7 +134,7 @@ class MobileControlMini extends HTMLElement {
                             index,
                             tab,
                           ] of this.THRID_PANEL_TABS.entries()) {
-                            markup += this.TEMPLATE_TAB(tab[0], tab[1], {
+                            markup += this.TEMPLATE_TAB(tab[0], tab[1], tab[2], {
                               classes:
                                 index == this.active
                                   ? "mobile-control-wrapper__grid-nav_active"
@@ -308,9 +306,10 @@ class MobileControlMini extends HTMLElement {
             });
             tab.classList.add("mobile-control-wrapper__grid-nav_active");
             bradCrumbs.classList.add("brad_crumbs_active");
-            bradCrumbsItemTextControl.innerHTML = control.querySelector("p").innerText + ": " + capitalizeFirstLetter(tab.querySelector(
-              ".mobile-control__tab-name"
-            ).innerText);
+
+            let bradCrumbsText = tab.querySelector(".mobile-control__tab-name").dataset.full_name ?? tab.querySelector(".mobile-control__tab-name").innerText;
+
+            bradCrumbsItemTextControl.innerHTML = control.querySelector("p").innerText + ": " + capitalizeFirstLetter(bradCrumbsText);
             // localStorage.setItem('mob_active_item', tab.querySelector(
             //   ".mobile-control__tab-name"
             // ).textContent);

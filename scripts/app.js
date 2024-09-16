@@ -216,6 +216,14 @@ async function exportTableToExcel(fileName, tableSelector = '.table_desktop') {
   closeExportPopUp();
 }
 
+const checkOnMobile = () => {
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+    return true;
+  }
+
+  return false;
+}
+
 const filterDataByAllCondition = () => {
   let dataFiltersTMP = dataSlice;
 
@@ -927,7 +935,7 @@ selectResetArr.forEach((reset, index) => {
     reset.style.display = 'none'
 
     if (index == 0) {
-      checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+      checkboxTypeSchoolArr.forEach((el) => { el.checked = false; (checkOnMobile()) ? el.parentElement.style.backgroundColor = 'unset' : ''; });
       arrFiltersType = [];
     }
 
@@ -1019,7 +1027,7 @@ selectElArr.forEach((select, indexSelect) => {
 
     setTimeout(() => {
       if (checkOutOfBounds(promptEl)) {
-        select.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        select.parentElement.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }, 200);
   }
@@ -1129,16 +1137,33 @@ let allCheckedCount = 0;
 checkboxTypeSchoolArr[0].addEventListener('click', () => {
   allCheckedCount++;
   allCheckedCount % 2
-    ? checkboxTypeSchoolArr.forEach((el) => (el.checked = true))
-    : checkboxTypeSchoolArr.forEach((el) => (el.checked = false));
+    ? checkboxTypeSchoolArr.forEach((el) => { el.checked = true; (checkOnMobile()) ? el.parentElement.style.backgroundColor = 'rgb(var(--light-blue), .2)' : ''; })
+    : checkboxTypeSchoolArr.forEach((el) => { el.checked = false; (checkOnMobile()) ? el.parentElement.style.backgroundColor = 'unset' : ''; });
 });
 
 checkboxTypeSchoolArr.forEach((el) => {
   el.addEventListener('click', (e) => {
+    if (checkOnMobile()) {
+      if (e.target.checked == true) {
+        e.target.parentElement.style.backgroundColor = 'rgb(var(--light-blue), .2)';
+      } else {
+        e.target.parentElement.style.backgroundColor = 'unset';
+      }
+    }
+
+    let checkboxChecked = document.querySelectorAll('.js-checkbox-school-type:checked');
+
     if (checkboxTypeSchoolArr[0].checked == true) {
-      if (document.querySelectorAll('.js-checkbox-school-type:checked').length - 1 < 3) {
+      if (checkboxChecked.length - 1 < 3) {
         allCheckedCount++;
         checkboxTypeSchoolArr[0].checked = false;
+
+        if (checkOnMobile())
+          checkboxTypeSchoolArr[0].parentElement.style.backgroundColor = 'unset';
+      }
+    } else {
+      if (checkboxChecked.length == 3) {
+        checkboxTypeSchoolArr[0].click();
       }
     }
 

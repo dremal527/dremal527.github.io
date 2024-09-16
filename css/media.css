@@ -804,9 +804,6 @@
   .warning-text .icon {
     margin-right: 18px;
   }
-  .main {
-    margin: 20px 20px 40px 0px;
-  }
 
   .popup-buttons > * {
     width: calc(100% - 60px);

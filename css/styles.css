@@ -916,6 +916,7 @@ td:first-child > .search-table {
   z-index: 1000;
   top: 0%;
   width: 99.4%;
+  width: -webkit-fill-available;
   transition-duration: 0.3s;
   overflow: hidden;
 }
