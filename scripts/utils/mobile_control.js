@@ -66,7 +66,7 @@ class MobileControlMini extends HTMLElement {
                 }
 
                 .mobile-menu-mini-wrapper {
-                    z-index: 1000;
+                    z-index: 20010;
                     position: fixed;
                     bottom: 0;
                     width: 100%;

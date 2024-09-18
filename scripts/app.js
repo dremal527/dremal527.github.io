@@ -29,25 +29,20 @@ const btnAddAltEl = document.querySelector('.btn-add-alt');
 const btnSaveEdit = document.querySelector('.btn-save');
 const importBtnEl = document.querySelector('.js-popup-import');
 const popupImport = document.querySelector('.import');
-const titlePage = document.querySelector('.title-page__wrapper');
 const btnRegionArr = document.querySelectorAll('.filter-region');
 const checkboxTypeSchoolArr = document.querySelectorAll('.js-checkbox-school-type');
 const inputArr = document.querySelectorAll('input');
-const main = document.querySelector('.main');
 const inpExportEl = document.querySelector('.input-export');
 const exportButton = document.querySelector('.btn-download-export');
 const selectOverlay = document.querySelector('.select_overlay');
 const newAltWrapper = document.querySelector('.wrap-forms-edit');
+const pFileName = document.querySelector('.filename');
+const inpImportEl = document.querySelector('.input-import');
 
 let inpFullName = document.querySelector('.edit-fullname');
 let inpInn = document.querySelector('.edit-inn');
-
-const pFileName = document.querySelector('.filename');
-const inpImportEl = document.querySelector('.input-import');
 let oldValueSchoolSelect = [];
-let dataPrev = [];
 let regionValueInput = '';
-let scrollPosition;
 let dataSlice = data.slice(0);
 let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
@@ -56,7 +51,6 @@ let n = 0;
 let countAddALtClick = 1;
 let newALtNameFormHTML = '';
 let idTrTable = '';
-let inpNewValues = document.querySelectorAll('.edit-inp');
 let dataFilters = [];
 let i = 0;
 let j = 0;
@@ -64,15 +58,9 @@ let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
 let idInterval;
 
-function checkUndef(prop) {
-  if (prop === undefined) {
-    return '';
-  } else return prop;
-}
 // Scroll position
 window.addEventListener('scroll', () => {
-  scrollPosition = window.scrollY;
-  localStorage.setItem('pos', scrollPosition);
+  localStorage.setItem('pos', window.scrollY);
 });
 window.onload = () => {
   window.scrollTo({ top: scroll });
@@ -82,6 +70,12 @@ window.onresize = () => {
     setHeightTextArae();
     setPositionForButtonsEdit();
   }
+}
+
+function checkUndef(prop) {
+  if (prop === undefined) {
+    return '';
+  } else return prop;
 }
 
 // Экспорт данных из таблицы 
@@ -532,6 +526,13 @@ function tableRender(dataValue) {
       }
     }, 0);
 
+    if (checkOnMobile) {
+      setTimeout(() => {
+        document.querySelectorAll('.alt-name').forEach((el) => {
+          el.innerText == '' ? el.parentNode.classList.add('empty') : false;
+        });
+      }, 0);
+    }
 
     trEl.setAttribute('data-value-id', school.id);
     trEl.insertAdjacentHTML('beforeend', htmlThead);
@@ -984,9 +985,16 @@ selectOverlay.addEventListener('click', () => {
       select.dataset.active = 'close';
       promptArr[indexSelect].dataset.active = 'close';
       selectArrowArr[indexSelect].dataset.active = 'close';
-      selectResetArr[indexSelect].style.display = 'none';
       selectOverlay.style.display = 'none';
       arParentSelectEl[indexSelect].style.zIndex = 'unset';
+
+      if (indexSelect == 1) {
+        if (select.value == '') {
+          selectResetArr[indexSelect].style.display = 'none';
+        }
+      } else {
+        selectResetArr[indexSelect].style.display = 'none';
+      }
 
       if (indexSelect == 0) {
         setOldValueSchoolSelect();
@@ -1083,6 +1091,11 @@ searchInput.forEach((inp, indexInp) => {
         indexBtn == indexInp && inp.value == '' ? (btn.style.display = 'none') : false;
         indexBtn == indexInp && inp.value !== '' ? (btn.style.display = 'block') : false;
       });
+
+      btn.addEventListener('click', () => {
+        inp.value = '';
+        btn.style.display = 'none';
+      });
     }
   });
 });
@@ -1094,7 +1107,6 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
     checkboxTypeSchoolArr.forEach((checkbox) => (checkbox.checked = false));
     oldValueSchoolSelect = [];
     dataFilters = [];
-    dataPrev = [];
     dataSlice = data.slice(0);
     i = 0;
     j = 0;

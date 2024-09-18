@@ -873,10 +873,10 @@
     max-width: inherit;
   }
   .filter-value > label {
-    font-size: 14px;
+    font-size: 18px;
   }
   .prompt-edit-text {
-    font-size: 14px;
+    font-size: 18px;
   }
   .prompt-edit > .icon {
     font-size: 18px !important;
@@ -902,7 +902,7 @@
     font-size: 16px !important;
   }
   td {
-    font-size: 14px;
+    font-size: 18px;
   }
   .thead-mobile-name {
     margin-right: 10px;
@@ -912,7 +912,7 @@
   }
   .td-name {
     width: 120px;
-    font-size: 14px;
+    font-size: 18px;
   }
   .popup__title {
     h2 {
@@ -921,7 +921,7 @@
     }
   }
   .btn__main {
-    font-size: 14px;
+    font-size: 18px;
     height: 38px;
   }
   .warning-text .icon {
@@ -967,12 +967,12 @@
   .main__select,
   .edit-label > input,
   .btn-add-alt {
-    height: 38px !important;
-    font-size: 14px !important;
+    height: 57px !important;
+    font-size: 18px !important;
   }
   .main__label,
   textarea {
-    font-size: 14px !important;
+    font-size: 18px !important;
   }
   .btn__menu {
     width: 100%;
@@ -1136,7 +1136,7 @@
       color: gray;
   }
   .mobile-control-wrapper__grid-control-wrapper > p {
-      font-size: 14px;
+      font-size: 18px;
       text-align: center;
   }
   .mobile-control-wrapper__grid-control-wrapper > span {
