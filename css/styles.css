@@ -950,7 +950,7 @@ td:first-child > .search-table {
 }
 .prompt {
   padding-left: 18px;
-  font-size: 16px;
+  font-size: 12px;
   color: #9e9c9c;
 }
 .filter-value > label:hover {

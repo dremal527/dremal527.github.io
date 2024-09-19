@@ -1029,9 +1029,12 @@ selectElArr.forEach((select, indexSelect) => {
   const openSelect = (select, arrow, promptEl) => {
     select.dataset.active = 'open';
     arrow.dataset.active = 'open';
-    promptEl.dataset.active = 'open';
     selectOverlay.style.display = 'block';
     arParentSelectEl[indexSelect].style.zIndex = 20001;
+
+    if (promptEl.querySelector('.js-region-filters__wrapper').childNodes.length > 0) {
+      promptEl.dataset.active = 'open';
+    }
 
     setTimeout(() => {
       if (checkOutOfBounds(promptEl)) {
@@ -1108,11 +1111,9 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
     oldValueSchoolSelect = [];
     dataFilters = [];
     dataSlice = data.slice(0);
-    i = 0;
-    j = 0;
-    n = 0;
     selectResetArr.forEach((reset) => (reset.style.display = 'none'));
     btnSearchResetArr.forEach((reset) => (reset.style.display = 'none'));
+    document.querySelectorAll('.input-search.table').forEach((inp) => (inp.value = ''));
   });
   filterDataByAllCondition();
 });
@@ -1389,7 +1390,7 @@ searchInput.forEach((inp, indexInp) => {
     let valuesSearchHTML = '';
     let regSearch = new RegExp('^' + valueInput, 'gi');
     let regHighlight = new RegExp(valueInput, 'gi');
-    searchId == 'fullName' ? (regHighlight = new RegExp(valueInput, 'g')) : false;
+    searchId == 'fullName' ? (regHighlight = new RegExp(valueInput, 'gi')) : false;
     if (i == 1 || j == 1 || n == 1) {
       let textHighlight = '';
       let textOriginal = '';
