@@ -437,8 +437,18 @@ function tableRender(dataValue) {
     `;
     let htmlTdNum = `<td data-prop="№">
       <div class="td-name">№</div>
-      <p class="td-num">${index + 1}</p>
       <p class="table__value__id">${school.id}</p>
+      <div class="table_mobile-tfoot">
+        <p class="td-num">${index + 1}</p>
+        <div class="table_mobile-tfoot__buttons">
+          <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
+            <span class="icon control-edit edit" ></span>
+          </div>
+          <div class="table-icon del-btn" data-value="Удалить" data-value-id="${school.id}" data-full-name="${school.fullName}">
+            <span class="icon control-edit delete"></span>
+          </div>
+        </div>
+      </div>
       </td>
       <td class="td-wrapper-icon">
       <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
@@ -538,7 +548,6 @@ function tableRender(dataValue) {
     trEl.insertAdjacentHTML('beforeend', htmlThead);
     trEl.insertAdjacentHTML('beforeend', htmlTdNum);
     trEl.insertAdjacentHTML('beforeend', htmlTdInfoAndFullNames);
-    trEl.insertAdjacentHTML('beforeend', htmlTfoot);
 
     tbodyWrapperEl.append(trEl);
   });
@@ -572,8 +581,8 @@ function tableRender(dataValue) {
               </div>
             </label>
           </label>
-          <label class="edit-label " data-edit-value="fullName">Полное название
-            <textarea class="edit-inp edit-fullname" placeholder="Введите полное название" data-edit-value="fullName">${checkUndef(matchingTr.fullName)}</textarea>
+          <label class="edit-label " data-edit-value="fullName" title="Название без юридической формы">Название без юр.ф.
+            <textarea class="edit-inp edit-fullname" placeholder="Введите название без юр.ф." title="Название без юридической формы" data-edit-value="fullName">${checkUndef(matchingTr.fullName)}</textarea>
           <div class="prompt-edit">
             <span class="icon" style="color: #D11521"></span>
             <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -1019,6 +1028,10 @@ selectElArr.forEach((select, indexSelect) => {
     if (indexSelect == 0)
       setTypeSchoolValue();
 
+    if (checkOnMobile) {
+      document.body.style.marginTop = '0';
+    }
+
     selectResetArr.forEach((reset, indexReset) => {
       if (indexReset == indexSelect && select.value == '') {
         reset.style.display = 'none';
@@ -1032,8 +1045,12 @@ selectElArr.forEach((select, indexSelect) => {
     selectOverlay.style.display = 'block';
     arParentSelectEl[indexSelect].style.zIndex = 20001;
 
-    if (promptEl.querySelector('.js-region-filters__wrapper').childNodes.length > 0) {
+    if (promptEl.querySelector('.filter-wrapper').childNodes.length > 0) {
       promptEl.dataset.active = 'open';
+    }
+
+    if (checkOnMobile) {
+      document.body.style.marginTop = '50px';
     }
 
     setTimeout(() => {
@@ -1177,6 +1194,8 @@ checkboxTypeSchoolArr.forEach((el) => {
     } else {
       if (checkboxChecked.length == 3) {
         checkboxTypeSchoolArr[0].click();
+      } else if (checkboxChecked.length == 0) {
+        selectResetArr[0].style.display = 'none';
       }
     }
 

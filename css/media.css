@@ -291,6 +291,9 @@
   }
 }
 @media (width <= 880px) {
+  .prompt {
+    font-size: 15px;
+  }
   .panels__panel.second-panel {
     padding-left: unset;
   }
@@ -390,6 +393,31 @@
     display: none;
   }
 
+  .thead-icon {
+    display: none;
+  }
+  .table_mobile-tfoot {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+  }
+  .table_mobile-tfoot > * {
+    display: block;
+  }
+  .table_mobile-tfoot__buttons {
+    display: flex;
+    justify-content: space-between;
+    order: 1;
+    width: 70px;
+    padding-right: 10px;
+  }
+  .td-info-wrapper {
+    padding-right: 10px;
+  }
+  .table_desktop .alt-name {
+    padding-right: 10px;
+  }
+
   .table__year,
   .table__year-name {
     position: relative;
@@ -423,12 +451,9 @@
     display: block;
     border-bottom: 1px solid rgb(20, 20, 20, 0.2);
   }
-  .fullname {
-    width: 50%;
-  }
   .td-name {
     display: block;
-    width: 200px;
+    min-width: 200px;
     white-space: pre;
     color: #9c9c9c;
     font-size: 18px;
@@ -868,8 +893,10 @@
   .row-inputs > label:nth-child(2) {
     margin-left: 25px;
   }
+  .td-name {
+    min-width: 150px;
+  }
   .td-info-wrapper {
-    padding-left: 4.7%;
     max-width: inherit;
   }
   .filter-value > label {
@@ -896,10 +923,10 @@
     height: 38px !important;
   }
   .back-to-mobile-menu {
-    font-size: 16px;
+    font-size: 18px;
   }
   h3 {
-    font-size: 16px !important;
+    font-size: 18px !important;
   }
   td {
     font-size: 18px;
@@ -911,13 +938,12 @@
     word-break: break-word;
   }
   .td-name {
-    width: 120px;
     font-size: 18px;
   }
   .popup__title {
     h2 {
       text-align: center;
-      font-size: 16px;
+      font-size: 18px;
     }
   }
   .btn__main {
@@ -928,7 +954,7 @@
     margin-right: 16px;
   }
   .warning-text {
-    font-size: 16px;
+    font-size: 18px;
     text-align: center;
   }
   .warning-text,
@@ -955,7 +981,7 @@
     font-size: 18px;
   }
   h1 {
-    font-size: 16px;
+    font-size: 18px;
   }
   .section__table__content.top {
     text-align: center;
@@ -1013,25 +1039,6 @@
   }
   .td-wrapper-icon:nth-child(odd) > .table-icon::before {
     left: 85%;
-  }
-}
-@media (max-width: 420px) {
-  .thead-icon {
-    display: none;
-  }
-  .table_mobile-tfoot {
-    display: flex;
-    justify-content: center;
-    order: 1;
-  }
-  .table_mobile-tfoot > * {
-    padding: 15px;
-  }
-  .table_mobile-tfoot > * {
-    display: block;
-  }
-  .td-info-wrapper {
-    padding-left: calc(var(--index) * 2);
   }
 }
 @media (max-width: 320px) {
