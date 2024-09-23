@@ -475,6 +475,7 @@ function tableRender(dataValue) {
       </td>
       <td class="table-desctop__td">
         <div class="td-name">Полное название</div>
+        <p class="dadata"> ${school.dadata}</p>
         <p class="fullname"> ${school.fullName}</p>
       </td>
     `;

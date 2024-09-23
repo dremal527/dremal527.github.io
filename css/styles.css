@@ -1685,7 +1685,7 @@ td:nth-child(9) {
   word-break: break-word;
 }
 td .dadata {
-  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .btn-save:disabled {
   background-color: transparent;
