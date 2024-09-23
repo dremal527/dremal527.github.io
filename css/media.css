@@ -393,7 +393,23 @@
     display: none;
   }
 
+  td.table-desctop__td {
+    display: none;
+  }
+  td.table-mobile__td {
+    display: flex;
+  }
+  .td-info-wrapper {
+    padding-bottom: unset;
+  }
+  .td-info-wrapper:last-child {
+    padding-bottom: 20px;
+  }
+
   .thead-icon {
+    display: none;
+  }
+  .td-num.desctop {
     display: none;
   }
   .table_mobile-tfoot {

@@ -1525,6 +1525,25 @@ table {
 .sort-table {
   cursor: pointer;
 }
+.sort-table span {
+  white-space: nowrap;
+}
+td.table-mobile__td {
+  display: none;
+  flex-direction: column;
+  margin-right: 10px;
+}
+.table-mobile__child {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  width: 100%;
+  padding-bottom: 20px;
+}
+.table-mobile__child .td-name.dadata,
+.table-mobile__child .td-name.full-name {
+  white-space: break-spaces;
+}
 .tr_empty:nth-child(1) {
   height: 25px;
   color: #9c9c9c;
@@ -1664,6 +1683,9 @@ td:nth-child(9) {
 }
 .fullname {
   word-break: break-word;
+}
+td .dadata {
+  margin-top: 10px;
 }
 .btn-save:disabled {
   background-color: transparent;

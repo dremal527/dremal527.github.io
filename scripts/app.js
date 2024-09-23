@@ -437,6 +437,7 @@ function tableRender(dataValue) {
     `;
     let htmlTdNum = `<td data-prop="№">
       <div class="td-name">№</div>
+      <p class="td-num desctop">${index + 1}</p>
       <p class="table__value__id">${school.id}</p>
       <div class="table_mobile-tfoot">
         <p class="td-num">${index + 1}</p>
@@ -460,31 +461,74 @@ function tableRender(dataValue) {
         <span class="icon control-edit delete"></span>
       </div>
       </td>`;
+
     let htmlTdInfoAndFullNames = `   
-      <td>
-      <div class="td-name">ИНН\nАббревиатура\nГод</div>
-      <div class="td-info-wrapper">
-      <p>${checkUndef(school.inn)}</p>
-      <p class="fullname fullname-abbr" hidden>${school.dadata}</p>
-      <p class="fullname fullname-abbr">${school.fullName}</p>
-      ${checkUndef(school.abbr) == '' ? '' : `<p class="table__abbr">${school.abbr}</p>`}
-      <p class="table__year-name">${checkUndef(school.year)}</p>
-      </div>
+      <td class="table-desctop__td">
+        <div class="td-name">ИНН\nАббревиатура\nГод</div>
+          <div class="td-info-wrapper">
+            <p>${checkUndef(school.inn)}</p>
+            <p class="fullname fullname-abbr" hidden>${school.dadata}</p>
+            <p class="fullname fullname-abbr">${school.fullName}</p>
+            ${checkUndef(school.abbr) == '' ? '' : `<p class="table__abbr">${school.abbr}</p>`}
+            <p class="table__year-name">${checkUndef(school.year)}</p>
+          </div>
       </td>
-      <td>
-      <div class="td-name">Полное название</div>
-      <p class="fullname"> ${school.fullName}</p>
+      <td class="table-desctop__td">
+        <div class="td-name">Полное название</div>
+        <p class="fullname"> ${school.fullName}</p>
       </td>
     `;
-    let htmlTfoot = `
-    <td class="table_mobile-tfoot">
-    <div class="table-icon edit-btn" data-value="Редактировать" data-value-id="${school.id}">
-      <span class="icon control-edit edit" ></span>
-    </div>
-    <div class="table-icon del-btn" data-value="Удалить" data-value-id="${school.id}" data-full-name="${school.fullName}">
-      <span class="icon control-edit delete"></span>
-    </div>
-    </td>`;
+
+
+    let htmlTdMobileInfoAndFullNames = `   
+      <td class="table-mobile__td">
+        ${
+          checkUndef(school.abbr) !== '' ? 
+          `
+            <div class="table-mobile__child">
+              <div class="td-name">Аббревиатура</div>
+                <p class="table__abbr">${school.abbr}</p>
+            </div> 
+          ` : ''
+        }
+        ${
+          checkUndef(school.inn) !== '' ? 
+          `
+            <div class="table-mobile__child">
+              <div class="td-name">ИНН</div>
+                <p>${school.inn}</p>
+            </div> 
+          ` : ''
+        }
+        ${
+          checkUndef(school.year) !== '' ? 
+          `
+            <div class="table-mobile__child">
+              <div class="td-name">Год</div>
+                <p class="table__year-name">${school.year}</p>
+            </div> 
+          ` : ''
+        }
+        ${
+          checkUndef(school.dadata) !== '' ? 
+          `
+            <div class="table-mobile__child">
+              <div class="td-name dadata">Название с сайта dadata.ru</div>
+                <p>${school.dadata}</p>
+            </div> 
+          ` : ''
+        }
+        ${
+          checkUndef(school.fullName) !== '' ? 
+          `
+            <div class="table-mobile__child">
+              <div class="td-name full-name">Название без юр.ф.</div>
+                <p>${school.fullName}</p>
+            </div> 
+          ` : ''
+        }
+      </td>
+    `;
 
     setTimeout(() => {
       const altSchool = school.altSchool;
@@ -548,6 +592,7 @@ function tableRender(dataValue) {
     trEl.insertAdjacentHTML('beforeend', htmlThead);
     trEl.insertAdjacentHTML('beforeend', htmlTdNum);
     trEl.insertAdjacentHTML('beforeend', htmlTdInfoAndFullNames);
+    trEl.insertAdjacentHTML('beforeend', htmlTdMobileInfoAndFullNames);
 
     tbodyWrapperEl.append(trEl);
   });
