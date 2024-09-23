@@ -839,6 +839,10 @@ div.mobile-wrapper__input > div.hint {
   right: 45px;
   display: none;
 }
+.input-btn.btn-select-reset,
+.textarea-btn.btn-select-reset {
+  right: 15px;
+}
 .section__table__content {
   display: flex;
   align-items: center;

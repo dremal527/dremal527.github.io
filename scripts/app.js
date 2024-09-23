@@ -612,15 +612,21 @@ function tableRender(dataValue) {
       // Заполняем информацию по главному названию
       document.querySelector('.popup-edit-content-wrapper').innerHTML = `
         <div class="input__wrapper" style="flex-direction: column; align-items: flex-start">
-          <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}"
-            >ИНН
-            <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn" value="${checkUndef(matchingTr.inn)}"/> <div class="prompt-edit">
+          <label class="edit-label" data-edit-value="inn" pattern="[0-9]{10}">ИНН
+            <input class="edit-inp edit-inn" type="number" max="9999999999" placeholder="Введите ИНН" data-edit-value="inn" value="${checkUndef(matchingTr.inn)}"/> 
+            <button class="input-btn btn-select-reset">
+              <span class="litle-cross icon"></span>
+            </button>
+          <div class="prompt-edit">
             <span class="icon" style="color: #D11521"></span>
             <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass> 
           </div>
           </label>
           <label class="edit-label" data-edit-value="dadata"><span class="edit-label__title">Название с сайта dadata.ru</span>
               <textarea class="edit-inp edit-dadata" disabled placeholder="Введите полное название" data-edit-value="dadata">${checkUndef(matchingTr.dadata)}</textarea>
+              <button class="textarea-btn btn-select-reset">
+                <span class="litle-cross icon"></span>
+              </button>
               <div class="prompt-edit">
                 <span class="icon" style="color: #D11521"></span>
                 <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -629,6 +635,9 @@ function tableRender(dataValue) {
           </label>
           <label class="edit-label " data-edit-value="fullName" title="Название без юридической формы">Название без юр.ф.
             <textarea class="edit-inp edit-fullname" placeholder="Введите название без юр.ф." title="Название без юридической формы" data-edit-value="fullName">${checkUndef(matchingTr.fullName)}</textarea>
+            <button class="textarea-btn btn-select-reset">
+              <span class="litle-cross icon"></span>
+            </button>
           <div class="prompt-edit">
             <span class="icon" style="color: #D11521"></span>
             <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
@@ -637,6 +646,9 @@ function tableRender(dataValue) {
           <label class="edit-label " data-edit-value="fullName">Аббревиатура
             <div class="last_edit_abbr">
               <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${checkUndef(matchingTr.abbr)}"/>
+              <button class="input-btn btn-select-reset">
+                <span class="litle-cross icon"></span>
+              </button>
               <label class="edit-label" data-edit-value="year">
               <span>Год</span>
                 <input
@@ -647,7 +659,11 @@ function tableRender(dataValue) {
                   max="2024"
                   placeholder="Введите год"
                   pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(matchingTr.year)}"
-              /></label>
+              />
+              <button class="input-btn btn-select-reset">
+                <span class="litle-cross icon"></span>
+              </button>
+              </label>
             </div>
           <div class="prompt-edit">
             <span class="icon" style="color: #D11521"></span>
@@ -687,9 +703,15 @@ function tableRender(dataValue) {
                     <label class="edit-label">Альтернативное название
                       <div class="last_edit_abbr">
                         <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${key}" data-edit-alt-value="abbr" value="${matchingTr.altSchool[key].abbr}" />
+                        <button class="input-btn btn-select-reset">
+                          <span class="litle-cross icon"></span>
+                        </button>
                         <label class="edit-label">
                           <span>Год</span>
                           <input type="number" class="edit-inp year-inp" data-edit-alt-value="year" maxlength="4" min="1800" max="2400"placeholder="Введите год" value="${matchingTr.altSchool[key].year}" />
+                          <button class="input-btn btn-select-reset">
+                            <span class="litle-cross icon"></span>
+                          </button>
                         </label>
                       </div>
                     </label>
@@ -1108,8 +1130,14 @@ selectElArr.forEach((select, indexSelect) => {
 
   selectResetArr.forEach((reset, indexReset) => {
     if (indexReset == indexSelect) {
-      select.addEventListener('input', () => {
-        reset.style.display = 'block';
+      select.addEventListener('input', (e) => {
+        let display = 'block';
+
+        if (e.target.value == '') {
+          display = 'none';
+        }
+
+        reset.style.display = display;
       });
     }
   });
