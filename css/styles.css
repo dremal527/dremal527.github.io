@@ -927,6 +927,7 @@ td:first-child > .search-table {
 .prompt-filter[data-active='open'] {
   top: 100%;
   border: 2px solid var(--blue);
+  border-top: unset;
 }
 .prompt-filter[data-active='close'] > .filter-wrapper {
   max-height: 0;
@@ -1007,10 +1008,8 @@ input[type='checkbox']:checked::before {
   color: var(--yellow);
 }
 .main__select[data-active='open']::placeholder {
-  font-size: 16px;
+  font-size: 15px;
   color: #9c9c9c;
-  position: absolute;
-  top: 0;
 }
 
 .filter-wrapper {
