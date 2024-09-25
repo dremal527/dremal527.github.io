@@ -1193,7 +1193,7 @@ tr:hover {
   line-height: 137.02%;
 }
 .year-inp {
-  width: 110px !important;
+  width: 130px !important;
 }
 .input__wrapper {
   display: flex;
@@ -1344,7 +1344,7 @@ h3 {
   height: 54px;
   color: #383838;
   font-size: 20px;
-  padding: 13px 20px;
+  padding: 13px 45px 13px 20px;
   width: 65%;
   text-transform: uppercase;
 }
@@ -1420,7 +1420,7 @@ h3 {
   font-size: 20px;
   width: 65%;
 }
-.popup.popup-edit-wrapper .last_edit_abbr > input {
+.popup.popup-edit-wrapper .last_edit_abbr input {
   border: 1px solid #c1c1c1;
   height: 54px;
   color: #383838;
@@ -1429,6 +1429,13 @@ h3 {
   width: 65%;
   text-transform: none !important;
 } 
+.last_edit_abbr__child {
+  width: 65%;
+  position: relative;
+}
+.last_edit_abbr__child .edit-inp {
+  width: 100% !important;
+}
 .popup.popup-edit-wrapper .last_edit_abbr .edit-label {
   width: auto;
 }
@@ -1547,6 +1554,9 @@ td.table-mobile__td {
 .table-mobile__child .td-name.dadata,
 .table-mobile__child .td-name.full-name {
   white-space: break-spaces;
+}
+.table-mobile__child p {
+  word-break: break-word;
 }
 .tr_empty:nth-child(1) {
   height: 25px;

@@ -218,6 +218,46 @@ const checkOnMobile = () => {
   return false;
 }
 
+const setEventToResetBtn = (input, resetBtn) => {
+  if (input && resetBtn) {
+    input.addEventListener('input', (e) => {
+      if (e.target.value != '') {
+        return resetBtn.style.display = 'block';
+      } 
+  
+      return resetBtn.style.display = 'none';
+    });
+  
+    resetBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      input.value = '';
+      e.target.style.display = 'none';
+    });
+
+    if (input.value != '') {
+      resetBtn.style.display = 'block';
+    }
+  }
+}
+
+const setEventToPopupEditInputs = () => {
+  let editInputs = document.querySelectorAll('.popup-edit .edit-inp');
+
+  if (editInputs.length > 0) {
+    for (const key in editInputs) {
+      let input = editInputs[key],
+          reset_btn;
+
+      if (typeof input === 'object') {
+        if (reset_btn = input.parentElement.querySelector('.btn-select-reset')) {
+          setEventToResetBtn(input, reset_btn);
+        }
+      }
+    }
+  }
+}
+
 const filterDataByAllCondition = () => {
   let dataFiltersTMP = dataSlice;
 
@@ -602,6 +642,10 @@ function tableRender(dataValue) {
   editBtnArr = document.querySelectorAll('.edit-btn');
   editBtnArr.forEach((edit) => {
     edit.addEventListener('click', () => {
+      if (checkOnMobile) {
+        document.querySelector('.mobile-menu-mini-wrapper').style.display = 'none';
+      }
+
       btnAddAltEl.disabled = false;
       idTrTable = edit.dataset.valueId;
 
@@ -645,12 +689,14 @@ function tableRender(dataValue) {
           </label>
           <label class="edit-label " data-edit-value="fullName">Аббревиатура
             <div class="last_edit_abbr">
-              <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${checkUndef(matchingTr.abbr)}"/>
-              <button class="input-btn btn-select-reset">
-                <span class="litle-cross icon"></span>
-              </button>
+              <div class="last_edit_abbr__child">
+                <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-value="abbr" value="${checkUndef(matchingTr.abbr)}"/>
+                <button class="input-btn btn-select-reset">
+                  <span class="litle-cross icon"></span>
+                </button>
+              </div>
               <label class="edit-label" data-edit-value="year">
-              <span>Год</span>
+                <span>Год</span>
                 <input
                   type="number"
                   class="edit-inp year-inp"
@@ -658,11 +704,10 @@ function tableRender(dataValue) {
                   min="1800"
                   max="2024"
                   placeholder="Введите год"
-                  pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(matchingTr.year)}"
-              />
-              <button class="input-btn btn-select-reset">
-                <span class="litle-cross icon"></span>
-              </button>
+                  pattern="[0-9]{4}" data-edit-value="year" value="${checkUndef(matchingTr.year)}"/>
+                <button class="input-btn btn-select-reset">
+                  <span class="litle-cross icon"></span>
+                </button>
               </label>
             </div>
           <div class="prompt-edit">
@@ -699,13 +744,18 @@ function tableRender(dataValue) {
                     <label class="edit-label">
                       Полное наименование 
                       <textarea class="edit-inp fullAlt" placeholder="Введите полное наименование №${key}" data-edit-alt-value="fullName">${matchingTr.altSchool[key].fullName}</textarea>
+                      <button class="input-btn btn-select-reset">
+                        <span class="litle-cross icon"></span>
+                      </button>
                     </label>
                     <label class="edit-label">Альтернативное название
                       <div class="last_edit_abbr">
-                        <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${key}" data-edit-alt-value="abbr" value="${matchingTr.altSchool[key].abbr}" />
-                        <button class="input-btn btn-select-reset">
-                          <span class="litle-cross icon"></span>
-                        </button>
+                        <div class="last_edit_abbr__child">
+                          <input class="edit-inp" type="text" placeholder="Введите альтернативное название №${key}" data-edit-alt-value="abbr" value="${matchingTr.altSchool[key].abbr}" />
+                          <button class="input-btn btn-select-reset">
+                            <span class="litle-cross icon"></span>
+                          </button>
+                        </div>
                         <label class="edit-label">
                           <span>Год</span>
                           <input type="number" class="edit-inp year-inp" data-edit-alt-value="year" maxlength="4" min="1800" max="2400"placeholder="Введите год" value="${matchingTr.altSchool[key].year}" />
@@ -784,6 +834,10 @@ function tableRender(dataValue) {
               countAddALtClick = 1;
               index != 0 ? formEl.remove() : false;
             });
+
+            if (checkOnMobile) {
+              document.querySelector('.mobile-menu-mini-wrapper').style.display = 'block';
+            }
           });
         });
         const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
@@ -805,6 +859,7 @@ function tableRender(dataValue) {
       });
 
       setHeightTextArae();
+      setEventToPopupEditInputs();
     });
   });
 
@@ -923,12 +978,27 @@ btnAddAltEl.addEventListener('click', (e) => {
               <span class="icon control-edit delete"></span>
             </div>
           </div>
-          <label class="edit-label">Полное наименование <textarea class="edit-inp fullAlt" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-alt-value="fullName"></textarea></label>
+          <label class="edit-label">
+            Полное наименование 
+            <textarea class="edit-inp fullAlt" placeholder="Введите полное наименование №${countAddALtClick}" data-edit-alt-value="fullName"></textarea>
+            <button class="input-btn btn-select-reset">
+              <span class="litle-cross icon"></span>
+            </button>
+            <div class="prompt-edit">
+              <span class="icon" style="color: #D11521"></span>
+              <span class="prompt-edit-text">Уже есть в БД id<span class="js-edit-id"></span>, поэтому нельзя добавить в БД</spanclass>
+            </div>
+          </label>
           <label class="edit-label">Аббревиатура
             <div class="last_edit_abbr">
-              <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-alt-value="abbr" value=""/>
+              <div class="last_edit_abbr__child">
+                <input type="text" class="edit-inp edit-fullname" placeholder="Введите аббревиатуру" data-edit-alt-value="abbr" value=""/>
+                <button class="input-btn btn-select-reset">
+                  <span class="litle-cross icon"></span>
+                </button>
+              </div>
               <label class="edit-label">
-              <span>Год</span>
+                <span>Год</span>
                 <input
                   type="number"
                   class="edit-inp year-inp"
@@ -936,8 +1006,11 @@ btnAddAltEl.addEventListener('click', (e) => {
                   min="1800"
                   max="2024"
                   placeholder="Введите год"
-                  pattern="[0-9]{4}" data-edit-alt-value="year" value=""
-              /></label>
+                  pattern="[0-9]{4}" data-edit-alt-value="year" value=""/>
+                <button class="input-btn btn-select-reset">
+                  <span class="litle-cross icon"></span>
+                </button>
+              </label>
             </div>
             <div class="prompt-edit">
               <span class="icon" style="color: #D11521"></span>
@@ -949,6 +1022,7 @@ btnAddAltEl.addEventListener('click', (e) => {
   newAltWrapper.insertAdjacentHTML('beforeend', newALtNameFormHTML);
 
   setPositionForButtonsEdit();
+  setEventToPopupEditInputs();
 
   let inpNewValues = document.querySelectorAll('.edit-inp');
   inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length

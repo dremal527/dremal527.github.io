@@ -899,6 +899,13 @@
   .edit-inp.year-inp {
     margin-top: unset;
   }
+  .input-btn.btn-select-reset,
+  .textarea-btn.btn-select-reset {
+    top: 25px;
+  }
+  .last_edit_abbr__child .input-btn.btn-select-reset {
+    top: 5px;
+  }
   .popup.popup-edit-wrapper .last_edit_abbr .edit-label {
     top: -18px;
   }
