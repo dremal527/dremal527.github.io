@@ -876,9 +876,18 @@ function tableRender(dataValue) {
       btnDeleteTr.dataset.valueId = del.dataset.valueId;
       popupDel.style.display = '';
       const closeBtn = document.querySelectorAll('.popup-close');
+
+      if (checkOnMobile) {
+        document.querySelector('.mobile-menu-mini-wrapper').style.display = 'none';
+      }
+
       closeBtn.forEach((btn) => {
         btn.addEventListener('click', () => {
           popupDel.style.display = 'none';
+
+          if (checkOnMobile) {
+            document.querySelector('.mobile-menu-mini-wrapper').style.display = 'block';
+          }
         });
       });
     });
@@ -894,6 +903,10 @@ function tableRender(dataValue) {
         matchingId = tr.dataset.valueId;
       }
       popupDel.style.display = 'none';
+
+      if (checkOnMobile) {
+        document.querySelector('.mobile-menu-mini-wrapper').style.display = 'block';
+      }
     });
 
     dataSlice = dataSlice.filter((el) => el.id != matchingId);
