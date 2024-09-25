@@ -372,5 +372,5 @@ function check_and_load_mobile(){
 }
 
 
-// window.addEventListener('load', check_and_load_mobile)
+window.addEventListener('load', check_and_load_mobile)
 // window.addEventListener('resize', check_and_load_mobile)
