@@ -232,7 +232,7 @@ const setEventToResetBtn = (input, resetBtn) => {
       e.preventDefault();
 
       input.value = '';
-      e.target.style.display = 'none';
+      e.target.parentElement.style.display = 'none';
     });
 
     if (input.value != '') {
@@ -258,7 +258,7 @@ const setEventToPopupEditInputs = () => {
   }
 }
 
-const filterDataByAllCondition = () => {
+const filterDataByAllCondition = (sortBy = '') => {
   let dataFiltersTMP = dataSlice;
 
   // Фильтруем по типу школы 
@@ -281,6 +281,10 @@ const filterDataByAllCondition = () => {
       searchId == 'fullName' ? (regHighlight = new RegExp(inp.value, 'g')) : false;
       dataFiltersTMP = dataFiltersTMP.filter((el) => String(el[searchId]).match(regSearch));
     })
+  }
+
+  if ( sortBy != '') {
+    dataFiltersTMP.sort(sortBy)
   }
 
   tableRender(dataFiltersTMP);
@@ -1297,6 +1301,8 @@ document.querySelector('.js-btn-deselect').addEventListener('click', () => {
 });
 
 //Sort
+let sortCount = 0;
+
 function bySort(sortPar) {
   return (a, b) => (a[sortPar] > b[sortPar] ? 1 : -1);
 }
@@ -1306,18 +1312,13 @@ function bySortRev(sortPar) {
 document.querySelectorAll('.sort-table').forEach((sort) => {
   sort.addEventListener('click', () => {
     let sortValues = sort.dataset.sortValue;
-    let sortData;
-    count++;
-    if (count % 2) {
-      i == 1 || j == 1 || n == 1
-        ? (sortData = dataFilters.sort(bySort(sortValues)))
-        : (sortData = dataSlice.sort(bySort(sortValues)));
-      tableRender(sortData);
+
+    sortCount++;
+
+    if (sortCount % 2) {
+      filterDataByAllCondition(bySort(sortValues));
     } else {
-      i == 1 || j == 1 || n == 1
-        ? (sortData = dataFilters.sort(bySortRev(sortValues)))
-        : (sortData = dataSlice.sort(bySortRev(sortValues)));
-      tableRender(sortData);
+      filterDataByAllCondition(bySortRev(sortValues));
     }
   });
 });
