@@ -877,10 +877,6 @@ h1 {
   position: relative;
   text-align: center;
 }
-td:first-child > .search-table {
-  left: 0;
-  right: 0;
-}
 .td-wrapper-icon > .table-icon:hover::after {
   content: attr(data-value);
   text-transform: uppercase;
@@ -1042,6 +1038,7 @@ input[type='checkbox']:checked::before {
   line-height: 137.02%;
   border: 1px solid rgb(193, 193, 193);
   color: #202020;
+  position: relative;
 }
 .search-wrapper > input::placeholder {
   color: #7d7d7d;
@@ -1471,7 +1468,7 @@ h3 {
 }
 textarea.input-search.table {
   resize: none;
-  padding: 10px 43px 0px 11px;
+  padding: 15px 10px 0px 10px;
   overflow: hidden;
 }
 .input-search[data-search-value='alt2'] + .prompt-search,
@@ -1496,9 +1493,6 @@ td > .btn-reset-search {
 }
 td:first-child > .icon.loop {
   margin-left: -10px;
-}
-td > .btn-reset-search .icon {
-  font-size: 30px !important;
 }
 input[type='text']:hover:active,
 input[type='number']:hover:active,
@@ -1624,7 +1618,7 @@ td:nth-child(3) {
 }
 td:nth-child(1) {
   text-align: center;
-  width: 40px;
+  width: 70px;
 }
 
 td:nth-child(4) {

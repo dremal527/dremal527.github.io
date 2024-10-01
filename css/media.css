@@ -86,7 +86,10 @@
     font-size: 16px;
   }
   td:nth-child(1) {
-    width: 48px;
+    width: 70px;
+  }
+  td:nth-child(1) > .btn-reset-search .icon {
+    font-size: 20px !important;
   }
   td:nth-child(2),
   td:nth-child(3) {

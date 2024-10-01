@@ -583,11 +583,7 @@ export const data = [
         abbr: "ПУ №80",
         fullName: "Профессиональное училище № 80",
         address: "г. Нижний Новгород, ул. Сергиевская, д.14а",
-        altSchool: {
-            2: {
-                fullName: "2014"
-            }
-        }
+        altSchool: []
     },
     {
         inn: "5257071901",

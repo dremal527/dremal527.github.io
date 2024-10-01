@@ -46,14 +46,9 @@ let regionValueInput = '';
 let dataSlice = data.slice(0);
 let editBtnArr = document.querySelectorAll('.edit-btn');
 let scroll = JSON.parse(localStorage.getItem('pos'));
-let count = 0;
-let n = 0;
 let countAddALtClick = 1;
 let newALtNameFormHTML = '';
 let idTrTable = '';
-let dataFilters = [];
-let i = 0;
-let j = 0;
 let arrFiltersType = [];
 let arrSchoolTypeSelect = '';
 let idInterval;
@@ -223,11 +218,11 @@ const setEventToResetBtn = (input, resetBtn) => {
     input.addEventListener('input', (e) => {
       if (e.target.value != '') {
         return resetBtn.style.display = 'block';
-      } 
-  
+      }
+
       return resetBtn.style.display = 'none';
     });
-  
+
     resetBtn.addEventListener('click', (e) => {
       e.preventDefault();
 
@@ -247,7 +242,7 @@ const setEventToPopupEditInputs = () => {
   if (editInputs.length > 0) {
     for (const key in editInputs) {
       let input = editInputs[key],
-          reset_btn;
+        reset_btn;
 
       if (typeof input === 'object') {
         if (reset_btn = input.parentElement.querySelector('.btn-select-reset')) {
@@ -283,7 +278,7 @@ const filterDataByAllCondition = (sortBy = '') => {
     })
   }
 
-  if ( sortBy != '') {
+  if (sortBy != '') {
     dataFiltersTMP.sort(sortBy)
   }
 
@@ -350,8 +345,8 @@ const checkOutOfBounds = (element, inaccuracy = 0) => {
 
 const setHeightTextArae = () => {
   [
-    '.edit-inp.edit-dadata', 
-    '.edit-inp.edit-fullname', 
+    '.edit-inp.edit-dadata',
+    '.edit-inp.edit-fullname',
     '.edit-inp.fullAlt'
   ].map(selector => {
     const textarea = document.querySelectorAll(selector);
@@ -359,13 +354,13 @@ const setHeightTextArae = () => {
     if (textarea !== null) {
       textarea.forEach(elem => {
         elem.style.height = 'auto';
-  
+
         let newHeight = elem.scrollHeight;
-    
+
         if (elem.value == '') {
           newHeight = 54;
         }
-    
+
         elem.style.height = `${newHeight}px`;
       })
     }
@@ -434,7 +429,7 @@ const sortAltSchoolByYear = (school) => {
     };
 
     newKey++;
-    
+
     return acc;
   }, {});
 
@@ -527,51 +522,46 @@ function tableRender(dataValue) {
 
     let htmlTdMobileInfoAndFullNames = `   
       <td class="table-mobile__td">
-        ${
-          checkUndef(school.abbr) !== '' ? 
-          `
+        ${checkUndef(school.abbr) !== '' ?
+        `
             <div class="table-mobile__child">
               <div class="td-name">Аббревиатура</div>
                 <p class="table__abbr">${school.abbr}</p>
             </div> 
           ` : ''
-        }
-        ${
-          checkUndef(school.inn) !== '' ? 
-          `
+      }
+        ${checkUndef(school.inn) !== '' ?
+        `
             <div class="table-mobile__child">
               <div class="td-name">ИНН</div>
                 <p>${school.inn}</p>
             </div> 
           ` : ''
-        }
-        ${
-          checkUndef(school.year) !== '' ? 
-          `
+      }
+        ${checkUndef(school.year) !== '' ?
+        `
             <div class="table-mobile__child">
               <div class="td-name">Год</div>
                 <p class="table__year-name">${school.year}</p>
             </div> 
           ` : ''
-        }
-        ${
-          checkUndef(school.dadata) !== '' ? 
-          `
+      }
+        ${checkUndef(school.dadata) !== '' ?
+        `
             <div class="table-mobile__child">
               <div class="td-name dadata">Название с сайта dadata.ru</div>
                 <p>${school.dadata}</p>
             </div> 
           ` : ''
-        }
-        ${
-          checkUndef(school.fullName) !== '' ? 
-          `
+      }
+        ${checkUndef(school.fullName) !== '' ?
+        `
             <div class="table-mobile__child">
               <div class="td-name full-name">Название без юр.ф.</div>
                 <p>${school.fullName}</p>
             </div> 
           ` : ''
-        }
+      }
       </td>
     `;
 
@@ -654,7 +644,7 @@ function tableRender(dataValue) {
       idTrTable = edit.dataset.valueId;
 
       let matchingTr = dataSlice.filter((el) => el.id == idTrTable).shift(),
-          valuesCount = Object.entries(matchingTr.altSchool).filter(([key, { fullName, abbr }]) => fullName && abbr).length;
+        valuesCount = Object.entries(matchingTr.altSchool).filter(([key, { fullName, abbr }]) => fullName && abbr).length;
       countAddALtClick = valuesCount + 1;
 
       // Заполняем информацию по главному названию
@@ -725,11 +715,11 @@ function tableRender(dataValue) {
       // Заполняем информацию по вльтернативным названиям
       if (valuesCount > 0) {
         let notEmptyAltSchool = Object.fromEntries(
-            Object.entries(matchingTr.altSchool)
-                .filter(([key, { fullName, abbr }]) => fullName && abbr)
+          Object.entries(matchingTr.altSchool)
+            .filter(([key, { fullName, abbr }]) => fullName && abbr)
         );
-        
-        for (const key in notEmptyAltSchool) {  
+
+        for (const key in notEmptyAltSchool) {
           newAltWrapper.insertAdjacentHTML(
             'beforeend',
             `<div class="popup-edit-content-wrapper" data-edit-form-id="${key}">
@@ -924,17 +914,17 @@ btnSaveEdit.addEventListener('click', (e) => {
   e.preventDefault();
 
   const index = dataSlice.findIndex((el) => el.id == idTrTable);
-  let editElement  = {},
-      newAltSchool = {};
+  let editElement = {},
+    newAltSchool = {};
 
   // Заполняем основные данные
-  editElement.inn      = document.querySelector('input.edit-inp[data-edit-value="inn"]').value;
-  editElement.dadata   = document.querySelector('textarea.edit-inp[data-edit-value="dadata"]').value;
+  editElement.inn = document.querySelector('input.edit-inp[data-edit-value="inn"]').value;
+  editElement.dadata = document.querySelector('textarea.edit-inp[data-edit-value="dadata"]').value;
   editElement.fullName = document.querySelector('textarea.edit-inp[data-edit-value="fullName"]').value;
-  editElement.abbr     = document.querySelector('input.edit-inp[data-edit-value="abbr"]').value;
-  editElement.year     = document.querySelector('input.edit-inp[data-edit-value="year"]').value;
-  editElement.id       = dataSlice[index].id;
-  editElement.address  = dataSlice[index].address;
+  editElement.abbr = document.querySelector('input.edit-inp[data-edit-value="abbr"]').value;
+  editElement.year = document.querySelector('input.edit-inp[data-edit-value="year"]').value;
+  editElement.id = dataSlice[index].id;
+  editElement.address = dataSlice[index].address;
 
   // Заполняем данные по альтернативным названиям
   ['fullName', 'abbr', 'year'].map(field => {
@@ -1090,7 +1080,6 @@ delBtnArr.forEach((del) => {
 
 //Apply select
 btnApply.addEventListener('click', () => {
-  j = 1;
   arrSchoolTypeSelect = '';
 
   setTypeSchoolValue();
@@ -1100,7 +1089,6 @@ btnApply.addEventListener('click', () => {
 //Select Reset
 selectResetArr.forEach((reset, index) => {
   reset.addEventListener('click', (e) => {
-    i = j = n = 0;
     reset.style.display = 'none'
 
     if (index == 0) {
@@ -1165,8 +1153,10 @@ selectOverlay.addEventListener('click', () => {
       }
 
       if (indexSelect == 0) {
-        setOldValueSchoolSelect();
-        setTypeSchoolValue();
+        setTimeout(() => {
+          setOldValueSchoolSelect();
+          setTypeSchoolValue();
+        }, 2000)
       }
     }
   });
@@ -1369,7 +1359,6 @@ checkboxTypeSchoolArr.forEach((el) => {
 
 const setEventToFilterRegion = (btn) => {
   btn.addEventListener('click', (e) => {
-    i = 1;
     inpRegion.value = regionValueInput = btn.innerText.replaceAll('\n', '');
 
     selectResetArr[1].style.display = 'block';
@@ -1498,10 +1487,6 @@ const showHint = (inp, promptEl, resetBtn) => {
   inp.style.zIndex = 20001;
   promptEl.style.zIndex = 20001;
   resetBtn.style.zIndex = 20001;
-
-  if (window.screen.width <= 880) {
-    inp.style.position = 'relative';
-  }
 }
 const hideHint = (inp, promptEl, resetBtn) => {
   selectOverlay.style.display = 'none';
@@ -1509,6 +1494,7 @@ const hideHint = (inp, promptEl, resetBtn) => {
   inp.style.zIndex = 'unset';
   promptEl.style.zIndex = 'unset';
   resetBtn.style.zIndex = 'unset';
+  promptEl.innerHTML = '';
 }
 
 document.querySelectorAll('.input-search.table').forEach((inp, indexInp) => {
@@ -1525,10 +1511,74 @@ document.querySelectorAll('.input-search.table').forEach((inp, indexInp) => {
   });
 });
 
+const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, loopIconsArr) => {
+  inp.value == '' ? inp.focus() : false;
+
+  let searchId = inp.dataset.searchValue,
+    valueInput = '';
+
+  inp.value !== ''
+    ? (valueInput =
+      inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
+    : (valueInput = '');
+
+  valueInput == '*' ? (valueInput = undefined) : false;
+
+  let valuesSearchHTML = '',
+    regSearch = new RegExp('^' + valueInput, 'gi'),
+    regHighlight = new RegExp(valueInput, 'gi');
+
+  let textHighlight = '',
+    textOriginal = '',
+    replaceText = '';
+
+  if (inp.value == '' || inp.value === undefined) {
+    searchInput.value = '';
+    btnSearchResetArr.style.display = 'none';
+    loopIconsArr.style.display = 'block';
+    promptSearchArr.style.display = 'none';
+
+    inp.blur();
+  } else {
+    let currentData = dataSlice,
+      filteredData = currentData
+        .filter((el) => String(el[searchId]).match(regSearch))
+        .filter((value, index, self) =>
+          index === self.findIndex((el) => (
+            el[searchId] === value[searchId]
+          ))
+        )
+        .slice(0, 6);
+
+    if (filteredData.length <= 0) {
+      promptSearchArr.style.display = 'none';
+    } else {
+      filteredData.forEach((el) => {
+        textHighlight = String(el[searchId]).match(regHighlight).join('');
+        textOriginal = String(el[searchId]).toLowerCase();
+        
+        console.log({textHighlight, textOriginal})
+
+        replaceText = textOriginal
+          .replace(
+            textHighlight.toLowerCase(),
+            `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+          )
+          .replaceAll(',', '');
+        valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
+        promptSearchArr.innerHTML = valuesSearchHTML;
+      });
+    }
+
+    filterDataByAllCondition();
+  }
+}
+
 searchInput.forEach((inp, indexInp) => {
   inp.addEventListener('blur', () => {
     setTimeout(() => {
       promptSearchArr[indexInp].style.display = 'none';
+      // тест
       hideHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
 
       if (inp.value == '') {
@@ -1545,116 +1595,21 @@ searchInput.forEach((inp, indexInp) => {
 
     promptSearchArr[indexInp].style.display = 'block';
 
-    if (checkOutOfBounds(promptSearchArr[indexInp])) {
-      inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
-  });
-
-  inp.addEventListener('input', () => {
     if (inp.value != '') {
-      loopIconsArr[indexInp].style.display = 'none';
-    }
-
-    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
-
-    promptSearchArr[indexInp].style.display = 'block';
-    inp.value == '' ? inp.blur() : false;
-    let searchId = inp.dataset.searchValue;
-    let valueInput = '';
-    inp.value !== ''
-      ? (valueInput =
-        inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
-      : (valueInput = '');
-    valueInput == '*' ? (valueInput = undefined) : false;
-    let valuesSearchHTML = '';
-    let regSearch = new RegExp('^' + valueInput, 'gi');
-    let regHighlight = new RegExp(valueInput, 'gi');
-    searchId == 'fullName' ? (regHighlight = new RegExp(valueInput, 'gi')) : false;
-    if (i == 1 || j == 1 || n == 1) {
-      let textHighlight = '';
-      let textOriginal = '';
-      let replaceText = '';
-      if (valueInput == '' || inp.value === undefined) {
-        searchInput[indexInp].value = '';
-        btnSearchResetArr[indexInp].style.display = 'none';
-        loopIconsArr[indexInp].style.display = 'block';
-        promptSearchArr[indexInp].style.display = 'none';
-
-        inp.blur();
-        n = 0;
-        filterDataByAllCondition();
-      } else {
-        let currentData = dataFilters;
-        let filteredData = currentData
-          .filter((el) => String(el[searchId]).match(regSearch))
-          .filter((value, index, self) =>
-            index === self.findIndex((el) => (
-              el[searchId] === value[searchId]
-            ))
-          )
-          .slice(0, 6);
-
-        if (filteredData.length <= 0) {
-          promptSearchArr[indexInp].style.display = 'none';
-        } else {
-          filteredData.forEach((el) => {
-            textHighlight = String(el[searchId]).match(regHighlight).join('');
-            textOriginal = String(el[searchId]).toLowerCase();
-            replaceText = textOriginal
-              .replace(
-                textHighlight.toLowerCase(),
-                `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
-              )
-              .replaceAll(',', '');
-            valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
-            promptSearchArr[indexInp].innerHTML = valuesSearchHTML;
-          });
-        }
-
-        valueInput == '' ? filterDataByAllCondition() : false;
-      }
-    } else {
-      let textHighlight = '';
-      let textOriginal = '';
-      let replaceText = '';
-      let filteredData = dataSlice
-        .filter((el) => String(el[searchId]).match(regSearch))
-        .filter((value, index, self) =>
-          index === self.findIndex((el) => (
-            el[searchId] === value[searchId]
-          ))
-        )
-        .slice(0, 6);
-
-      if (filteredData.length <= 0) {
-        promptSearchArr[indexInp].style.display = 'none';
-      } else {
-        filteredData.forEach((el) => {
-          textHighlight = String(el[searchId]).match(regHighlight).join('');
-          textOriginal = String(el[searchId]).toLowerCase();
-          replaceText = textOriginal
-            .replace(
-              textHighlight.toLowerCase(),
-              `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
-            )
-            .replaceAll(',', '');
-          valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
-          promptSearchArr[indexInp].innerHTML = valuesSearchHTML;
-        });
-      }
-
-      if (valueInput == '') {
-        promptSearchArr[indexInp].style.display = 'none';
-      }
-
-      filterDataByAllCondition();
+      setHintContent(
+        inp,
+        promptSearchArr[indexInp],
+        searchInput[indexInp],
+        btnSearchResetArr[indexInp],
+        loopIconsArr[indexInp]
+      );
     }
 
     if (checkOutOfBounds(promptSearchArr[indexInp])) {
       inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
 
     document.querySelectorAll('.search-value').forEach(
       (el) =>
@@ -1662,6 +1617,28 @@ searchInput.forEach((inp, indexInp) => {
         e.preventDefault();
       })
     );
+  });
+
+  inp.addEventListener('input', () => {
+    if (inp.value != '') {
+      loopIconsArr[indexInp].style.display = 'none';
+    }
+
+    promptSearchArr[indexInp].style.display = 'block';
+
+    setHintContent(
+      inp,
+      promptSearchArr[indexInp],
+      searchInput[indexInp],
+      btnSearchResetArr[indexInp],
+      loopIconsArr[indexInp]
+    );
+
+    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+
+    if (checkOutOfBounds(promptSearchArr[indexInp])) {
+      inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     document.querySelectorAll('.search-value').forEach((el) => {
       el.innerText.includes('UNDEFINED') ? (el.style.color = 'rgba(0, 0, 0, 0)') : false;
@@ -1671,7 +1648,6 @@ searchInput.forEach((inp, indexInp) => {
           promptSearch = parent.querySelector('.prompt-search'),
           resetBtn = parent.querySelector('.btn-reset-search');
 
-        n = 1;
         input.value = el.textContent;
         input.value == 'undefined' ? (input.style.color = 'rgba(0, 0, 0, 0)') : false;
         promptSearch.style.display = 'none';
@@ -1685,6 +1661,13 @@ searchInput.forEach((inp, indexInp) => {
         filterDataByAllCondition();
       });
     });
+
+    document.querySelectorAll('.search-value').forEach(
+      (el) =>
+      (el.onmousedown = function (e) {
+        e.preventDefault();
+      })
+    );
   });
 });
 
