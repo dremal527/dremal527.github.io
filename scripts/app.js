@@ -269,12 +269,24 @@ const filterDataByAllCondition = (sortBy = '') => {
   // Филтруем по всем полям быстрого поиска
   if (searchInput.length) {
     searchInput.forEach(inp => {
-      let searchId = inp.dataset.searchValue,
-        regSearch = new RegExp('^' + inp.value, 'gi'),
-        regHighlight = new RegExp(inp.value, 'gi');
+      let searchId  = inp.dataset.searchValue,
+          regSearch = new RegExp('^' + inp.value.trim(), 'gi'),
+          altIndex  = 0;
 
-      searchId == 'fullName' ? (regHighlight = new RegExp(inp.value, 'g')) : false;
-      dataFiltersTMP = dataFiltersTMP.filter((el) => String(el[searchId]).match(regSearch));
+      if (searchId.indexOf('altSchool') !== -1) {
+        altIndex = Number(searchId.match(/\d+/g)[0])
+        searchId = 'altSchool';
+      }
+
+      dataFiltersTMP = dataFiltersTMP.filter((el) => { 
+        let findElem = el[searchId];
+
+        if (searchId == 'altSchool') {
+          findElem = findElem[altIndex]['abbr'];
+        }
+
+        return String(findElem).match(regSearch)
+      });
     })
   }
 
@@ -565,7 +577,12 @@ function tableRender(dataValue) {
       </td>
     `;
 
-    setTimeout(() => {
+    trEl.setAttribute('data-value-id', school.id);
+    trEl.insertAdjacentHTML('beforeend', htmlThead);
+    trEl.insertAdjacentHTML('beforeend', htmlTdNum);
+    trEl.insertAdjacentHTML('beforeend', htmlTdInfoAndFullNames);
+    trEl.insertAdjacentHTML('beforeend', htmlTdMobileInfoAndFullNames);
+
       const altSchool = school.altSchool;
 
       if (Object.keys(altSchool).length > 0) {
@@ -613,7 +630,6 @@ function tableRender(dataValue) {
           trEl.append(altName1);
         }
       }
-    }, 0);
 
     if (checkOnMobile) {
       setTimeout(() => {
@@ -622,12 +638,6 @@ function tableRender(dataValue) {
         });
       }, 0);
     }
-
-    trEl.setAttribute('data-value-id', school.id);
-    trEl.insertAdjacentHTML('beforeend', htmlThead);
-    trEl.insertAdjacentHTML('beforeend', htmlTdNum);
-    trEl.insertAdjacentHTML('beforeend', htmlTdInfoAndFullNames);
-    trEl.insertAdjacentHTML('beforeend', htmlTdMobileInfoAndFullNames);
 
     tbodyWrapperEl.append(trEl);
   });
@@ -1489,12 +1499,12 @@ const showHint = (inp, promptEl, resetBtn) => {
   resetBtn.style.zIndex = 20001;
 }
 const hideHint = (inp, promptEl, resetBtn) => {
-  selectOverlay.style.display = 'none';
   inp.style.backgroundColor = 'transparent';
   inp.style.zIndex = 'unset';
   promptEl.style.zIndex = 'unset';
   resetBtn.style.zIndex = 'unset';
   promptEl.innerHTML = '';
+  selectOverlay.style.display = 'none';
 }
 
 document.querySelectorAll('.input-search.table').forEach((inp, indexInp) => {
@@ -1515,7 +1525,13 @@ const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, lo
   inp.value == '' ? inp.focus() : false;
 
   let searchId = inp.dataset.searchValue,
-    valueInput = '';
+    valueInput = '',
+    altIndex   = 0;
+
+  if (searchId.indexOf('altSchool') !== -1) {
+    altIndex = Number(searchId.match(/\d+/g)[0])
+    searchId = 'altSchool';
+  }
 
   inp.value !== ''
     ? (valueInput =
@@ -1525,8 +1541,10 @@ const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, lo
   valueInput == '*' ? (valueInput = undefined) : false;
 
   let valuesSearchHTML = '',
-    regSearch = new RegExp('^' + valueInput, 'gi'),
-    regHighlight = new RegExp(valueInput, 'gi');
+      regSearch,
+      regHighlight;
+
+  regSearch = regHighlight = new RegExp('^' + valueInput.trim(), 'gi');
 
   let textHighlight = '',
     textOriginal = '',
@@ -1536,55 +1554,74 @@ const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, lo
     searchInput.value = '';
     btnSearchResetArr.style.display = 'none';
     loopIconsArr.style.display = 'block';
-    promptSearchArr.style.display = 'none';
-
-    inp.blur();
+    promptSearchArr.style.display = 'none';    
   } else {
     let currentData = dataSlice,
       filteredData = currentData
-        .filter((el) => String(el[searchId]).match(regSearch))
-        .filter((value, index, self) =>
-          index === self.findIndex((el) => (
-            el[searchId] === value[searchId]
-          ))
-        )
+        .filter((el) => {
+          let findElem = el[searchId];
+
+          if (searchId == 'altSchool') {
+            findElem = findElem[altIndex]['abbr'];
+          }
+
+          return String(findElem).match(regSearch)
+        })
+        .filter((value, index, self) => {
+          return index === self.findIndex((el) => {
+            let findElem  = el[searchId],
+                needValue = value[searchId];
+
+            if (searchId === 'altSchool') {
+              findElem  = findElem[altIndex]['abbr'];
+              needValue = needValue[altIndex]['abbr'];
+            }
+
+            return findElem === needValue;
+          })
+        })
         .slice(0, 6);
+
+    console.log({filteredData})
 
     if (filteredData.length <= 0) {
       promptSearchArr.style.display = 'none';
     } else {
       filteredData.forEach((el) => {
-        textHighlight = String(el[searchId]).match(regHighlight).join('');
-        textOriginal = String(el[searchId]).toLowerCase();
-        
-        console.log({textHighlight, textOriginal})
+        let findElem = el[searchId];
 
+        if (searchId == 'altSchool') {
+          findElem = findElem[altIndex]['abbr'];
+        }
+
+        textHighlight = String(findElem).match(regHighlight).join('');
+        textOriginal = String(findElem).toLowerCase();
+        
         replaceText = textOriginal
           .replace(
             textHighlight.toLowerCase(),
-            `<span class="highlight">${String(el[searchId]).match(regHighlight)}</span>`
+            `<span class="highlight">${String(findElem).match(regHighlight)}</span>`
           )
           .replaceAll(',', '');
         valuesSearchHTML += `<div class="search-value">${replaceText}</div>`;
         promptSearchArr.innerHTML = valuesSearchHTML;
       });
     }
-
-    filterDataByAllCondition();
   }
+
+  setMaxHeightSearchInput();
+  filterDataByAllCondition();
 }
 
 searchInput.forEach((inp, indexInp) => {
   inp.addEventListener('blur', () => {
-    setTimeout(() => {
-      promptSearchArr[indexInp].style.display = 'none';
-      // тест
-      hideHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+    promptSearchArr[indexInp].style.display = 'none';
+    // тест
+    hideHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
 
-      if (inp.value == '') {
-        loopIconsArr[indexInp].style.display = 'block';
-      }
-    }, 100);
+    if (inp.value == '') {
+      loopIconsArr[indexInp].style.display = 'block';
+    }
   });
   inp.addEventListener('click', () => {
     if (inp.value != '') {
