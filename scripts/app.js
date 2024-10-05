@@ -263,14 +263,14 @@ const filterDataByAllCondition = (sortBy = '') => {
   }
 
   // Фильтруем по региону
-  if (regionValueInput != '')
+  if (regionValueInput != '') {
     dataFiltersTMP = dataFiltersTMP.filter((school) => school.address.match(regionValueInput))
+  }
 
   // Филтруем по всем полям быстрого поиска
   if (searchInput.length) {
     searchInput.forEach(inp => {
       let searchId  = inp.dataset.searchValue,
-          regSearch = new RegExp('^' + inp.value.trim(), 'gi'),
           altIndex  = 0;
 
       if (searchId.indexOf('altSchool') !== -1) {
@@ -278,15 +278,21 @@ const filterDataByAllCondition = (sortBy = '') => {
         searchId = 'altSchool';
       }
 
-      dataFiltersTMP = dataFiltersTMP.filter((el) => { 
-        let findElem = el[searchId];
-
-        if (searchId == 'altSchool') {
-          findElem = findElem[altIndex]['abbr'];
-        }
-
-        return String(findElem).match(regSearch)
-      });
+      if (inp.value.trim() !== '*') {
+        let regSearch = new RegExp('^' + inp.value.trim(), 'gi');
+  
+        dataFiltersTMP = dataFiltersTMP.filter((el) => { 
+          let findElem = el[searchId];
+  
+          if (searchId == 'altSchool') {
+            findElem = findElem[altIndex]['abbr'];
+          }
+  
+          return String(findElem).match(regSearch)
+        });
+      } else {
+        dataFiltersTMP.sort(bySortRev(searchId))
+      }
     })
   }
 
@@ -1544,7 +1550,7 @@ const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, lo
     : (valueInput = '');
 
   if (valueInput == '*') {
-    return false;
+    return filterDataByAllCondition();
   }
 
   let valuesSearchHTML = '',
