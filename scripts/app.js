@@ -780,7 +780,42 @@ function tableRender(dataValue) {
       let inpNewValues = document.querySelectorAll('.edit-inp');
 
       popupEdit.style.display = '';
+
       const closeBtn = document.querySelectorAll('.popup-close');
+      closeBtn.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          inpNewValues.forEach((inp) => (inp.value = ''));
+          popupEdit.style.display = 'none';
+          const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+          dataFormEl.forEach((formEl, index) => {
+            countAddALtClick = 1;
+            index != 0 ? formEl.remove() : false;
+          });
+
+          if (checkOnMobile) {
+            document.querySelector('.mobile-menu-mini-wrapper').style.display = 'block';
+          }
+        });
+      });
+
+      const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
+      const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
+      delNewAlt.forEach((del, indexDel) => {
+          del.addEventListener('click', () => {
+            countAddALtClick = indexDel;
+            countAddALtClick >= 6
+              ? (btnAddAltEl.disabled = true)
+              : (btnAddAltEl.disabled = false);
+
+            dataFormEl.forEach((formEl, indexForm) => {
+              indexDel + 1 == indexForm ? formEl.remove() : false;
+            });
+
+            setPositionForButtonsEdit();
+          });
+      });
+
       inpFullName = document.querySelector('.edit-fullname');
       inpInn = document.querySelector('.edit-inn');
       const promptSpanIdArr = document.querySelectorAll('.js-edit-id');
@@ -827,36 +862,6 @@ function tableRender(dataValue) {
           inpNewValues.length !== Array.from(inpNewValues).filter((el) => el.value !== '').length
             ? (btnSaveEdit.disabled = true)
             : (btnSaveEdit.disabled = false);
-        });
-        closeBtn.forEach((btn) => {
-          btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            inpNewValues.forEach((inp) => (inp.value = ''));
-            popupEdit.style.display = 'none';
-            const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
-            dataFormEl.forEach((formEl, index) => {
-              countAddALtClick = 1;
-              index != 0 ? formEl.remove() : false;
-            });
-
-            if (checkOnMobile) {
-              document.querySelector('.mobile-menu-mini-wrapper').style.display = 'block';
-            }
-          });
-        });
-        const dataFormEl = document.querySelectorAll('.popup-edit-content-wrapper');
-        const delNewAlt = document.querySelectorAll('.js-edit-btn-altDel');
-        delNewAlt.forEach((del, indexDel) => {
-          dataFormEl.forEach((formEl, indexForm) => {
-            del.addEventListener('click', () => {
-              countAddALtClick = indexDel;
-              countAddALtClick >= 6
-                ? (btnAddAltEl.disabled = true)
-                : (btnAddAltEl.disabled = false);
-              indexDel + 1 == indexForm ? formEl.remove() : false;
-              setPositionForButtonsEdit();
-            });
-          });
         });
 
         setPositionForButtonsEdit();
@@ -1538,7 +1543,9 @@ const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, lo
       inp.value[0].replace(inp.value[0], inp.value[0].toUpperCase()) + inp.value.slice(1))
     : (valueInput = '');
 
-  valueInput == '*' ? (valueInput = undefined) : false;
+  if (valueInput == '*') {
+    return false;
+  }
 
   let valuesSearchHTML = '',
       regSearch,
@@ -1551,10 +1558,7 @@ const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, lo
     replaceText = '';
 
   if (inp.value == '' || inp.value === undefined) {
-    searchInput.value = '';
-    btnSearchResetArr.style.display = 'none';
-    loopIconsArr.style.display = 'block';
-    promptSearchArr.style.display = 'none';    
+    hideHint(inp, promptSearchArr, searchInput, btnSearchResetArr, loopIconsArr);
   } else {
     let currentData = dataSlice,
       filteredData = currentData
@@ -1582,10 +1586,8 @@ const setHintContent = (inp, promptSearchArr, searchInput, btnSearchResetArr, lo
         })
         .slice(0, 6);
 
-    console.log({filteredData})
-
     if (filteredData.length <= 0) {
-      promptSearchArr.style.display = 'none';
+      hideHint(inp, promptSearchArr, searchInput, btnSearchResetArr, loopIconsArr);
     } else {
       filteredData.forEach((el) => {
         let findElem = el[searchId];
@@ -1646,7 +1648,9 @@ searchInput.forEach((inp, indexInp) => {
       inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+    if (promptSearchArr[indexInp].querySelector('.search-value') !== null) {
+      showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+    }
 
     document.querySelectorAll('.search-value').forEach(
       (el) =>
@@ -1671,7 +1675,9 @@ searchInput.forEach((inp, indexInp) => {
       loopIconsArr[indexInp]
     );
 
-    showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+    if (promptSearchArr[indexInp].querySelector('.search-value') !== null) {
+      showHint(inp, promptSearchArr[indexInp], btnSearchResetArr[indexInp]);
+    }
 
     if (checkOutOfBounds(promptSearchArr[indexInp])) {
       inp.scrollIntoView({ behavior: 'smooth', block: 'start' });
